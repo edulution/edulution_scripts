@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo rm .bash_aliases
+sudo cat newaliases > .bash_aliases
