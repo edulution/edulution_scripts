@@ -10,7 +10,7 @@ chmod +x backupdb/remove_old_backups.sh
 #make backups directory
 mkdir ~/backups
 # copy backup script to backups directory
-cp backup.py ~/backups
+cp backupdb/backup.py ~/backups
 
 #make reports directory
 mkdir ~/reports
@@ -18,7 +18,7 @@ mkdir ~/reports
 #Update bash aliases
 cd ~
 sudo rm .bash_aliases
-sudo cat newaliases > .bash_aliases
+sudo cat .scripts/newaliases > .bash_aliases
 
 #Send testfile to make sure scripts are correctly set up
 touch ~/reports/test.R
