@@ -8,7 +8,7 @@ alias syncverbose=' sudo service ka-lite stop;sudo service nginx stop;kalite man
 alias l='ls -ltr'
 alias whoru='~/whoru'
 alias swapdb='~/swapdb' 
-alias fixcrazy='sudo service ka-lite stop;sudo service nginx stop;sudo ~/fixcrazy'
-alias alldata='~/month_end_scripts/alldata.sh'
-alias monthend='~/month_end_scripts/monthend.sh'
+alias fixcrazy='sudo service ka-lite stop;sudo service nginx stop;sudo ~/.scripts/reporting/fix_crazy/fixcrazy'
+alias alldata='~/.scripts/reporting/alldata.sh'
+alias monthend='~/.scripts/reporting/monthend.sh'
 
