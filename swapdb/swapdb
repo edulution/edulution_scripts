@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [ ! -d "/home/pi/ka-lite/kalite/database/swapdb" ]; then
+  # exits if the swap directory does not exist
+  echo "Swap directory does not exist: skipping"
+  exit 0
+fi
+
+if [ ! -f /home/pi/ka-lite/kalite/database/swapdb/data.swap.sqlite ]; then
+  # exits if the swap db file does not exist
+  echo "Swap db file does not exist: skipping"
+  exit 0
+fi
+
+# First stop the kalite server (takes a few minutes)
+echo "stopping ka-lite server, please wait..."
+sudo  /home/pi/ka-lite/stop.sh
+
+# Once server stopped switch db files
+cd /home/pi/ka-lite/kalite/database/
+
+# swapping db files
+mv /home/pi/ka-lite/kalite/database/swapdb/data.swap.sqlite .
+mv data.sqlite /home/pi/ka-lite/kalite/database/swapdb/data.swap.sqlite
+mv data.swap.sqlite data.sqlite 
+
+# Re start kalite server (takes a few minutes)
+echo "restarting ka-lite server, please wait..."
+sudo  /home/pi/ka-lite/start.sh
+
+# When server re-started, run whoru script
+echo "Database swapped - details of active database is:"
+/home/pi/whoru
+
