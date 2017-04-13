@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #make files executable
 chmod +x reporting/alldata.sh
 chmod +x reporting/monthend.sh
@@ -7,21 +7,44 @@ chmod +x reporting/fix_crazy/fixcrazy
 chmod +x backupdb/remove_old_backups.sh
 
 
-#make backups directory
-mkdir ~/backups
-# copy backup script to backups directory
-cp backupdb/backup.py ~/backups
+#make backups and reports directories if they don't exist
+DIRECTORIES=( ~/reports ~/backups )
+for DIRECTORY in ${DIRECTORIES[@]}; do
+	if [ ! -d "$DIRECTORY" ]; then
+		mkdir "$DIRECTORY"
+	else
+		echo "$DIRECTORY already exists. Skipping this step"
+	fi
+done
 
-#make reports directory
-mkdir ~/reports
+#If backup.py script already exists, replace it with latest version. If not, create it
+test -f ~/backups/backup.py
+if [ "$?" = "0" ]; then
+	rm ~/backups/backup.py
+	echo removing old backup script
+	cp backupdb/backup.py ~/backups
+	echo inserting latest backup script
+else
+	echo backup script doesnt exist. copying now...
+	cp backupdb/backup.py ~/backups
+fi
 
-#Update bash aliases
+#If bash aliases already exists, replace it with latest version. If not, create it
 cd ~
-sudo rm .bash_aliases
-sudo cat .scripts/newaliases > .bash_aliases
+test -f ~/.bash_aliases
+if [ "$?" = "0" ]; then
+	echo "aliases file already exists. Replacing with latest version"
+	sudo rm .bash_aliases
+	echo "Replacing aliases with latest version"
+	sudo cp .scripts/.bash_aliases ~
+else
+	echo "Aliases file does not exist. Inserting latest version"
+	sudo cp ~/.scripts/.bash_aliases ~
+fi
 
 #Send testfile to make sure scripts are correctly set up
 touch ~/reports/test.R
+echo "Testing report submission..."
 sshpass -p $SSHPASS scp ~/reports/test.R edulution@130.211.93.74:/home/edulution/reports
 # if connection lost the script will exit with status 1 and output error message
 if [ "$?" = "0" ]; then
