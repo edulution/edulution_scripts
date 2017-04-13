@@ -21,11 +21,11 @@ done
 test -f ~/backups/backup.py
 if [ "$?" = "0" ]; then
 	rm ~/backups/backup.py
-	echo removing old backup script
+	echo "Removing old backup script"
 	cp backupdb/backup.py ~/backups
-	echo inserting latest backup script
+	echo "Inserting latest backup script"
 else
-	echo backup script doesnt exist. copying now...
+	echo "Backup script doesnt exist. Copying now..."
 	cp backupdb/backup.py ~/backups
 fi
 
@@ -33,7 +33,7 @@ fi
 cd ~
 test -f ~/.bash_aliases
 if [ "$?" = "0" ]; then
-	echo "aliases file already exists. Replacing with latest version"
+	echo "Bash aliases file already exists. Replacing with latest version"
 	sudo rm .bash_aliases
 	echo "Replacing aliases with latest version"
 	sudo cp .scripts/.bash_aliases ~
@@ -48,8 +48,8 @@ echo "Testing report submission..."
 sshpass -p $SSHPASS scp ~/reports/test.R edulution@130.211.93.74:/home/edulution/reports
 # if connection lost the script will exit with status 1 and output error message
 if [ "$?" = "0" ]; then
-	echo Report submitted successfully!
-	echo Everything has been set up correctly
+	echo "Report submitted successfully!"
+	echo "Everything has been set up correctly"
 else
 	echo Something went wrong or internet connection was lost 1>&2
 	exit 1
