@@ -11,12 +11,12 @@ if [ "$?" = "0" ]; then
 	   sudo service nginx stop
        echo "Extracting all data until $1"
        echo Checking and fixing students with abnormal hours
-       ~/fixcrazy
+       ~/.scripts/reporting/fix_crazy/fixcrazy
        echo Beginning report extraction.....
        # fetch the first argument given on the command line and use it as an argument to the Rscript
-       Rscript ~/month_end_scripts/alldata.R "$1"
+       Rscript ~/.scripts/reporting/alldata.R "$1"
        # After Rscript executes, execute send report script
-       ~/month_end_scripts/send_report.sh
+       ~/.scripts/reporting/send_report.sh
    else 
        echo Please enter a valid month and year e.g 02-17
        exit 1 
