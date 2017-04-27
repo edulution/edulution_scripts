@@ -6,7 +6,6 @@ chmod +x reporting/send_report.sh
 chmod +x reporting/fix_crazy/fixcrazy
 chmod +x backupdb/remove_old_backups.sh
 
-
 #make backups and reports directories if they don't exist
 DIRECTORIES=( ~/reports ~/backups )
 for DIRECTORY in ${DIRECTORIES[@]}; do
@@ -42,10 +41,23 @@ else
 	sudo cp ~/.scripts/.bash_aliases ~
 fi
 
+#test if upgrade script exists. If not add it
+test -f ~/upgrade
+if [ "$?" = "0" ]; then
+	echo "Upgrade script already exists. Replacing with latest version"
+	sudo rm upgrade
+	echo "Replacing upgrade script with latest version"
+	sudo cp .scripts/upgrade ~
+else
+	echo "Upgrade script does not exist. Inserting it now"
+	sudo cp ~/.scripts/upgrade ~
+fi
+
 #Send testfile to make sure scripts are correctly set up
 touch ~/reports/test.R
 echo "Testing report submission..."
 sshpass -p $SSHPASS scp ~/reports/test.R edulution@130.211.93.74:/home/edulution/reports
+
 # if connection lost the script will exit with status 1 and output error message
 if [ "$?" = "0" ]; then
 	echo "Report submitted successfully!"
