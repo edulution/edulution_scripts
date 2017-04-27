@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd ~/.scripts
+git reset --hard origin/master
+git fetch origin master
