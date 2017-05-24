@@ -69,7 +69,7 @@ monthend <- function(year_month) {
   # Need to get end of month in standard format before chopping it up for grepping. Need it for monthend column in final csv file
   monthend_column <- strftime(upper_limit,format = "%d-%m-%y")
   upper_limit <- substring(upper_limit,1,7)
-  exercises_per_user <- main_exerciselog %>% filter(grepl(upper_limit, latest_activity_timestamp) || grepl(upper_limit, completion_timestamp)) %>% group_by(user_id) %>% summarize(exercises_attempted = n(), total_exercises = sum(complete))
+  exercises_per_user <- main_exerciselog %>% filter(grepl(upper_limit, completion_timestamp)) %>% group_by(user_id) %>% summarize(exercises_attempted = n(), total_exercises = sum(complete))
   videos_per_user <- main_videolog %>% filter(grepl(upper_limit, latest_activity_timestamp)) %>% group_by(user_id) %>% summarize(total_videos = n())
   complete_summary <- main_userlogsummary %>% filter(grepl(upper_limit,last_activity_datetime)) %>% group_by(user_id) %>% summarise(total_hours = sum(total_seconds)/3600, total_logins = n(), last_active_date = max(as.Date(last_activity_datetime))) %>% right_join(users, by = c("user_id" = "id")) %>% left_join(exercises_per_user, by = "user_id") %>% left_join(videos_per_user, by = "user_id") %>% left_join(facilities, by = c("facility_id" = "id")) %>% left_join(groups, by = c("group_id" = "id"))%>% mutate(month_end=rep(monthend_column))
   rpt <- complete_summary %>% select(user_id,first_name,last_name,username,name.y,total_logins,total_hours,total_exercises,total_videos,month_end,exercises_attempted,name.x,last_active_date) %>% rename(centre = name.x, group = name.y, id = user_id)
