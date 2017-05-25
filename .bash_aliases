@@ -1,5 +1,5 @@
 alias checktemp='/opt/vc/bin/vcgencmd measure_temp'
-alias shutdown='sudo service ka-lite stop;sudo service nginx stop;sudo shutdown -h now'
+alias shutdown='sudo service ka-lite stop;sudo service nginx stop;cd ~/backups;python backup.py;sudo shutdown -h now'
 alias reboot='sudo reboot'
 alias cdusb='cd /media'
 alias ka='cd ~/.kalite'
@@ -12,5 +12,5 @@ alias fixcrazy='sudo service ka-lite stop;sudo service nginx stop;sudo ~/.script
 alias alldata='~/.scripts/reporting/alldata.sh'
 alias monthend='~/.scripts/reporting/monthend.sh'
 alias restartka='sudo service nginx restart;sudo service ka-lite restart'
-alias backup='sudo service nginx stop;sudo service ka-lite stop;python ~/backups/backup.py'
+alias backup='sudo service nginx stop;sudo service ka-lite stop;cd ~/backups;python backup.py'
 alias upgrade='~/upgrade'
