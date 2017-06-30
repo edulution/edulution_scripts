@@ -13,9 +13,9 @@ FROM
 	main_userlogsummary l
 	JOIN securesync_facilityuser u ON u.id = l.user_id
 	JOIN securesync_facilitygroup f ON f.id = u.group_id
-WHERE l.total_seconds > 720000''')
+WHERE l.total_seconds > 432000''')
     results = c.fetchall()
-    c.execute("UPDATE main_userlogsummary SET total_seconds = 54000 WHERE total_seconds>720000")
+    c.execute("UPDATE main_userlogsummary SET total_seconds = 54000 WHERE total_seconds>432000")
     db.commit()
 	
 #keep log of students with abnormal hours	
