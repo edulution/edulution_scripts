@@ -52,7 +52,7 @@ meta_query <- dbSendQuery(conn,"SELECT * FROM securesync_devicemetadata")
 device_meta <- dbFetch(meta_query) %>% select(id,device_id,is_own_device)
 
 device_name <- device_meta %>% filter(is_own_device == 1) %>% left_join(device,by=c("device_id" = "id"))
-device_name <- device_name$name
+device_name <- substring(device_name$name,1,3)
 
 #clean up and close database connection
 dbDisconnect(conn)
