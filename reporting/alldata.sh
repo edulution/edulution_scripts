@@ -1,4 +1,10 @@
 #!/bin/sh
+
+#pull latest changes from master branch in repo
+cd ~/.scripts
+git reset --hard origin/master
+git pull
+
 #check if database file exists before extracting reports
 test -f ~/.kalite/database/data.sqlite
 #if db file exists then extraction and submission begin. If not, will output error message to contact support
