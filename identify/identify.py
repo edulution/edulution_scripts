@@ -5,7 +5,7 @@ import subprocess
 
 ka_database = expanduser("~/.kalite/database/data.sqlite")
 #get top 3 lines of git log to get id and date of most recent commit
-latest_update = subprocess.check_output("cd ..;git log | head -n 3", shell=True)
+latest_update = subprocess.check_output("cd /home/ka-lite/.scripts;git log | head -n 3", shell=True)
 
 # connect to kalite database file
 db = sqlite3.connect(ka_database)
