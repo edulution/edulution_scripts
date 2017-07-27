@@ -5,6 +5,9 @@ cd ~/.scripts
 git reset --hard origin/master
 git pull
 
+# Do silent upgrade of all scripts
+./upgrade_silent
+
 #check if database file exists before extracting reports
 test -f ~/.kalite/database/data.sqlite
 #if db file exists then extraction and submission begin. If not, will output error message to contact support
