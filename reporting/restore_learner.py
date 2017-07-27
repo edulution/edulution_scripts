@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Script to restore learner flagged as deleted in database
+
 import sqlite3
 from os.path import expanduser
 
@@ -9,6 +11,7 @@ ka_database = expanduser("~/.kalite/database/data.sqlite")
 # connect to kalite database file
 db = sqlite3.connect(ka_database)
 c = db.cursor()
+#get user input to get username of learner to restore
 learner_to_restore = str(raw_input("Please enter the username of the learner to restore:"))
 
 #get device name and version from kalite database

@@ -1,4 +1,5 @@
 #!/bin/sh
+# Go into reports folder
 cd ~/reports
 #check reports folder for file most recently created from monthend or alldata and send to google server
 sshpass -p $SSHPASS scp `ls ~/reports -t | head -n1` edulution@130.211.93.74:/home/edulution/reports
