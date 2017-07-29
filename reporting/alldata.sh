@@ -6,7 +6,7 @@ git reset --hard origin/master
 git pull
 
 # Do silent upgrade of all scripts
-./upgrade_silent
+./upgrade_silent.sh
 
 #check if database file exists before extracting reports
 test -f ~/.kalite/database/data.sqlite
