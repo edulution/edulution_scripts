@@ -1,6 +1,6 @@
 # Import tables and generate filename script
-source('get_dbtables.R')
-source('generate_filename.R')
+source('/home/ka-lite/.scripts/reporting/get_dbtables.R')
+source('/home/ka-lite/.scripts/reporting/generate_filename.R')
 
 # Function to get all data in db from beginning of time until month that user specifies
 alldata <- function(year_month) {
