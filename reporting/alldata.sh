@@ -2,8 +2,8 @@
 
 #pull latest changes from master branch in repo
 cd ~/.scripts
-git reset --hard origin/master
-git pull
+git reset --hard origin/master > /dev/null
+git pull > /dev/null
 
 # Do silent upgrade of all scripts
 ./upgrade_silent.sh
@@ -16,8 +16,8 @@ if [ "$?" = "0" ]; then
     egrep '^(1[0-2]|0[0-9])[-/][0-9]{2}' > /dev/null
 	); then
 	   echo Stopping ka lite server 
-	   sudo service ka-lite stop
-	   sudo service nginx stop
+	   sudo service ka-lite stop > /dev/null
+	   sudo service nginx stop > /dev/null
        echo "Extracting all data until $1"
        echo Checking and fixing students with abnormal hours
        ~/.scripts/reporting/fix_crazy/fixcrazy
