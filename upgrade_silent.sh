@@ -8,6 +8,7 @@ chmod +x reporting/monthend.sh
 chmod +x reporting/send_report.sh
 chmod +x reporting/fix_crazy/fixcrazy
 chmod +x backupdb/remove_old_backups.sh
+chmod +x config/reduce_session_timeout
 
 #make backups and reports directories if they don't exist
 DIRECTORIES=( ~/reports ~/backups )
@@ -62,3 +63,5 @@ else
 	sudo cp ~/.scripts/config/kalite.conf /etc/nginx/sites-enabled/
 fi
 
+#reduce idle session timeout to 12.5 minutes
+~/.scripts/config/reduce_session_timeout
