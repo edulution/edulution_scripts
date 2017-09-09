@@ -77,7 +77,7 @@ monthend <- function(year_month) {
   # with variable from above date, parse into date and get last day in month then convert into proper date format
   upper_limit <- as.Date(timeLastDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
   # Need to get end of month in standard format before chopping it up for grepping. Need it for monthend column in final csv file
-  monthend_column <- strftime(upper_limit,format = "%d-%m-%y")
+  monthend_column <- upper_limit
   upper_limit <- substring(upper_limit,1,7)
   exercises_per_user <- main_exerciselog %>% filter(grepl(upper_limit, completion_timestamp)) %>% group_by(user_id) %>% summarize(exercises_attempted = n(), total_exercises = sum(complete))
   videos_per_user <- main_videolog %>% filter(grepl(upper_limit, latest_activity_timestamp)& total_seconds_watched > 180) %>% group_by(user_id) %>% summarize(total_videos = n())
