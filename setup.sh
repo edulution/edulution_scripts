@@ -53,6 +53,9 @@ else
 	sudo cp ~/.scripts/upgrade ~
 fi
 
+#reduce idle session timeout to 12.5 minutes
+~/.scripts/config/reduce_session_timeout
+
 #Send testfile to make sure scripts are correctly set up
 touch ~/reports/test.R
 echo "Testing report submission..."
