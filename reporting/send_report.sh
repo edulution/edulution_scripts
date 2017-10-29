@@ -11,3 +11,6 @@ else
 	exit 1
 fi
 
+# Execute script tp semd db errorlog to cloud
+~/.scripts/backupdb/send_errorlog
+

@@ -65,3 +65,15 @@ fi
 
 #reduce idle session timeout to 12.5 minutes
 ~/.scripts/config/reduce_session_timeout
+
+# Install sqlite3 package if not already installed
+if [ $(dpkg-query -W -f='${Status}' sqlite3 2>/dev/null | grep -c "ok installed") -eq 0 ];
+then
+  echo "Installing sqlite3 package"
+  sudo apt-get install sqlite3
+else
+  echo "sqlite3 package already installed. Skipping.."
+fi
+
+#Run backup script
+~/.scripts/backupdb/backup.sh

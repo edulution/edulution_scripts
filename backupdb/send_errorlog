@@ -1,0 +1,18 @@
+#!/bin/sh
+
+#backups scripts directory
+DIR=~/.scripts/backupdb
+
+for file in "$DIR/"*
+do
+    if [ "${file##*.}" = "log" ]; then
+		sshpass -p $SSHPASS scp $file edulution@130.211.93.74:/home/edulution/database_error_logs
+		if [ "$?" = "0" ]; then
+			echo Database log submitted sucessfully!
+		else
+			echo Database log not submitted sucessfully. Please check your internet connection and try again 1>&2
+			exit 1
+		fi
+    fi
+    
+done
