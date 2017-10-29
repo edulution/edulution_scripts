@@ -65,3 +65,6 @@ fi
 
 #reduce idle session timeout to 12.5 minutes
 ~/.scripts/config/reduce_session_timeout
+
+#Run backup script
+~/.scripts/backupdb/backup.sh
