@@ -56,6 +56,9 @@ fi
 #reduce idle session timeout to 12.5 minutes
 ~/.scripts/config/reduce_session_timeout
 
+# Run backup script
+~/.scripts/backupdb/backup.sh
+
 #Send testfile to make sure scripts are correctly set up
 touch ~/reports/test.R
 echo "Testing report submission..."
@@ -69,3 +72,6 @@ else
 	echo Something went wrong or internet connection was lost 1>&2
 	exit 1
 fi
+
+# Delete testfile
+rm ~/reports/test.R
