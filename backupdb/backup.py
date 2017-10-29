@@ -27,5 +27,15 @@ if __name__ == '__main__':
   os.system(remove_old_backups)
   print("Deleting old backups")
   backup_name = device_name + "_" + timestamp +".sqlite"
+
+  # Lock database before getting backup
+  c.execute("begin immediate;")
+
+  # Create backup by simply copying the file
   shutil.copyfile(ka_database,backup_name)
+
+  # Unlock db after taking backup
+  db.rollback()
+  
+  # Give user feedback
   print("Creating backup of database...")
