@@ -7,3 +7,6 @@ sudo rm /usr/lib/python2.7/dist-packages/kalite/facility/api_resources.py
 echo "Removing old api_resources file"
 sudo cp ~/.scripts/config/api_resources.py /usr/lib/python2.7/dist-packages/kalite/facility/
 echo "Copied new api_resources file"
+
+# restart the kalite server
+sudo service ka-lite restart
