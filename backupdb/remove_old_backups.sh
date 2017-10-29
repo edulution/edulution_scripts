@@ -6,6 +6,8 @@ now=$(date +%s)
 #Specify number of days older old backups will be
 DAYS=40
 
+echo "Cleaning up old backups..."
+
 for file in "$DIR/"*
 do
     if [ $(((`stat $file -c '%Y'`) + (86400 * $DAYS))) -lt $now ]
