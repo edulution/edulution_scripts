@@ -65,6 +65,9 @@ fi
 #reduce idle session timeout to 12.5 minutes
 ~/.scripts/config/reduce_session_timeout
 
+#Make simplifed login work even when over 1000 students present at facility
+~/.scripts/config/fix_user_limit_on_simplified_login
+
 # Run backup script
 ~/.scripts/backupdb/backup.sh
 
