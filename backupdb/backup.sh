@@ -20,12 +20,12 @@ backup_name=${database_name}_${timestamp}${file_extension}
 # Check if file exists and
 filename=${database_name}_"db_error.log"
 
-if [ ! -e "$filename" ] ; then
-    touch "$filename"
+if [ ! -e "~/.scripts/backupdb/$filename" ] ; then
+    touch ~/.scripts/backupdb/$filename
 fi
 
 # Log result of integrity check to errorlog file
-echo ${complete_timestamp}-${integrity_check} >> $filename
+echo ${complete_timestamp}-${integrity_check} >> ~/.scripts/backupdb/$filename
 
 # create backup file using variables above
 echo "Checking Database integrity and creating backup"
@@ -34,7 +34,13 @@ sqlite3 $database_path << EOF
 EOF
 
 # Move backup file created into backups folder
-mv ~/.scripts/backupdb/$backup_name ~/backups/$backup_name
+# File is created in either home directory or home directory
+test -f ~/$backup_name
+if [ "$?" = "0" ]; then
+	mv ~/$backup_name ~/backups/$backup_name
+else
+	mv ~/.scripts/backupdb/$backup_name ~/backups/$backup_name
+fi
 
 # Call script to remove old backups
 ~/.scripts/backupdb/remove_old_backups.sh
