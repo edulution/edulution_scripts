@@ -12,5 +12,5 @@ else
 fi
 
 # Execute script tp semd db errorlog to cloud
-~/.scripts/backupdb/send_errorlog
+#~/.scripts/backupdb/send_errorlog
 
