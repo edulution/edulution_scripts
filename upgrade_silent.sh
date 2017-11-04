@@ -73,7 +73,7 @@ fi
 if [ $(dpkg-query -W -f='${Status}' sqlite3 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
   echo "Installing sqlite3 package"
-  sudo apt-get install sqlite3
+  sudo apt-get install -y sqlite3
 else
   echo "sqlite3 package already installed. Skipping.."
 fi
