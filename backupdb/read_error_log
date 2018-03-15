@@ -1,0 +1,20 @@
+#!/bin/bash
+
+database_path=~/.kalite/database/data.sqlite
+database_name=$(sqlite3 $database_path "SELECT d.name FROM securesync_device d JOIN securesync_devicemetadata s WHERE s.device_id = d.id AND s.is_own_device = 1")
+
+# Get filename of error log based on database name. 
+# If check has been done at least once before, there should exist a file called <database_name>_db_error.log in ~/.scripts/backupdb
+filename="${database_name}_db_error.log"
+
+# Read last line at bottom of file(latest log entry)
+line=$(tail -n 1 ~/.scripts/backupdb/$filename)
+
+# Get timestamp - first 20 columns of line
+last_check=${line:0:19}
+
+# Get result of check - string after <timestamp>-
+result=${line##*-}
+
+echo "Integrity check last done on: ${last_check}"
+echo "Result: ${result}"
