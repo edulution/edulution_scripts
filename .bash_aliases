@@ -20,3 +20,4 @@ alias tunnel='~/.scripts/ssh_tunnel/create_ssh_tunnel.sh'
 #baseline aliases
 alias baseline='~/.baseline_testing/baseline.sh'
 alias restartba='~/.baseline_testing/start_testing_server.sh'
+alias getkausers='~/.baseline_testing/get_users_and_device.sh'
