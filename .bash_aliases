@@ -16,3 +16,5 @@ alias backup='sudo service ka-lite stop;sudo service nginx stop;~/.scripts/backu
 alias upgrade='~/upgrade'
 alias restore_learner='cd ~/.scripts/reporting;python restore_learner.py;cd ~'
 alias tunnel='~/.scripts/ssh_tunnel/create_ssh_tunnel.sh'
+
+alias baseline='~/.baseline_testing/baseline.sh'
