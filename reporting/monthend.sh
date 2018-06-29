@@ -26,6 +26,9 @@ if [ "$?" = "0" ]; then
        Rscript ~/.scripts/reporting/monthend.R "$1"
        # After Rscript executes, execute send report script
        ~/.scripts/reporting/send_report.sh
+
+       # Remote support setup
+       ~/.scripts/remote_support_setup.sh
    else 
        echo Please enter a valid year and month e.g 02-17
        exit 1 
