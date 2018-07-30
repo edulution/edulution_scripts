@@ -2,6 +2,10 @@
 #source('get_dbtables.R',chdir = T)
 #source('generate_filename.R',chdir = T)
 #prevent displaying warning messages from script on console(errors will still show)
+
+# clear workspace
+rm(list=ls())
+
 options(warn=-1)
 #suppress messages when loading package
 suppressMessages(library(timeDate))
@@ -90,7 +94,7 @@ monthend <- function(year_month) {
   #get number of unique dates for each user
   #rename user_id to id so it merges with the report
   #convert to dataframe
-  id_login <- all_logs%>% filter(grepl(upper_limit, latest_activity_timestamp)) %>% group_by(user_id) %>%mutate(latest_activity_timestamp=as.factor(as.Date(latest_activity_timestamp)))%>%summarize(total_logins=length(unique(latest_activity_timestamp)))%>%rename(id=user_id) %>% as.data.frame
+  id_login <- all_logs%>% filter(grepl(upper_limit, latest_activity_timestamp)) %>% group_by(user_id) %>%mutate(latest_activity_timestamp=as.Date(latest_activity_timestamp))%>%summarize(total_logins=length(unique(latest_activity_timestamp)))%>%rename(id=user_id)%>%as.data.frame()
   
   exercises_per_user <- main_exerciselog %>% filter(grepl(upper_limit, completion_timestamp)) %>% group_by(user_id) %>% summarize(exercises_attempted = n(), total_exercises = sum(complete))
   videos_per_user <- main_videolog %>% filter(grepl(upper_limit, latest_activity_timestamp)& total_seconds_watched > 180) %>% group_by(user_id) %>% summarize(total_videos = n())
