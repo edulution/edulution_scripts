@@ -9,7 +9,7 @@ if [ "$?" = "0" ]; then
 	echo "Baseline Testing already configured"
 	cd ~/.baseline_testing/
 	echo "Pulling latest changes to Baseline system..."
-	git pull
+	git pull origin master
 	./setup.sh
 else
 	echo "Baseline system not configured correctly or missing from system"
