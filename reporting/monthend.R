@@ -100,6 +100,8 @@ monthend <- function(year_month) {
   videos_per_user <- main_videolog %>% filter(grepl(upper_limit, latest_activity_timestamp)& total_seconds_watched > 180) %>% group_by(user_id) %>% summarize(total_videos = n())
   complete_summary <- main_userlogsummary %>% filter(grepl(upper_limit,last_activity_datetime)) %>% group_by(user_id) %>% summarise(total_hours = sum(total_seconds)/3600, last_active_date = max(as.Date(last_activity_datetime))) %>% right_join(users, by = c("user_id" = "id")) %>% left_join(exercises_per_user, by = "user_id") %>% left_join(videos_per_user, by = "user_id") %>% left_join(facilities, by = c("facility_id" = "id")) %>% left_join(groups, by = c("group_id" = "id"))%>% mutate(month_end=rep(monthend_column))
   rpt <- complete_summary %>% select(user_id,first_name,last_name,username,name.y,total_hours,total_exercises,total_videos,month_end,exercises_attempted,name.x,last_active_date) %>% rename(centre = name.x, group = name.y, id = user_id) %>% mutate(month_active = ifelse(total_hours>0, 1, 0), module=rep("numeracy"))
+  # Set total exercises and total videos to 0 if total hours is 0
+  rpt <- rpt %>% mutate(total_exercises=replace(total_exercises, total_hours == 0, 0)) %>% mutate(total_videos=replace(total_videos, total_hours == 0, 0))
   rpt <- merge(rpt,id_login)
   write.csv(rpt, file = generate_filename("monthend_",year_month) ,col.names = FALSE, row.names = FALSE,na="0")
   system("echo Report extracted successfully!")
