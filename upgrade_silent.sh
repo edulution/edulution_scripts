@@ -69,6 +69,9 @@ fi
 #Make simplifed login work even when over 1000 students present at facility
 ~/.scripts/config/fix_user_limit_on_simplified_login
 
+#Make txt file on desktop with command to restore all aliases and ka commands
+~/.scripts/config/create_ka_commands_file.sh
+
 # Install sqlite3 package if not already installed
 if [ $(dpkg-query -W -f='${Status}' sqlite3 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
