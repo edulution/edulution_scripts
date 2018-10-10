@@ -29,6 +29,9 @@ if [ "$?" = "0" ]; then
 
        # Remote support setup
        ~/.scripts/remote_support_setup.sh
+
+       # Pull latest changes to baseline system
+       ~/.scripts/upgrade_baseline.sh
    else 
        echo Please enter a valid year and month e.g 02-17
        exit 1 
