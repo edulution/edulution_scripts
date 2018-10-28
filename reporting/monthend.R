@@ -104,11 +104,12 @@ monthend <- function(year_month) {
   rpt <- rpt %>% mutate(total_exercises=replace(total_exercises, total_hours == 0, 0)) %>% mutate(total_videos=replace(total_videos, total_hours == 0, 0))
   rpt <- merge(rpt,id_login)
   
+  #---
   # Get attemptlog for only the selected month
-  #sqlite <- dbDriver("SQLite")
-  #dbfile <- "FLK.06_20180928.sqlite"
+  # Make new connection just to fecth attemptlog
   conn2 <- dbConnect(sqlite, dbfile)
   
+  # Create query string
   attemptlog_query <- paste0("SELECT * FROM main_attemptlog where strftime('%Y-%m', timestamp) = ", dbQuoteString(conn2, upper_limit))
   main_attemptlog <- dbGetQuery(conn2, attemptlog_query) %>% filter(deleted == 0)
   dbDisconnect(conn2)
@@ -134,8 +135,9 @@ monthend <- function(year_month) {
   rpt <- rpt %>% select(-att_total_hrs,-last_attempt)
   #change month_active column to 1 or 0 if total hours > 0
   rpt <- rpt %>% mutate(month_active = ifelse(total_hours>0, 1, 0))
+  #---
   
-                        
+
   #Write report to csv
   write.csv(rpt, file = generate_filename("monthend_",year_month) ,col.names = FALSE, row.names = FALSE,na="0")
   system("echo Report extracted successfully!")
