@@ -103,40 +103,6 @@ monthend <- function(year_month) {
   # Set total exercises and total videos to 0 if total hours is 0
   rpt <- rpt %>% mutate(total_exercises=replace(total_exercises, total_hours == 0, 0)) %>% mutate(total_videos=replace(total_videos, total_hours == 0, 0))
   rpt <- merge(rpt,id_login)
-  
-  #---
-  # Get attemptlog for only the selected month
-  # Make new connection just to fecth attemptlog
-  conn2 <- dbConnect(sqlite, dbfile)
-  
-  # Create query string
-  attemptlog_query <- paste0("SELECT * FROM main_attemptlog where strftime('%Y-%m', timestamp) = ", dbQuoteString(conn2, upper_limit))
-  main_attemptlog <- dbGetQuery(conn2, attemptlog_query) %>% filter(deleted == 0)
-  dbDisconnect(conn2)
-  
-  # Get attemptlog hrs and last attempt by user_id
-  total_hrs_by_attempts <- main_attemptlog %>% group_by(user_id) %>% summarise(att_total_hours = sum(time_taken)/3600000, last_attempt = strftime(max(timestamp),"%Y-%m-%d"))
-  
-  #change colnames so can be left_joined to rpt
-  colnames(total_hrs_by_attempts) <- c("id","att_total_hrs","last_attempt")
-  
-  #left join attemptlog cols to rpt
-  rpt <- rpt %>% left_join(total_hrs_by_attempts,by="id")
-  
-  #get indexes of rows with total hours == NA
-  index_na_hrs <- is.na(rpt$total_hours)
-  #assign attempt log time to rows with no hours
-  rpt$total_hours[index_na_hrs] <- rpt$att_total_hrs[index_na_hrs]
-  # get indexes of rows with last active date == NA
-  index_na_last_act <- is.na(rpt$last_active_date)
-  rpt$last_active_date[index_na_last_act] <- rpt$last_attempt[index_na_last_act]
-  
-  # remove the att_total_hrs and last_attempt columns
-  rpt <- rpt %>% select(-att_total_hrs,-last_attempt)
-  #change month_active column to 1 or 0 if total hours > 0
-  rpt <- rpt %>% mutate(month_active = ifelse(total_hours>0, 1, 0))
-  #---
-  
 
   #Write report to csv
   write.csv(rpt, file = generate_filename("monthend_",year_month) ,col.names = FALSE, row.names = FALSE,na="0")
