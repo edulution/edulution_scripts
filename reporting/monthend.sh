@@ -25,12 +25,12 @@ export exit_bold_mode=`tput rmso`
 
 
 #pull latest changes from master branch in repo
-cd ~/.scripts
-git reset --hard origin/master > /dev/null
-git pull > /dev/null
+# cd ~/.scripts
+# git reset --hard origin/master > /dev/null
+# git pull > /dev/null
 
 # Do silent upgrade of all scripts
-./upgrade_silent.sh
+# ./upgrade_silent.sh
 
 #check if database file exists before extracting reports
 test -f ~/.kalite/database/data.sqlite
@@ -56,6 +56,9 @@ if [ "$?" = "0" ]; then
 
        # Pull latest changes to baseline system
        ~/.scripts/upgrade_baseline.sh
+
+       # submit baseline tests for the selected month
+       ~/.baseline_testing/scripts/reporting/baseline.sh $1
    else 
        echo "${red}Please enter a valid year and month e.g 02-17${reset}"
        exit 1 
