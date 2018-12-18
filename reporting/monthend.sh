@@ -29,7 +29,7 @@ cd ~/.scripts
 git reset --hard origin/master > /dev/null
 git pull > /dev/null
 
-Do silent upgrade of all scripts
+#Do silent upgrade of all scripts
 ./upgrade_silent.sh
 
 #check if database file exists before extracting reports
