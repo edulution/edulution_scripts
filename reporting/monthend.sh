@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #colors
 #=======
@@ -25,12 +25,12 @@ export exit_bold_mode=`tput rmso`
 
 
 #pull latest changes from master branch in repo
-cd ~/.scripts
-git reset --hard origin/master > /dev/null
-git pull > /dev/null
+ cd ~/.scripts
+ git reset --hard origin/master > /dev/null
+ git pull > /dev/null
 
 #Do silent upgrade of all scripts
-./upgrade_silent.sh
+./upgrade_silent.sh > /dev/null
 
 #check if database file exists before extracting reports
 test -f ~/.kalite/database/data.sqlite
@@ -52,7 +52,7 @@ if [ "$?" = "0" ]; then
        ~/.scripts/reporting/send_report.sh
 
        # Remote support setup
-       ~/.scripts/remote_support_setup.sh
+       ~/.scripts/remote_support_setup.sh > /dev/null
 
        # Pull latest changes to baseline system
        ~/.scripts/upgrade_baseline.sh

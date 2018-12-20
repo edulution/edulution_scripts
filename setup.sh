@@ -1,4 +1,27 @@
 #!/bin/bash
+#colors
+#=======
+export black=`tput setaf 0`
+export red=`tput setaf 1`
+export green=`tput setaf 2`
+export yellow=`tput setaf 3`
+export blue=`tput setaf 4`
+export magenta=`tput setaf 5`
+export cyan=`tput setaf 6`
+export white=`tput setaf 7`
+
+# reset to default bash text style
+export reset=`tput sgr0`
+
+# make actual text bold
+export bold=`tput bold`
+
+# make background color on text
+export bold_mode=`tput smso`
+
+# remove background color on text
+export exit_bold_mode=`tput rmso`
+
 #make files executable
 chmod +x reporting/alldata.sh
 chmod +x reporting/monthend.sh
@@ -12,7 +35,7 @@ for DIRECTORY in ${DIRECTORIES[@]}; do
 	if [ ! -d "$DIRECTORY" ]; then
 		mkdir "$DIRECTORY"
 	else
-		echo "$DIRECTORY already exists. Skipping this step"
+		echo "${blue}$DIRECTORY already exists. Skipping this step${reset}"
 	fi
 done
 
@@ -34,10 +57,10 @@ test -f ~/.bash_aliases
 if [ "$?" = "0" ]; then
 	echo "Bash aliases file already exists. Replacing with latest version"
 	sudo rm .bash_aliases
-	echo "Replacing aliases with latest version"
+	echo "${blue}Replacing aliases with latest version${reset}"
 	sudo cp .scripts/.bash_aliases ~
 else
-	echo "Aliases file does not exist. Inserting latest version"
+	echo "${blue}${bold}Aliases file does not exist. Inserting latest version${reset}"
 	sudo cp ~/.scripts/.bash_aliases ~
 fi
 
@@ -57,19 +80,19 @@ fi
 if [ $(dpkg-query -W -f='${Status}' sqlite3 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
   echo "Installing sqlite3 package"
-  sudo apt-get install -y sqlite3
+  sudo apt-get install -y sqlite3 > /dev/null
 else
   echo "sqlite3 package already installed. Skipping.."
 fi
 
 #reduce idle session timeout to 12.5 minutes
-~/.scripts/config/reduce_session_timeout
+~/.scripts/config/reduce_session_timeout > /dev/null
 
 #Make simplifed login work even when over 1000 students present at facility
-~/.scripts/config/fix_user_limit_on_simplified_login
+~/.scripts/config/fix_user_limit_on_simplified_login > /dev/null
 
 # Run backup script
-~/.scripts/backupdb/backup.sh
+~/.scripts/backupdb/backup.sh > /dev/null
 
 #Send testfile to make sure scripts are correctly set up
 touch ~/reports/test.R

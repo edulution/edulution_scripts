@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cd ~/.scripts
 git reset --hard origin/master

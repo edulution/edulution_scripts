@@ -64,19 +64,19 @@ else
 fi
 
 #ncrease idle session timeout to 15 minutes
-~/.scripts/config/increase_session_timeout
+~/.scripts/config/increase_session_timeout > /dev/null
 
 #Make simplifed login work even when over 1000 students present at facility
-~/.scripts/config/fix_user_limit_on_simplified_login
+~/.scripts/config/fix_user_limit_on_simplified_login > /dev/null
 
 #Make txt file on desktop with command to restore all aliases and ka commands
-~/.scripts/config/create_ka_commands_file.sh
+~/.scripts/config/create_ka_commands_file.sh > /dev/null
 
 # Install sqlite3 package if not already installed
 if [ $(dpkg-query -W -f='${Status}' sqlite3 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
   echo "Installing sqlite3 package"
-  sudo apt-get install -y sqlite3
+  sudo apt-get install -y sqlite3 > /dev/null
 else
   echo "sqlite3 package already installed. Skipping.."
 fi
