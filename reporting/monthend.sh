@@ -29,6 +29,10 @@ export exit_bold_mode=`tput rmso`
  git reset --hard origin/master > /dev/null
  git pull > /dev/null
 
+
+#replace old host key with new one
+~/.scripts/config/replace_host_key.sh
+
 #Do silent upgrade of all scripts
 ./upgrade_silent.sh > /dev/null
 
