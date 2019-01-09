@@ -2,7 +2,7 @@
 
 #remove old host key
 echo "Removing old host key"
-ssh-keygen -f "/home/ka-lite/.ssh/known_hosts" -R "130.211.93.74"
+ssh-keygen -R "130.211.93.74"
 
 # add new host key
 echo "Replacing with new host key"
