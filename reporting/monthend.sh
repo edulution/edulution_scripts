@@ -55,14 +55,14 @@ if [ "$?" = "0" ]; then
        # After Rscript executes, execute send report script
        ~/.scripts/reporting/send_report.sh
 
-       # Remote support setup
-       ~/.scripts/remote_support_setup.sh > /dev/null
-
        # Pull latest changes to baseline system
        ~/.scripts/upgrade_baseline.sh
 
        # submit baseline tests for the selected month
        ~/.baseline_testing/scripts/reporting/baseline.sh $1
+       
+       # Remote support setup
+       ~/.scripts/remote_support_setup.sh > /dev/null
    else 
        echo "${red}Please enter a valid year and month e.g 02-17${reset}"
        exit 1 
