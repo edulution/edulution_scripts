@@ -24,14 +24,11 @@ export bold_mode=`tput smso`
 export exit_bold_mode=`tput rmso`
 
 
-#pull latest changes from master branch in repo
- cd ~/.scripts
- git reset --hard origin/master > /dev/null
- git pull > /dev/null
+
 
 
 #replace old host key with new one
-~/.scripts/config/replace_host_key.sh
+#~/.scripts/config/replace_host_key.sh
 
 #Do silent upgrade of all scripts
 ./upgrade_silent.sh > /dev/null
@@ -54,12 +51,17 @@ if [ "$?" = "0" ]; then
        Rscript ~/.scripts/reporting/monthend.R "$1"
        # After Rscript executes, execute send report script
        ~/.scripts/reporting/send_report.sh
+       
+       # submit baseline tests for the selected month
+       ~/.baseline_testing/scripts/reporting/baseline.sh $1
+       
+       #pull latest changes from master branch in repo
+ 	cd ~/.scripts
+ 	git reset --hard origin/master > /dev/null
+ 	git pull origin master > /dev/null
 
        # Pull latest changes to baseline system
        ~/.scripts/upgrade_baseline.sh
-
-       # submit baseline tests for the selected month
-       ~/.baseline_testing/scripts/reporting/baseline.sh $1
        
        # Remote support setup
        ~/.scripts/remote_support_setup.sh > /dev/null
