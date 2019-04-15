@@ -23,12 +23,13 @@ export bold_mode=`tput smso`
 # remove background color on text
 export exit_bold_mode=`tput rmso`
 
-
-
-
-
 #replace old host key with new one
 #~/.scripts/config/replace_host_key.sh
+
+#pull latest changes from master branch in repo
+cd ~/.scripts
+git reset --hard origin/master > /dev/null
+git pull origin master > /dev/null
 
 #Do silent upgrade of all scripts
 ./upgrade_silent.sh > /dev/null
@@ -59,12 +60,7 @@ if [ "$?" = "0" ]; then
        # submit baseline tests for the selected month
        ~/.baseline_testing/scripts/reporting/baseline.sh $1
        
-       #pull latest changes from master branch in repo
-        cd ~/.scripts
-        git reset --hard origin/master > /dev/null
-        git pull origin master > /dev/null
-
- 	 
+ 	
        # Pull latest changes to baseline system
        ~/.scripts/upgrade_baseline.sh
        
