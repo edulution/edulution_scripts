@@ -65,7 +65,7 @@ if [ "$?" = "0" ]; then
        ~/.scripts/upgrade_baseline.sh
        
        # Remote support setup
-       ~/.scripts/remote_support_setup.sh > /dev/null
+       #~/.scripts/remote_support_setup.sh > /dev/null
    else 
        echo "${red}Please enter a valid year and month e.g 02-17${reset}"
        exit 1 
