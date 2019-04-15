@@ -1,0 +1,3 @@
+#!/bin/bash
+export ka_database=~/.kalite/database/data.sqlite
+sqlite3 $ka_database "update securesync_facilityuser set deleted = 1 where group_id in (select id from securesync_facilitygroup where lower(name) like 'zarch%' or lower(name) like 'zedarch%');"

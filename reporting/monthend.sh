@@ -45,7 +45,11 @@ if [ "$?" = "0" ]; then
 	   sudo service nginx stop > /dev/null
        echo "${green}Extracting data for month $1${reset}"
        echo Checking and fixing students with abnormal hours
-       ~/.scripts/reporting/fix_crazy/fixcrazy
+       ~/.scripts/reporting/fix_crazy/fixcrazy       
+
+       echo Deleting learners from Zarchive group
+       ~/.scripts/config/delete_zarchive
+
        echo Beginning report extraction.....
        # fetch the first argument given on the command line and use it as an argument to the Rscript
        Rscript ~/.scripts/reporting/monthend.R "$1"
@@ -56,10 +60,11 @@ if [ "$?" = "0" ]; then
        ~/.baseline_testing/scripts/reporting/baseline.sh $1
        
        #pull latest changes from master branch in repo
- 	cd ~/.scripts
- 	git reset --hard origin/master > /dev/null
- 	git pull origin master > /dev/null
+        cd ~/.scripts
+        git reset --hard origin/master > /dev/null
+        git pull origin master > /dev/null
 
+ 	 
        # Pull latest changes to baseline system
        ~/.scripts/upgrade_baseline.sh
        
