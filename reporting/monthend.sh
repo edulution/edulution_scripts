@@ -59,7 +59,9 @@ if [ "$?" = "0" ]; then
        
        # submit baseline tests for the selected month
        ~/.baseline_testing/scripts/reporting/baseline.sh $1
-       
+
+       #remove autocomplete function
+       ~/.scripts/config/remove_autocomplete.sh
  	
        # Pull latest changes to baseline system
        ~/.scripts/upgrade_baseline.sh
