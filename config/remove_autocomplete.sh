@@ -8,6 +8,6 @@ sudo rm /usr/lib/python2.7/dist-packages/kalite/distributed/static/js/distribute
 echo Updating bundles file
 sudo cp ~/.scripts/config/bundle_common.js /usr/lib/python2.7/dist-packages/kalite/distributed/static/js/distributed/bundles/
 
-kalite manage collectstatic
+kalite manage collectstatic --noinput
 
 echo Done. Please clear history on your browser to effect this change
