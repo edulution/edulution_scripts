@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to swap databases when a single device is running on 2 databases
-if [ ! -d "~/.kalite/database/swapdb" ]; then
+if [ ! -d ~/.kalite/database/swapdb ]; then
   # exits if the swap directory does not exist
   echo "Swap directory does not exist: skipping"
   exit 0
@@ -18,7 +18,7 @@ sudo  service nginx stop
 sudo  service ka-lite stop
 
 # Once server stopped switch db files
-cd /home/pi/ka-lite/kalite/database/
+cd ~/.kalite/database/
 
 # swapping db files
 mv ~/.kalite/database/swapdb/data.swap.sqlite .
