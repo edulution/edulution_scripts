@@ -32,7 +32,7 @@ if [ "$?" = "0" ]; then
 	echo "${blue}Baseline Testing already configured${reset}"
 	cd ~/.baseline_testing/
 	echo "Pulling latest changes to Baseline system..."
-	git pull origin master > /dev/null
+	git pull origin kolibri > /dev/null
 
 	#make script executable if it isnt
 	chmod +x ~/.baseline_testing/scripts/setup.sh

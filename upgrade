@@ -1,6 +1,6 @@
 #!/bin/bash
 
 cd ~/.scripts
-git reset --hard origin/master
+git reset --hard origin/kolibri
 git pull
 ./setup.sh
