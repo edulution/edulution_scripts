@@ -39,18 +39,6 @@ for DIRECTORY in ${DIRECTORIES[@]}; do
 	fi
 done
 
-#If backup.py script already exists, replace it with latest version. If not, create it
-test -f ~/backups/backup.py
-if [ "$?" = "0" ]; then
-	rm ~/backups/backup.py
-	echo "Removing old backup script"
-	cp backupdb/backup.py ~/backups
-	echo "Inserting latest backup script"
-else
-	echo "Backup script doesnt exist. Copying now..."
-	cp backupdb/backup.py ~/backups
-fi
-
 #If bash aliases already exists, replace it with latest version. If not, create it
 cd ~
 test -f ~/.bash_aliases
@@ -86,10 +74,10 @@ else
 fi
 
 #reduce idle session timeout to 12.5 minutes
-~/.scripts/config/reduce_session_timeout > /dev/null
+#~/.scripts/config/reduce_session_timeout > /dev/null
 
 #Make simplifed login work even when over 1000 students present at facility
-~/.scripts/config/fix_user_limit_on_simplified_login > /dev/null
+#~/.scripts/config/fix_user_limit_on_simplified_login > /dev/null
 
 # Run backup script
 ~/.scripts/backupdb/backup.sh > /dev/null
