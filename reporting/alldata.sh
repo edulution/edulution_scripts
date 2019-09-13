@@ -31,10 +31,11 @@ git pull > /dev/null
 # Do silent upgrade of all scripts
 ./upgrade_silent.sh
 
-#check if database file exists before extracting reports
-test -f ~/.kalite/database/data.sqlite
-#if db file exists then extraction and submission begin. If not, will output error message to contact support
-if [ "$?" = "0" ]; then
+# check if postgresql is running before attempting to extract a report
+ps_out=`ps -ef | grep $1 | grep -v 'grep' | grep -v $0`
+result=$(echo $ps_out | grep "$1")
+
+if [[ "$result" != "" ]];then
 	if (echo $1 |\
     egrep '^(1[0-2]|0[0-9])[-/][0-9]{2}' > /dev/null
 	); then
@@ -42,8 +43,8 @@ if [ "$?" = "0" ]; then
 	   sudo service ka-lite stop > /dev/null
 	   sudo service nginx stop > /dev/null
        echo "${green}Extracting all data until $1${reset}"
-       echo Checking and fixing students with abnormal hours
-       ~/.scripts/reporting/fix_crazy/fixcrazy
+       #echo Checking and fixing students with abnormal hours
+       #~/.scripts/reporting/fix_crazy/fixcrazy
        echo Beginning report extraction.....
        # fetch the first argument given on the command line and use it as an argument to the Rscript
        Rscript ~/.scripts/reporting/alldata.R "$1"
