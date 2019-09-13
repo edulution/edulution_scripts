@@ -1,14 +1,9 @@
 #!/bin/bash
 
-database_path=~/.kalite/database/data.sqlite
-database_name=$(sqlite3 $database_path "SELECT d.name FROM securesync_device d JOIN securesync_devicemetadata s WHERE s.device_id = d.id AND s.is_own_device = 1")
+# file extension for backup files is custom format with extension .backup
+file_extension=".backup"
 
-# Lock database and do integrity check, then unlock
-#integrity_check=$(sqlite3 $database_path "begin immediate;pragma integrity_check;rollback")
-
-file_extension=".sqlite"
-
-# Timestamp for database backup file
+# Get today's date and use it as timestamp for database backup file
 timestamp=$(date +"%Y%m%d")
 
 # Complete timestamp in the format YYYY-MM-DD_hh:mm:ss
@@ -16,33 +11,11 @@ complete_timestamp=$(date +%F_%T)
 
 backup_name=${database_name}_${timestamp}${file_extension}
 
-# Append database name to the string "db_errorlog" to make errolog file
-# Check if file exists and
-#filename=${database_name}_"db_error.log"
+# Create database backup using credentials from environment variables 
+echo "Creating database backup"
+PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD pg_dump $KOLIBRI_DATABASE_NAME -U $KOLIBRI_DATABASE_USER -h $KOLIBRI_DATABASE_HOST -p $KOLIBRI_DATABASE_PORT -Fc > ~/.backups/$backup_name
 
-#if [ ! -e "~/.scripts/backupdb/$filename" ] ; then
-#    touch ~/.scripts/backupdb/$filename
-#fi
-
-# Log result of integrity check to errorlog file
-#echo ${complete_timestamp}-${integrity_check} >> ~/.scripts/backupdb/$filename
-
-# create backup file using variables above
-echo "Checking Database integrity and creating backup"
-sqlite3 $database_path << EOF
-.backup $backup_name
-EOF
-
-# Move backup file created into backups folder
-# File is created in either home directory or home directory
-test -f ~/$backup_name
-if [ "$?" = "0" ]; then
-	mv ~/$backup_name ~/backups/$backup_name
-else
-	mv ~/.scripts/backupdb/$backup_name ~/backups/$backup_name
-fi
-
-# Call script to remove old backups
+# Call script to remove backups older than 40 days
 ~/.scripts/backupdb/remove_old_backups.sh
 
 echo "Done"
