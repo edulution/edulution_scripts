@@ -26,7 +26,6 @@ export exit_bold_mode=`tput rmso`
 chmod +x reporting/alldata.sh
 chmod +x reporting/monthend.sh
 chmod +x reporting/send_report.sh
-chmod +x reporting/fix_crazy/fixcrazy
 chmod +x backupdb/remove_old_backups.sh
 
 #make backups and reports directories if they don't exist
@@ -73,11 +72,15 @@ else
   echo "sqlite3 package already installed. Skipping.."
 fi
 
-#reduce idle session timeout to 12.5 minutes
-#~/.scripts/config/reduce_session_timeout > /dev/null
 
-#Make simplifed login work even when over 1000 students present at facility
-#~/.scripts/config/fix_user_limit_on_simplified_login > /dev/null
+# check if postgresql is installed. Alert user to contact support if it is not installed
+if [ $(dpkg-query -W -f='${Status}' postgresql 2>/dev/null | grep -c "ok installed") -eq 0 ];
+then
+  echo "PostgreSQL is not installed. Please contact support"
+  
+else
+  echo "PostgreSQL is already installed. Skipping.."
+fi
 
 # Run backup script
 ~/.scripts/backupdb/backup.sh > /dev/null
