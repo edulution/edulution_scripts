@@ -43,6 +43,7 @@ else
 	echo "${blue}Cloning repository...${reset}"
 	git clone https://github.com/techZM/offline_testing.git .baseline_testing > /dev/null
 	cd ~/.baseline_testing/
+	git checkout kolibri
 
 	#make script executable if it isnt
 	chmod +x ~/.baseline_testing/scripts/setup.sh
