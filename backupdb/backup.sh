@@ -6,9 +6,10 @@ file_extension=".backup"
 # Get today's date and use it as timestamp for database backup file
 timestamp=$(date +"%Y%m%d")
 
-# Complete timestamp in the format YYYY-MM-DD_hh:mm:ss
-complete_timestamp=$(date +%F_%T)
+# get database name using direct query on terminal
+database_name=$(PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD psql -d $KOLIBRI_DATABASE_NAME -U $KOLIBRI_DATABASE_USER -h $KOLIBRI_DATABASE_HOST -p $KOLIBRI_DATABASE_PORT -t -c "select name from kolibriauth_collection where id = (select default_facility_id from device_devicesettings);")
 
+# Derive backup nam
 backup_name=${database_name}_${timestamp}${file_extension}
 
 # Create database backup using credentials from environment variables 
