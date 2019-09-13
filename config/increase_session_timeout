@@ -1,3 +1,0 @@
-#!/bin/bash
-# inline string replacement. Replace "SESSION_IDLE_TIMEOUT", 750 (12.5 minutes) with "SESSION_IDLE_TIMEOUT", 900 (15 minutes)
-sudo sed -i -e 's/SESSION_IDLE_TIMEOUT = getattr(local_settings, "SESSION_IDLE_TIMEOUT", 750)/SESSION_IDLE_TIMEOUT = getattr(local_settings, "SESSION_IDLE_TIMEOUT", 900)/g' /usr/lib/python2.7/dist-packages/kalite/settings/base.py
