@@ -6,9 +6,7 @@
 chmod +x reporting/alldata.sh
 chmod +x reporting/monthend.sh
 chmod +x reporting/send_report.sh
-chmod +x reporting/fix_crazy/fixcrazy
 chmod +x backupdb/remove_old_backups.sh
-chmod +x config/increase_session_timeout
 
 #make backups and reports directories if they don't exist
 DIRECTORIES=( ~/reports ~/backups )
@@ -17,15 +15,6 @@ for DIRECTORY in ${DIRECTORIES[@]}; do
 		mkdir "$DIRECTORY"
 	fi
 done
-
-#If backup.py script already exists, replace it with latest version. If not, create it
-test -f ~/backups/backup.py
-if [ "$?" = "0" ]; then
-	rm ~/backups/backup.py
-	cp backupdb/backup.py ~/backups
-else
-	cp backupdb/backup.py ~/backups
-fi
 
 #If bash aliases already exists, replace it with latest version. If not, create it
 cd ~
@@ -55,19 +44,15 @@ else
 	sudo cp ~/.scripts/config/nginx.conf /etc/nginx/
 fi
 
-test -f /etc/nginx/sites-enabled/kalite.conf
+test -f /etc/nginx/sites-available/kolibri.conf
 if [ "$?" = "0" ]; then
-	sudo rm /etc/nginx/sites-enabled/kalite.conf
-	sudo cp ~/.scripts/config/kalite.conf /etc/nginx/sites-enabled/
+	sudo rm /etc/nginx/sites-available/kolibri.conf
+	sudo cp ~/.scripts/config/kolibri.conf /etc/nginx/sites-available/
+	sudo ln etc/nginx/sites-available/kolibri.conf /etc/nginx/sites-enabled
 else
-	sudo cp ~/.scripts/config/kalite.conf /etc/nginx/sites-enabled/
+	sudo cp ~/.scripts/config/kolibri.conf /etc/nginx/sites-available/
+	sudo ln etc/nginx/sites-available/kolibri.conf /etc/nginx/sites-enabled
 fi
-
-#ncrease idle session timeout to 15 minutes
-~/.scripts/config/increase_session_timeout > /dev/null
-
-#Make simplifed login work even when over 1000 students present at facility
-~/.scripts/config/fix_user_limit_on_simplified_login > /dev/null
 
 #Make txt file on desktop with command to restore all aliases and ka commands
 ~/.scripts/config/create_ka_commands_file.sh > /dev/null
@@ -79,6 +64,15 @@ then
   sudo apt-get install -y sqlite3 > /dev/null
 else
   echo "sqlite3 package already installed. Skipping.."
+fi
+
+# check if postgresql is installed and alert user if it is not installed
+if [ $(dpkg-query -W -f='${Status}' postgresql 2>/dev/null | grep -c "ok installed") -eq 0 ];
+then
+  echo "PostgreSQL is not installed. Please contact support"
+  
+else
+  echo "PostgreSQL is already installed. Skipping.."
 fi
 
 #Run backup script
