@@ -2,5 +2,5 @@
 
 cd ~/.scripts
 git reset --hard origin/kolibri
-git pull
+git pull origin kolibri
 ./setup.sh
