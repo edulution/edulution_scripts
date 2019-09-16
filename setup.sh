@@ -42,9 +42,8 @@ done
 cd ~
 test -f ~/.bash_aliases
 if [ "$?" = "0" ]; then
-	echo "Bash aliases file already exists. Replacing with latest version"
+	echo "${blue}Bash aliases file already exists. Replacing with latest version${reset}"
 	sudo rm .bash_aliases
-	echo "${blue}Replacing aliases with latest version${reset}"
 	sudo cp .scripts/.bash_aliases ~
 else
 	echo "${blue}${bold}Aliases file does not exist. Inserting latest version${reset}"
@@ -54,32 +53,31 @@ fi
 #test if upgrade script exists. If not add it
 test -f ~/upgrade
 if [ "$?" = "0" ]; then
-	echo "Upgrade script already exists. Replacing with latest version"
+	echo "${blue}Upgrade script already exists. Replacing with latest version${reset}"
 	sudo rm upgrade
-	echo "Replacing upgrade script with latest version"
 	sudo cp .scripts/upgrade ~
 else
-	echo "Upgrade script does not exist. Inserting it now"
+	echo "${blue}${bold}Upgrade script does not exist. Inserting it now${reset}"
 	sudo cp ~/.scripts/upgrade ~
 fi
 
 # Install sqlite3 package if not already installed
 if [ $(dpkg-query -W -f='${Status}' sqlite3 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
-  echo "Installing sqlite3 package"
+  echo "${yellow}Installing sqlite3 package${reset}"
   sudo apt-get install -y sqlite3 > /dev/null
 else
-  echo "sqlite3 package already installed. Skipping.."
+  echo "${blue}sqlite3 package already installed. Skipping..${reset}"
 fi
 
 
 # check if postgresql is installed. Alert user to contact support if it is not installed
 if [ $(dpkg-query -W -f='${Status}' postgresql 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
-  echo "PostgreSQL is not installed. Please contact support"
+  echo "${red}${bold}PostgreSQL is not installed. Please contact support${reset}"
   
 else
-  echo "PostgreSQL is already installed. Skipping.."
+  echo "${blue}PostgreSQL is already installed. Skipping..${reset}"
 fi
 
 # Run backup script
@@ -92,15 +90,15 @@ touch ~/reports/test.R
 ~/.scripts/identify/whoru >> ~/reports/test.R
 
 # Test the report submission by sending the test file
-echo "Testing report submission..."
+echo "${white}${bold}Testing report submission...${reset}"
 sshpass -p $SSHPASS scp ~/reports/test.R edulution@130.211.93.74:/home/edulution/reports
 
 # if connection lost the script will exit with status 1 and output error message
 if [ "$?" = "0" ]; then
-	echo "Report submitted successfully!"
-	echo "Everything has been set up correctly"
+	echo "${green}${bold}Report submitted successfully!${reset}"
+	echo "${green}${bold}Scripts have been set up correctly${reset}"
 else
-	echo Something went wrong or internet connection was lost 1>&2
+	echo "${red}${bold}Something went wrong or internet connection was lost${reset}" 1>&2
 	exit 1
 fi
 
