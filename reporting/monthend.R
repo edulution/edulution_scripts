@@ -22,6 +22,30 @@ suppressMessages(library(gsubfn))
 suppressMessages(library(DBI))
 suppressMessages(library(RPostgreSQL))
 
+# helper function to get last name
+get_last_name <- function(full_name) {
+  # if the full name is blank or there is only one name
+  if(nchar(full_name) == 0 || length(strsplit(full_name,' ')[[1]]) == 1){
+    last_name <- ''  
+  }
+  
+  else{
+    last_name <- paste(strsplit(full_name,' ')[[1]][-1],collapse = ' ')
+  }
+  return(last_name)
+}
+
+# helper function to get first name
+get_first_name <- function(full_name) {
+  
+  if(nchar(full_name) == 0 || length(strsplit(full_name,' ')[[1]]) == 1){
+    first_name <- ''  
+  }
+  else{
+    first_name <- paste(strsplit(full_name,' ')[[1]][1],collapse = ' ')
+  }
+  return(toString(first_name))
+}
 
 
 # connect to Kolibri database 
@@ -178,6 +202,13 @@ monthend <- function(year_month) {
 
   # Set total exercises and total videos to 0 if total hours is 0
   rpt <- rpt %>% mutate(total_exercises=replace(total_exercises, total_hours == 0, 0)) %>% mutate(total_videos=replace(total_videos, total_hours == 0, 0), month_end=rep(strftime(month_end,"%Y-%m-%d")))
+
+  #derive the first name and last name columns using helper functions
+  rpt$first_name <- sapply(rpt$full_name,get_first_name)
+  rpt$last_name <- sapply(rpt$full_name,get_last_name)
+
+  #reorder columns. put familiar columns first
+  rpt <- rpt %>% select(c(id, first_name, last_name, username, group, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
   
   #Write report to csv
   write.csv(rpt, file = generate_filename("monthend_",year_month) ,col.names = FALSE, row.names = FALSE,na="0")
