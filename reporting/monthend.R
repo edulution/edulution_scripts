@@ -21,6 +21,7 @@ suppressMessages(library(gsubfn))
 # load postgresql library
 suppressMessages(library(DBI))
 suppressMessages(library(RPostgreSQL))
+suppressMessages(library(stringr))
 
 # helper function to get last name
 get_last_name <- function(full_name) {
@@ -211,6 +212,9 @@ monthend <- function(year_month) {
   #derive the first name and last name columns using helper functions
   rpt$first_name <- sapply(rpt$full_name,get_first_name)
   rpt$last_name <- sapply(rpt$full_name,get_last_name)
+
+  # convert id column from uuid to character string
+  rpt <- rpt %>% mutate(id = str_replace_all(id,'-',''))
 
   #reorder columns. put familiar columns first
   rpt <- rpt %>% select(c(id, first_name, last_name, username, group, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
