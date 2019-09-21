@@ -132,7 +132,7 @@ monthend <- function(year_month) {
   month_start <- as.Date(timeFirstDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
   
   #get total time spent by each user between month start and month end
-  time_spent_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id) %>% summarize(total_hours = sum(time_spent))
+  time_spent_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id) %>% summarize(total_hours = sum(time_spent)/3600)
   
   # get the number of distinct days a user logeed in using the start_timestamp date only
   logins_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% distinct(user_id,start_date_only) %>% group_by(user_id) %>% summarize(total_logins = n())
@@ -145,7 +145,12 @@ monthend <- function(year_month) {
   completed_ex_vid_count <- tidyr::spread(completed_ex_vid_count,kind,count)
   
   # rename the columns to read total_exercises, total_videos
-  completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_exercises = exercise, total_videos = video)
+  if("video" %in% colnames(completed_ex_vid_count)){
+    completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_exercises = exercise, total_videos = video)
+  }
+  else{
+    completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_exercises = exercise) %>% mutate(total_videos = 0)
+  }
   
   # get total time spent by channel
   time_by_channel <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id,channel_id) %>% summarise(total_time = sum(time_spent)) %>% spread(channel_id, total_time)
