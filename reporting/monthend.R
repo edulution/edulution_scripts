@@ -178,7 +178,7 @@ monthend <- function(year_month) {
   }
   
   # get total time spent by channel
-  time_by_channel <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id,channel_id) %>% summarise(total_time = sum(time_spent)) %>% spread(channel_id, total_time)
+  time_by_channel <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id,channel_id) %>% summarise(total_time = sum(time_spent)/3600) %>% spread(channel_id, total_time)
   # this produces a data frame with time spent on each channel as a separate column with the channel id as the column name
   
   # change column names which are channel_ids from channel_ids to readable course names
