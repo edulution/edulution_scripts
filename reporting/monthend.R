@@ -21,6 +21,7 @@ suppressMessages(library(gsubfn))
 # load postgresql library
 suppressMessages(library(DBI))
 suppressMessages(library(RPostgreSQL))
+suppressMessages(library(stringr))
 
 # helper function to get last name
 get_last_name <- function(full_name) {
@@ -156,7 +157,7 @@ monthend <- function(year_month) {
   month_start <- as.Date(timeFirstDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
   
   #get total time spent by each user between month start and month end
-  time_spent_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id) %>% summarize(total_hours = sum(time_spent))
+  time_spent_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id) %>% summarize(total_hours = sum(time_spent)/3600)
   
   # get the number of distinct days a user logeed in using the start_timestamp date only
   logins_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% distinct(user_id,start_date_only) %>% group_by(user_id) %>% summarize(total_logins = n())
@@ -169,7 +170,12 @@ monthend <- function(year_month) {
   completed_ex_vid_count <- tidyr::spread(completed_ex_vid_count,kind,count)
   
   # rename the columns to read total_exercises, total_videos
-  completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_exercises = exercise, total_videos = video)
+  if("video" %in% colnames(completed_ex_vid_count)){
+    completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_exercises = exercise, total_videos = video)
+  }
+  else{
+    completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_exercises = exercise) %>% mutate(total_videos = 0)
+  }
   
   # get total time spent by channel
   time_by_channel <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id,channel_id) %>% summarise(total_time = sum(time_spent)/3600) %>% spread(channel_id, total_time)
@@ -206,6 +212,9 @@ monthend <- function(year_month) {
   #derive the first name and last name columns using helper functions
   rpt$first_name <- sapply(rpt$full_name,get_first_name)
   rpt$last_name <- sapply(rpt$full_name,get_last_name)
+
+  # convert id column from uuid to character string
+  rpt <- rpt %>% mutate(id = str_replace_all(id,'-',''))
 
   #reorder columns. put familiar columns first
   rpt <- rpt %>% select(c(id, first_name, last_name, username, group, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
