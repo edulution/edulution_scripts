@@ -35,10 +35,20 @@ git pull origin kolibri > /dev/null
 ./upgrade_silent.sh > /dev/null
 
 # check if postgresql is running before attempting to extract a report
+function check_process_running () {
 ps_out=`ps -ef | grep $1 | grep -v 'grep' | grep -v $0`
 result=$(echo $ps_out | grep "$1")
-
 if [[ "$result" != "" ]];then
+    echo "Running"
+else
+    echo "Not Running"
+fi
+}
+
+
+psql_running=$( check_process_running postgresql )
+
+if [[ "$psql_running" == 'Running' ]];then
 	if (echo $1 |\
     egrep '^(1[0-2]|0[0-9])[-/][0-9]{2}' > /dev/null
 	); then
@@ -64,6 +74,6 @@ if [[ "$result" != "" ]];then
        exit 1 
    fi
 else
-	echo "${red}${bold}Error. Report NOT extracted. Please contact tech support 1>&2${reset}"
+	echo "${red}${bold}Error. Report NOT extracted. Please contact tech support ${reset}" 1>&2
 	exit 1
 fi
