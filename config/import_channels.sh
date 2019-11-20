@@ -25,4 +25,20 @@ python -m kolibri manage importchannel -- disk 3d6c9d72a2e047d4b7a0ed20699e1b1f 
 python -m kolibri manage importcontent -- disk 3d6c9d72a2e047d4b7a0ed20699e1b1f /opt/KOLIBRI_DATA/
 
 python -m kolibri manage importchannel -- disk cc80537886cb498eb564242f44c87723 /opt/KOLIBRI_DATA/
-python -m kolibri manage importcontent -- disk cc80537886cb498eb564242f44c87723 /opt/KOLIBRI_DATA/
+python -m kolibri manage importchannel -- disk cc80537886cb498eb564242f44c87723 /opt/KOLIBRI_DATA/
+
+# Bravo A
+python -m kolibri manage importcontent -- disk 57995474194c4068bfed1ee16108093f /opt/KOLIBRI_DATA/
+python -m kolibri manage importcontent -- disk 57995474194c4068bfed1ee16108093f /opt/KOLIBRI_DATA/
+
+# Bravo B
+python -m kolibri manage importcontent -- disk b7214b921fd94a1cb758821919bcd3e0 /opt/KOLIBRI_DATA/
+python -m kolibri manage importcontent -- disk b7214b921fd94a1cb758821919bcd3e0 /opt/KOLIBRI_DATA/
+
+# Bravo C
+python -m kolibri manage importcontent -- disk 5aee4435135b4039a3a824d96f72bfcb /opt/KOLIBRI_DATA/
+python -m kolibri manage importcontent -- disk 5aee4435135b4039a3a824d96f72bfcb /opt/KOLIBRI_DATA/
+
+# Bravo D
+python -m kolibri manage importcontent -- disk 98ab8048107545da92e3394409955526 /opt/KOLIBRI_DATA/
+python -m kolibri manage importcontent -- disk 98ab8048107545da92e3394409955526 /opt/KOLIBRI_DATA/
