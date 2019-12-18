@@ -63,7 +63,7 @@ dbDisconnect(conn)
 # Simple function to generate filename of csv report in desired format
 generate_filename <- function(report,date){
   # put generated file in a folder called reports in home directory, and generate filename based on name of report and user input
-  filename <- paste("~/reports/",report,device_name,"_numeracy_",date,".csv",sep = "")
+  filename <- paste("~/.reports/",report,device_name,"_numeracy_",date,".csv",sep = "")
 }
 
 # Function to get all data in db from beginning of time until month that user specifies

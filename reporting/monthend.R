@@ -140,7 +140,7 @@ num_contents_by_channel <- channel_contents %>% filter(!kind %in% c('topic','cha
 # Simple function to generate filename of csv report in desired format
 generate_filename <- function(report,date){
   # put generated file in a folder called reports in home directory, and generate filename based on name of report and user input
-  filename <- paste("~/reports/",report,device_name,"_numeracy_",date,".csv",sep = "")
+  filename <- paste("~/.reports/",report,device_name,"_numeracy_",date,".csv",sep = "")
 }
 
 # Function to get data extract only for month that user inputs

@@ -29,7 +29,7 @@ chmod +x reporting/send_report.sh
 chmod +x backupdb/remove_old_backups.sh
 
 #make backups and reports directories if they don't exist
-DIRECTORIES=( ~/reports ~/backups )
+DIRECTORIES=( ~/.reports ~/backups )
 for DIRECTORY in ${DIRECTORIES[@]}; do
 	if [ ! -d "$DIRECTORY" ]; then
 		mkdir "$DIRECTORY"
