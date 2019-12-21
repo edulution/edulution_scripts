@@ -23,7 +23,7 @@ python -m kolibri manage importcontent -- disk 8784b9f78d584273aff579b246529215 
 
 #Alpha B
 python -m kolibri manage importchannel -- disk cc80537886cb498eb564242f44c87723 /opt/KOLIBRI_DATA/
-python -m kolibri manage importchannel -- disk cc80537886cb498eb564242f44c87723 /opt/KOLIBRI_DATA/
+python -m kolibri manage importcontent -- disk cc80537886cb498eb564242f44c87723 /opt/KOLIBRI_DATA/
 
 #Alpha C
 python -m kolibri manage importchannel -- disk 7035e7921ddf489fad4544c814a199fb /opt/KOLIBRI_DATA/
