@@ -1,6 +1,4 @@
 # Import tables and generate filename script
-#source('get_dbtables.R',chdir = T)
-#source('generate_filename.R',chdir = T)
 #prevent displaying warning messages from script on console(errors will still show)
 
 # clear workspace
@@ -49,15 +47,15 @@ get_first_name <- function(full_name) {
 }
 
 
-# connect to Kolibri database 
-pg <- dbDriver("PostgreSQL")
+# Get database credentials from environment variables
 db_name = Sys.getenv("KOLIBRI_DATABASE_NAME")
 db_host = Sys.getenv("KOLIBRI_DATABASE_HOST")
 db_user = Sys.getenv("KOLIBRI_DATABASE_USER")
 db_passwd = Sys.getenv("KOLIBRI_DATABASE_PASSWORD")
 db_port = Sys.getenv("KOLIBRI_DATABASE_PORT")
 
-# create database connections
+# connect to Kolibri database 
+pg <- dbDriver("PostgreSQL")
 conn <-  dbConnect(pg, dbname=db_name, host = db_host, port = db_port, user=db_user, password=db_passwd)
 
 #facilityysers
