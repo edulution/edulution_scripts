@@ -1,6 +1,6 @@
 #!/bin/bash
 
 cd ~/.scripts
-git reset --hard origin/kolibri
-git pull origin kolibri
+git reset --hard origin/zambia
+git pull origin zambia
 ./setup.sh
