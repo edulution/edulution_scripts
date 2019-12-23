@@ -81,7 +81,7 @@ touch ~/.reports/test.R
 
 # Test the report submission by sending the test file
 echo "${white}${bold}Testing report submission...${reset}"
-sshpass -p $SSHPASS scp ~/reports/test.R edulution@130.211.93.74:/home/edulution/reports
+sshpass -p $SSHPASS scp ~/.reports/test.R edulution@130.211.93.74:/home/edulution/reports
 
 # if connection lost the script will exit with status 1 and output error message
 if [ "$?" = "0" ]; then
