@@ -77,7 +77,7 @@ fi
 touch ~/.reports/test.R
 
 # Populate the test file with the output of the whoru script
-~/.scripts/identify/whoru >> ~/reports/test.R
+~/.scripts/identify/whoru >> ~/.reports/test.R
 
 # Test the report submission by sending the test file
 echo "${white}${bold}Testing report submission...${reset}"
