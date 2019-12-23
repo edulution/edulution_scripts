@@ -74,7 +74,7 @@ fi
 ~/.scripts/backupdb/backup.sh > /dev/null
 
 #Send testfile to make sure scripts are correctly set up
-touch ~/reports/test.R
+touch ~/.reports/test.R
 
 # Populate the test file with the output of the whoru script
 ~/.scripts/identify/whoru >> ~/reports/test.R
@@ -93,4 +93,4 @@ else
 fi
 
 # Delete testfile
-rm ~/reports/test.R
+rm ~/.reports/test.R
