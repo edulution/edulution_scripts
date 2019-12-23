@@ -25,8 +25,8 @@ export exit_bold_mode=`tput rmso`
 
 #pull latest changes from master branch in repo
 cd ~/.scripts
-git reset --hard origin/kolibri > /dev/null
-git pull > /dev/null
+git reset --hard origin/zambia > /dev/null
+git pull origin zambia > /dev/null
 
 # Do silent upgrade of all scripts
 ./upgrade_silent.sh
