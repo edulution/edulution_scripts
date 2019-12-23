@@ -55,16 +55,7 @@ else
 fi
 
 #Make txt file on desktop with command to restore all aliases and ka commands
-~/.scripts/config/create_ka_commands_file.sh > /dev/null
-
-# Install sqlite3 package if not already installed
-if [ $(dpkg-query -W -f='${Status}' sqlite3 2>/dev/null | grep -c "ok installed") -eq 0 ];
-then
-  echo "Installing sqlite3 package"
-  sudo apt-get install -y sqlite3 > /dev/null
-else
-  echo "sqlite3 package already installed. Skipping.."
-fi
+~/.scripts/config/create_kolibri_commands_file.sh > /dev/null
 
 # check if postgresql is installed and alert user if it is not installed
 if [ $(dpkg-query -W -f='${Status}' postgresql 2>/dev/null | grep -c "ok installed") -eq 0 ];
