@@ -32,7 +32,7 @@ if [ "$?" = "0" ]; then
 	echo "${blue}Baseline Testing already configured${reset}"
 	cd ~/.baseline_testing/
 	echo "Pulling latest changes to Baseline system..."
-	git pull origin kolibri > /dev/null
+	git pull origin zambia > /dev/null
 
 	#make script executable if it isnt
 	chmod +x ~/.baseline_testing/scripts/setup.sh
@@ -43,7 +43,7 @@ else
 	echo "${blue}Cloning repository...${reset}"
 	git clone https://github.com/techZM/offline_testing.git .baseline_testing > /dev/null
 	cd ~/.baseline_testing/
-	git checkout kolibri
+	git checkout zambia
 
 	#make script executable if it isnt
 	chmod +x ~/.baseline_testing/scripts/setup.sh
