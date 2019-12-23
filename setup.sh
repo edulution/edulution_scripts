@@ -61,16 +61,6 @@ else
 	sudo cp ~/.scripts/upgrade ~
 fi
 
-# Install sqlite3 package if not already installed
-if [ $(dpkg-query -W -f='${Status}' sqlite3 2>/dev/null | grep -c "ok installed") -eq 0 ];
-then
-  echo "${yellow}Installing sqlite3 package${reset}"
-  sudo apt-get install -y sqlite3 > /dev/null
-else
-  echo "${blue}sqlite3 package already installed. Skipping..${reset}"
-fi
-
-
 # check if postgresql is installed. Alert user to contact support if it is not installed
 if [ $(dpkg-query -W -f='${Status}' postgresql 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
