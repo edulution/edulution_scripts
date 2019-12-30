@@ -36,23 +36,23 @@ else
 fi
 
 #replace nginx conf files with latest version
-test -f /etc/nginx/nginx.conf
-if [ "$?" = "0" ]; then
-	sudo rm /etc/nginx/nginx.conf
-	sudo cp ~/.scripts/config/nginx.conf /etc/nginx/
-else
-	sudo cp ~/.scripts/config/nginx.conf /etc/nginx/
-fi
+# test -f /etc/nginx/nginx.conf
+# if [ "$?" = "0" ]; then
+# 	sudo rm /etc/nginx/nginx.conf
+# 	sudo cp ~/.scripts/config/nginx.conf /etc/nginx/
+# else
+# 	sudo cp ~/.scripts/config/nginx.conf /etc/nginx/
+# fi
 
-test -f /etc/nginx/sites-available/kolibri.conf
-if [ "$?" = "0" ]; then
-	sudo rm /etc/nginx/sites-available/kolibri.conf
-	sudo cp ~/.scripts/config/kolibri.conf /etc/nginx/sites-available/
-	sudo ln etc/nginx/sites-available/kolibri.conf /etc/nginx/sites-enabled
-else
-	sudo cp ~/.scripts/config/kolibri.conf /etc/nginx/sites-available/
-	sudo ln etc/nginx/sites-available/kolibri.conf /etc/nginx/sites-enabled
-fi
+# test -f /etc/nginx/sites-available/kolibri.conf
+# if [ "$?" = "0" ]; then
+# 	sudo rm /etc/nginx/sites-available/kolibri.conf
+# 	sudo cp ~/.scripts/config/kolibri.conf /etc/nginx/sites-available/
+# 	sudo ln etc/nginx/sites-available/kolibri.conf /etc/nginx/sites-enabled
+# else
+# 	sudo cp ~/.scripts/config/kolibri.conf /etc/nginx/sites-available/
+# 	sudo ln etc/nginx/sites-available/kolibri.conf /etc/nginx/sites-enabled
+# fi
 
 #Make txt file on desktop with command to restore all aliases and ka commands
 ~/.scripts/config/create_kolibri_commands_file.sh > /dev/null
