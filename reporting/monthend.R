@@ -46,6 +46,33 @@ get_first_name <- function(full_name) {
   return(toString(first_name))
 }
 
+generate_filename <- function(report,date){
+  # put generated file in a folder called reports in home directory, and generate filename based on name of report and user input
+  filename <- paste("~/.reports/",report,device_name,"_numeracy_",date,".csv",sep = "")
+}
+
+check_content_logs_in_curr_month <- function(year_month,month_start,month_end){
+  num_logs <- nrow(content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end))
+  if(num_logs == 0){
+    system("echo No learner activity found for the requested month")
+    system("echo Sending list of users instead")
+
+    # if no activity is found between the month start and month end, return the list of users with all other fields blank
+    report <- users
+    report$first_name <- sapply(report$full_name,get_first_name)
+    report$last_name <- sapply(report$full_name,get_last_name)
+
+    # convert id column from uuid to character string
+    report <- report %>% mutate(id = str_replace_all(id,'-',''))
+
+    report <- report %>% mutate(total_hours = 0, total_exercises = 0, total_videos = 0, month_end = month_end, centre = device_name, month_active = 0, module = '', total_logins = 0)
+    report <- report %>% select(c(id, first_name, last_name, username, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
+
+    write.csv(report, file = generate_filename("monthend_",year_month) ,col.names = FALSE, row.names = FALSE,na="0")
+
+    quit(save="no")
+  }
+}
 
 # Get database credentials from environment variables
 db_name = Sys.getenv("KOLIBRI_DATABASE_NAME")
@@ -98,7 +125,13 @@ device_name <- facility_name$name
 
 #filter out admins and coaches to get list of users
 # select only the relevant columns
-users <- facilityusers %>% filter(!id %in% roles$user_id) %>% select(id,full_name,username,date_joined,last_login)
+users <- facilityusers %>% filter(!id %in% roles$user_id)
+if(nrow(users) == 0){
+  # If there are no users on the device, stop the program and inform the user
+  stop('No users found. Nothing to extract')
+} else{
+  users <- users %>% select(id,full_name,username,date_joined,last_login)
+}
 
 #join collections to memberships. (used for getting user groups)
 memberships <- memberships %>% left_join(collections,by=c("collection_id"= "id"))
@@ -108,9 +141,27 @@ learners_and_groups <- memberships %>% filter(kind == 'learnergroup') %>% distin
 
 # select only the name of the group and the user_id
 learners_and_groups <- learners_and_groups %>% select(c(name,user_id)) %>% rename(group = name)
+if(nrow(learners_and_groups) == 0){
+  learners_and_groups$user_id <- users$user_id
+  learners_and_groups$group <- rep('ungrouped',nrow(learners_and_groups))
+} else{
+  learners_and_groups <- learners_and_groups %>% select(c(name,user_id)) %>% rename(group = name)
+}
 
 #create column in content_sessionlogs of start_timestamp with date only which will be used to get number of logins
-content_sessionlogs <- content_sessionlogs %>% mutate(start_date_only = strftime(start_timestamp,"%Y-%m-%d"))
+if(nrow(content_sessionlogs) == 0){
+  system("echo No session logs found")
+  system("echo Sending list of users instead")
+  report <- users
+  report$first_name <- sapply(report$full_name,get_first_name)
+  report$last_name <- sapply(report$full_name,get_last_name)
+
+  report <- report %>% mutate(id = str_replace_all(id,'-',''))
+  write.csv(report, file = generate_filename("users_",Sys.Date()) ,col.names = FALSE, row.names = FALSE,na="0")
+  quit(save="no")
+} else{
+  content_sessionlogs <- content_sessionlogs %>% mutate(start_date_only = strftime(start_timestamp,"%Y-%m-%d"))
+}
 
 #join channel metadata to channel_module
 channel_metadata <- channel_metadata %>% left_join(channel_module,by=c("id" = "channel_id"))
@@ -136,10 +187,6 @@ num_contents_by_channel <- channel_contents %>% filter(!kind %in% c('topic','cha
 #as.integer(num_items_by_channel[num_items_by_channel$channel_id=='3d6c9d72-a2e0-47d4-b7a0-ed20699e1b1f',"total_items"])
 
 # Simple function to generate filename of csv report in desired format
-generate_filename <- function(report,date){
-  # put generated file in a folder called reports in home directory, and generate filename based on name of report and user input
-  filename <- paste("~/.reports/",report,device_name,"_numeracy_",date,".csv",sep = "")
-}
 
 # Function to get data extract only for month that user inputs
 monthend <- function(year_month) {
@@ -153,6 +200,8 @@ monthend <- function(year_month) {
   # get month start and month end as correctly formatted strings
   month_end <- as.Date(timeLastDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
   month_start <- as.Date(timeFirstDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
+
+  check_content_logs_in_curr_month(year_month,month_start,month_end)
   
   #get total time spent by each user between month start and month end
   time_spent_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id) %>% summarize(total_hours = sum(time_spent)/3600)
@@ -162,17 +211,34 @@ monthend <- function(year_month) {
   
   # get the total number of completed exercises and videos between month start and month end
   completed_ex_vid_count <- content_sessionlogs %>% filter(start_timestamp >= month_start, end_timestamp <= month_end, progress >= 0.99) %>% group_by(user_id,kind) %>% summarize(count = n())
-  
-  # transpose the rows into columns by user_id
-  # exercise and video counts become columns
-  completed_ex_vid_count <- tidyr::spread(completed_ex_vid_count,kind,count)
-  
-  # rename the columns to read total_exercises, total_videos
-  if("video" %in% colnames(completed_ex_vid_count)){
-    completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_exercises = exercise, total_videos = video)
-  }
-  else{
-    completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_exercises = exercise) %>% mutate(total_videos = 0)
+
+  # check if 
+  if(nrow(completed_ex_vid_count) == 0){
+    system("echo no exercises or videos have been completed")
+    completed_ex_vid_count$user_id <- users$id
+    completed_ex_vid_count$total_exercises <- rep(0,nrow(completed_ex_vid_count))
+    completed_ex_vid_count$total_videos <- rep(0,nrow(completed_ex_vid_count))
+
+  }else{
+    
+    # transpose the rows into columns by user_id
+    # exercise and video counts become columns
+    completed_ex_vid_count <- tidyr::spread(completed_ex_vid_count,kind,count)
+    
+    # rename the columns to read total_exercises, total_videos
+    
+    if("exercise" %in% colnames(completed_ex_vid_count)){
+     completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_exercises = exercise) 
+    } else{
+      completed_ex_vid_count <- completed_ex_vid_count %>% mutate(total_exercises = 0)
+    }
+
+    if("video" %in% colnames(completed_ex_vid_count)){
+     completed_ex_vid_count <- completed_ex_vid_count %>% rename(total_videos = video) 
+    } else{
+      completed_ex_vid_count <- completed_ex_vid_count %>% mutate(total_videos = 0)
+    }
+    
   }
   
   # get total time spent by channel
@@ -199,7 +265,8 @@ monthend <- function(year_month) {
   names(prog_by_user_by_channel) <- c("user_id",recode(names(prog_by_user_by_channel)[-1],!!!course_name_id_progress))
   
   # everything together to make a complete report
-  rpt <- users %>% left_join(time_spent_by_user,by=c("id"="user_id")) %>% left_join(completed_ex_vid_count,by=c("id"="user_id")) %>% left_join(logins_by_user,by=c("id"="user_id")) %>% left_join(time_by_channel,by=c("id"="user_id")) %>% left_join(prog_by_user_by_channel,by=c("id"="user_id")) %>% left_join(learners_and_groups,by=c("id"="user_id"))
+  #rpt <- users %>% left_join(time_spent_by_user,by=c("id"="user_id")) %>% left_join(completed_ex_vid_count,by=c("id"="user_id")) %>% left_join(logins_by_user,by=c("id"="user_id")) %>% left_join(time_by_channel,by=c("id"="user_id")) %>% left_join(prog_by_user_by_channel,by=c("id"="user_id")) %>% left_join(learners_and_groups,by=c("id"="user_id"))
+  rpt <- users %>% left_join(time_spent_by_user,by=c("id"="user_id")) %>% left_join(completed_ex_vid_count,by=c("id"="user_id")) %>% left_join(logins_by_user,by=c("id"="user_id")) %>% left_join(time_by_channel,by=c("id"="user_id")) %>% left_join(prog_by_user_by_channel,by=c("id"="user_id"))
   
   # add month active, module, and centre by mutation
   rpt <- rpt %>% mutate(month_active = ifelse(total_hours>0, 1, 0), module=rep("numeracy"), centre=rep(device_name))
@@ -215,7 +282,8 @@ monthend <- function(year_month) {
   rpt <- rpt %>% mutate(id = str_replace_all(id,'-',''))
 
   #reorder columns. put familiar columns first
-  rpt <- rpt %>% select(c(id, first_name, last_name, username, group, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
+  # rpt <- rpt %>% select(c(id, first_name, last_name, username, group, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
+  rpt <- rpt %>% select(c(id, first_name, last_name, username, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
   
   #Write report to csv
   write.csv(rpt, file = generate_filename("monthend_",year_month) ,col.names = FALSE, row.names = FALSE,na="0")
