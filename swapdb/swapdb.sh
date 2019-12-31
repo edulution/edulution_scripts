@@ -58,6 +58,11 @@ echo "Restarting Kolibri Server"
 kolibri start
 
 echo "Restarting Baseline Testing Server"
+
+KOLIBRI_DATABASE_NAME=$KOLIBRI_SWAP_DB
+BASELINE_DATABASE_NAME=$BASELINE_SWAP_DB
+
+~/.baseline_testing/scripts/startup_script
 forever start ~/.baseline_testing/index.js
 
 echo "${green}${bold}Database Swapped"
