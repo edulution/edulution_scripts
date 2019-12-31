@@ -8,6 +8,7 @@ alias restartko='~/.scripts/restart_kolibri.sh;chmod +x ~/.baseline_testing/scri
 alias backup='python -m kolibri stop;sudo service nginx stop;~/.scripts/backupdb/backup.sh'
 alias upgrade='~/upgrade'
 alias tunnel='~/.scripts/ssh_tunnel/create_ssh_tunnel.sh'
+alias swapdb='~/.scripts/swapdb/swapdb.sh'
 
 #baseline aliases
 alias baseline='chmod +x ~/.baseline_testing/scripts/reporting/baseline.sh;~/.baseline_testing/scripts/reporting/baseline.sh'
