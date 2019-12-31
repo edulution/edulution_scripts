@@ -140,7 +140,6 @@ memberships <- memberships %>% left_join(collections,by=c("collection_id"= "id")
 learners_and_groups <- memberships %>% filter(kind == 'learnergroup') %>% distinct(user_id,.keep_all = TRUE) %>% select(c(name,user_id))
 
 # select only the name of the group and the user_id
-learners_and_groups <- learners_and_groups %>% select(c(name,user_id)) %>% rename(group = name)
 if(nrow(learners_and_groups) == 0){
   learners_and_groups$user_id <- users$user_id
   learners_and_groups$group <- rep('ungrouped',nrow(learners_and_groups))
@@ -191,36 +190,38 @@ num_contents_by_channel <- channel_contents %>% filter(!kind %in% c('topic','cha
 # Function to get data extract only for month that user inputs
 monthend <- function(year_month) {
   #with user input from command line, create complete date by prefixing with 01
-  upper_limit <- paste("01-",year_month,sep="")
-  #regular expression to check if the user input is a valid month and year, and in the form mm-yy
-  regexp <-'((?:(?:[0-2]?\\d{1})|(?:[3][01]{1}))[-:\\/.](?:[0]?[1-9]|[1][012])[-:\\/.](?:(?:\\d{1}\\d{1})))(?![\\d])'
-  #check if its a valid date and correct number of characters. stops the program if input not fit
-  if(!(grepl(pattern = regexp,x=upper_limit,perl = TRUE)) | (nchar(upper_limit) > 8)) stop("Please enter a valid month and year mm-yy e.g 02-17")
-  
-  # get month start and month end as correctly formatted strings
-  month_end <- as.Date(timeLastDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
-  month_start <- as.Date(timeFirstDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
+    upper_limit <- paste("01-",year_month,sep="")
+    #regular expression to check if the user input is a valid month and year, and in the form mm-yy
+    regexp <-'((?:(?:[0-2]?\\d{1})|(?:[3][01]{1}))[-:\\/.](?:[0]?[1-9]|[1][012])[-:\\/.](?:(?:\\d{1}\\d{1})))(?![\\d])'
+    #check if its a valid date and correct number of characters. stops the program if input not fit
+    if(!(grepl(pattern = regexp,x=upper_limit,perl = TRUE)) | (nchar(upper_limit) > 8)) stop("Please enter a valid month and year mm-yy e.g 02-17")
+    
+    # get month start and month end as correctly formatted strings
+    month_end <- as.Date(timeLastDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
+    month_start <- as.Date(timeFirstDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
 
-  check_content_logs_in_curr_month(year_month,month_start,month_end)
-  
-  #get total time spent by each user between month start and month end
-  time_spent_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id) %>% summarize(total_hours = sum(time_spent)/3600)
-  
-  # get the number of distinct days a user logeed in using the start_timestamp date only
-  logins_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% distinct(user_id,start_date_only) %>% group_by(user_id) %>% summarize(total_logins = n())
-  
-  # get the total number of completed exercises and videos between month start and month end
-  completed_ex_vid_count <- content_sessionlogs %>% filter(start_timestamp >= month_start, end_timestamp <= month_end, progress >= 0.99) %>% group_by(user_id,kind) %>% summarize(count = n())
+    check_content_logs_in_curr_month(year_month,month_start,month_end)
+    
+    #get total time spent by each user between month start and month end
+    time_spent_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% group_by(user_id) %>% summarize(total_hours = sum(time_spent)/3600)
+    
+    # get the number of distinct days a user logeed in using the start_timestamp date only
+    logins_by_user <- content_sessionlogs %>% filter(start_timestamp >= month_start & end_timestamp <= month_end) %>% distinct(user_id,start_date_only) %>% group_by(user_id) %>% summarize(total_logins = n())
+    
+    # get the total number of completed exercises and videos between month start and month end
+    completed_ex_vid_count <- content_sessionlogs %>% filter(start_timestamp >= month_start, end_timestamp <= month_end, progress >= 0.99) %>% group_by(user_id,kind) %>% summarize(count = n())
 
   # check if 
   if(nrow(completed_ex_vid_count) == 0){
     system("echo no exercises or videos have been completed")
-    completed_ex_vid_count$user_id <- users$id
-    completed_ex_vid_count$total_exercises <- rep(0,nrow(completed_ex_vid_count))
-    completed_ex_vid_count$total_videos <- rep(0,nrow(completed_ex_vid_count))
+
+    zeroes <- data.frame(users$id,rep(0,nrow(users)),rep(0,nrow(users)))
+    names(zeroes) <- c('user_id','total_exercises','total_videos')
+
+    completed_ex_vid_count <- zeroes
+
 
   }else{
-    
     # transpose the rows into columns by user_id
     # exercise and video counts become columns
     completed_ex_vid_count <- tidyr::spread(completed_ex_vid_count,kind,count)
