@@ -22,12 +22,6 @@ export bold_mode=`tput smso`
 # remove background color on text
 export exit_bold_mode=`tput rmso`
 
-#make files executable
-chmod +x reporting/alldata.sh
-chmod +x reporting/monthend.sh
-chmod +x reporting/send_report.sh
-chmod +x backupdb/remove_old_backups.sh
-
 #make backups and reports directories if they don't exist
 DIRECTORIES=( ~/.reports ~/backups )
 for DIRECTORY in ${DIRECTORIES[@]}; do
