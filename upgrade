@@ -1,6 +1,6 @@
 #!/bin/bash
 
 cd ~/.scripts
-git reset --hard origin/zambia
-git pull origin zambia
+git reset --hard origin/namibia
+git pull origin namibia
 ./setup.sh
