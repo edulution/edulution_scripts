@@ -1,4 +1,4 @@
-alias shutdown='~/.scripts/backupdb/backup.sh;sudo shutdown -h now'
+alias shutdown='kolibri stop;~/.scripts/backupdb/backup.sh;sudo shutdown -h now'
 alias reboot='sudo reboot'
 alias whoru='cd ~/.scripts/identify/;python identify.py'
 alias alldata='~/.scripts/reporting/alldata.sh'
