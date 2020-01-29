@@ -16,5 +16,5 @@ alias restartbl='chmod +x ~/.baseline_testing/scripts/startup_script;~/.baseline
 alias getkousers='chmod +x ~/.baseline_testing/scripts/start_users_extraction.sh;~/.baseline_testing/scripts/start_users_extraction.sh'
 
 # assign live learners to the right groups
-alias assign_learners='~/.kolibri_helper_scripts/assign_learners.sh'
+alias assign_learners='~/.kolibri_helper_scripts/assign_learners.sh;chmod +x ~/.baseline_testing/scripts/startup_script;~/.baseline_testing/scripts/startup_script'
 
