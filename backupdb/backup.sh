@@ -16,11 +16,19 @@ database_name="${database_name##*( )}"
 database_name="${database_name%%*( )}"
 
 # Derive backup name by combining the dataabse name, timestamp and file extension
-backup_name=${database_name}_${timestamp}${file_extension}
+kolibri_backup_name=${database_name}_kolibri_${timestamp}${file_extension}
+
+baseline_backup_name=${database_name}_baseline_${timestamp}${file_extension}
 
 # Create database backup using credentials from environment variables 
-echo "Creating database backup"
-PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD pg_dump $KOLIBRI_DATABASE_NAME -U $KOLIBRI_DATABASE_USER -h $KOLIBRI_DATABASE_HOST -p $KOLIBRI_DATABASE_PORT -Fc > ~/backups/"$backup_name"
+echo "Creating Kolibri database backup"
+PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD pg_dump $KOLIBRI_DATABASE_NAME -U $KOLIBRI_DATABASE_USER -h $KOLIBRI_DATABASE_HOST -p $KOLIBRI_DATABASE_PORT -Fc > ~/backups/"$kolibri_backup_name"
+
+echo "Creating Baseline database backup"
+PGPASSWORD=$BASELINE_DATABASE_PASSWORD pg_dump $BASELINE_DATABASE_NAME -U $BASELINE_DATABASE_USER -h $BASELINE_DATABASE_HOST -p $BASELINE_DATABASE_PORT -Fc > ~/backups/"$baseline_backup_name"
+
+#remove spaces from names of backups
+rename "s/ //g" ~/backups/*.backup
 
 # Call script to remove backups older than 40 days
 ~/.scripts/backupdb/remove_old_backups.sh
