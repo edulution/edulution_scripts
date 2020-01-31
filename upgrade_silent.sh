@@ -66,5 +66,7 @@ else
   echo "PostgreSQL is already installed. Skipping.."
 fi
 
+~/.scripts/config/increase_session_timeout.sh
+
 #Run backup script
 ~/.scripts/backupdb/backup.sh
