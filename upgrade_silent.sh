@@ -68,5 +68,7 @@ fi
 
 ~/.scripts/config/increase_session_timeout.sh
 
+cd ~/.kolibri_helper_scripts && git reset --hard origin/master && git pull origin master && cd ~
+
 #Run backup script
 ~/.scripts/backupdb/backup.sh
