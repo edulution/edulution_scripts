@@ -74,7 +74,7 @@ if [ -d "$kolibri_helper_scripts_dir" ]; then
 	cd $kolibri_helper_scripts_dir && git reset --hard origin/master && git pull origin master && cd ~
 else
 	echo "Helper scripts directory does not exist. Cloning now..."
-	git clone https://github.com/techZM/kolibri_helper_scripts.git ~/.kolibri_helper_scripts
+	git clone https://github.com/techZM/kolibri_helper_scripts.git $kolibri_helper_scripts_dir
 fi
 
 #Run backup script
