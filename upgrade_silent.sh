@@ -8,6 +8,8 @@ chmod +x reporting/monthend.sh
 chmod +x reporting/send_report.sh
 chmod +x backupdb/remove_old_backups.sh
 
+kolibri_helper_scripts_dir=~/.kolibri_helper_scripts
+
 #make backups and reports directories if they don't exist
 DIRECTORIES=( ~/.reports ~/backups )
 for DIRECTORY in ${DIRECTORIES[@]}; do
@@ -68,8 +70,13 @@ fi
 
 ~/.scripts/config/increase_session_timeout.sh
 
-# pull latest master branch of kolibri helper scripts
-cd ~/.kolibri_helper_scripts && git reset --hard origin/master && git pull origin master && cd ~
+#check if kolibri helper scripts directory exists. pull it if it does not
+if [ -d "$kolibri_helper_scripts_dir" ]; then
+	cd $kolibri_helper_scripts_dir && git reset --hard origin/master && git pull origin master && cd ~
+else
+	echo "Helper scripts directory does not exist. Cloning now..."
+	git clone https://github.com/techZM/kolibri_helper_scripts.git $kolibri_helper_scripts_dir
+fi
 
 # rename numeracy class to learners on program
 python ~/.kolibri_helper_scripts/rename_class.py -o "Numeracy" -n "Learners on Program"
