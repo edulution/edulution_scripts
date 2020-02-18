@@ -68,7 +68,11 @@ fi
 
 ~/.scripts/config/increase_session_timeout.sh
 
+# pull latest master branch of kolibri helper scripts
 cd ~/.kolibri_helper_scripts && git reset --hard origin/master && git pull origin master && cd ~
+
+# rename numeracy class to learners on program
+python ~/.kolibri_helper_scripts/rename_class.py -o "Numeracy" -n "Learners on Program"
 
 #Run backup script
 ~/.scripts/backupdb/backup.sh
