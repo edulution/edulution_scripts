@@ -70,12 +70,16 @@ fi
 
 ~/.scripts/config/increase_session_timeout.sh
 
+#check if kolibri helper scripts directory exists. pull it if it does not
 if [ -d "$kolibri_helper_scripts_dir" ]; then
 	cd $kolibri_helper_scripts_dir && git reset --hard origin/master && git pull origin master && cd ~
 else
 	echo "Helper scripts directory does not exist. Cloning now..."
 	git clone https://github.com/techZM/kolibri_helper_scripts.git $kolibri_helper_scripts_dir
 fi
+
+# rename numeracy class to learners on program
+python ~/.kolibri_helper_scripts/rename_class.py -o "Numeracy" -n "Learners on Program"
 
 #Run backup script
 ~/.scripts/backupdb/backup.sh
