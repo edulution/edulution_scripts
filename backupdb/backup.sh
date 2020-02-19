@@ -24,7 +24,7 @@ echo "Creating Baseline database backup"
 PGPASSWORD=$BASELINE_DATABASE_PASSWORD pg_dump $BASELINE_DATABASE_NAME -U $BASELINE_DATABASE_USER -h $BASELINE_DATABASE_HOST -p $BASELINE_DATABASE_PORT -Fc > ~/backups/"$baseline_backup_name"
 
 echo "Creating zip file with backups"
-zip -jm ~/backups/$zip_file_name ~/backups/"$kolibri_backup_name" ~/backups/"$baseline_backup_name"
+zip -jm ~/backups/"$zip_file_name" ~/backups/"$kolibri_backup_name" ~/backups/"$baseline_backup_name"
 
 #remove spaces from names of backups
 rename "s/ //g" ~/backups/*.backup
