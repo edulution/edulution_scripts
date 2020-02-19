@@ -12,8 +12,10 @@ database_name="$(PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD psql -d $KOLIBRI_DATABASE
 # Derive backup name by combining the dataabse name, timestamp and file extension
 kolibri_backup_name=${database_name}_kolibri_${timestamp}${file_extension}
 
+# name of baseline backup
 baseline_backup_name=${database_name}_baseline_${timestamp}${file_extension}
 
+# name of zip file
 zip_file_name=${database_name}_backups_${timestamp}
 
 # Create database backup using credentials from environment variables 
@@ -24,6 +26,7 @@ echo "Creating Baseline database backup"
 PGPASSWORD=$BASELINE_DATABASE_PASSWORD pg_dump $BASELINE_DATABASE_NAME -U $BASELINE_DATABASE_USER -h $BASELINE_DATABASE_HOST -p $BASELINE_DATABASE_PORT -Fc > ~/backups/"$baseline_backup_name"
 
 echo "Creating zip file with backups"
+# create zip file containing both backups taken above and remove the original files
 zip -jm ~/backups/"$zip_file_name" ~/backups/"$kolibri_backup_name" ~/backups/"$baseline_backup_name"
 
 #remove spaces from names of backups
