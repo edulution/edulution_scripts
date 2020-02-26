@@ -1,9 +1,10 @@
 #!/bin/sh
-#backups directory
+
+# Backups directory
 DIR=~/backups
-#today's date
+# Today's date
 now=$(date +%s)
-#Specify number of days older old backups will be
+# Specify number of days older old backups will be
 DAYS=40
 
 echo "Cleaning up old backups..."
@@ -18,5 +19,4 @@ do
     	fi
     	echo "Removed $file"
     fi
-    
 done
