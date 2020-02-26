@@ -1,26 +1,4 @@
 #!/bin/bash
-#colors
-#=======
-export black=`tput setaf 0`
-export red=`tput setaf 1`
-export green=`tput setaf 2`
-export yellow=`tput setaf 3`
-export blue=`tput setaf 4`
-export magenta=`tput setaf 5`
-export cyan=`tput setaf 6`
-export white=`tput setaf 7`
-
-# reset to default bash text style
-export reset=`tput sgr0`
-
-# make actual text bold
-export bold=`tput bold`
-
-# make background color on text
-export bold_mode=`tput smso`
-
-# remove background color on text
-export exit_bold_mode=`tput rmso`
 
 #make backups and reports directories if they don't exist
 DIRECTORIES=( ~/.reports ~/backups )
@@ -32,10 +10,11 @@ for DIRECTORY in ${DIRECTORIES[@]}; do
 	fi
 done
 
-#If bash aliases already exists, replace it with latest version. If not, create it
+# switch to home directory
 cd ~
-test -f ~/.bash_aliases
-if [ "$?" = "0" ]; then
+
+#If bash aliases already exists, replace it with latest version. If not, create it
+if test -f ~/.bash_aliases; then
 	echo "${blue}Bash aliases file already exists. Replacing with latest version${reset}"
 	sudo rm .bash_aliases
 	sudo cp .scripts/.bash_aliases ~
@@ -44,9 +23,18 @@ else
 	sudo cp ~/.scripts/.bash_aliases ~
 fi
 
+#If bash colors already exists, replace it with latest version. If not, create it
+if test -f ~/.bash_colors; then
+	echo "${blue}Bash aliases file already exists. Replacing with latest version${reset}"
+	sudo rm .bash_colors
+	sudo cp .scripts/.bash_colors ~
+else
+	echo "${blue}${bold}Aliases file does not exist. Inserting latest version${reset}"
+	sudo cp ~/.scripts/.bash_colors ~
+fi
+
 #test if upgrade script exists. If not add it
-test -f ~/upgrade
-if [ "$?" = "0" ]; then
+if test -f ~/upgrade; then
 	echo "${blue}Upgrade script already exists. Replacing with latest version${reset}"
 	sudo rm upgrade
 	sudo cp .scripts/upgrade ~
@@ -75,10 +63,9 @@ touch ~/.reports/test.R
 
 # Test the report submission by sending the test file
 echo "${white}${bold}Testing report submission...${reset}"
-sshpass -p $SSHPASS scp ~/.reports/test.R edulution@130.211.93.74:/home/edulution/reports
 
 # if connection lost the script will exit with status 1 and output error message
-if [ "$?" = "0" ]; then
+if sshpass -p $SSHPASS scp ~/.reports/test.R edulution@130.211.93.74:/home/edulution/reports; then
 	echo "${green}${bold}Report submitted successfully!${reset}"
 	echo "${green}${bold}Scripts have been set up correctly${reset}"
 else
