@@ -1,22 +1,40 @@
-#colors
-#=======
-export black=`tput setaf 0`
-export red=`tput setaf 1`
-export green=`tput setaf 2`
-export yellow=`tput setaf 3`
-export blue=`tput setaf 4`
-export magenta=`tput setaf 5`
-export cyan=`tput setaf 6`
-export white=`tput setaf 7`
+#!/bin/bash
+
+# declare vars
+#==============
+# colors
+BLACK=$(tput setaf 0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+WHITE=$(tput setaf 7)
 
 # reset to default bash text style
-export reset=`tput sgr0`
+RESET=$(tput sgr0)
 
 # make actual text bold
-export bold=`tput bold`
+BOLD=$(tput bold)
 
 # make background color on text
-export bold_mode=`tput smso`
+BOLD_MODE=$(tput smso)
 
 # remove background color on text
-export exit_bold_mode=`tput rmso`
+EXIT_BOLD_MODE=$(tput rmso)
+
+# export vars
+#=============
+export BLACK
+export RED
+export GREEN
+export YELLOW
+export BLUE
+export MAGENTA
+export CYAN
+export WHITE
+export RESET
+export BOLD
+export BOLD_MODE
+export EXIT_BOLD_MODE
