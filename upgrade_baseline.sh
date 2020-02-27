@@ -1,13 +1,12 @@
 #!/bin/bash
 
 #Switch to home directory
-cd ~
+cd ~ || exit
 
 # Check if client script exists 
-test -f ~/.baseline_testing/scripts/startup_script
-if [ "$?" = "0" ]; then
-	echo "${blue}Baseline Testing already configured${reset}"
-	cd ~/.baseline_testing/
+if test -f ~/.baseline_testing/scripts/startup_script; then
+	echo "${BLUE}Baseline Testing already configured${RESET}"
+	cd ~/.baseline_testing/ || exit
 	echo "Pulling latest changes to Baseline system..."
 	git pull origin zambia > /dev/null
 
@@ -15,11 +14,11 @@ if [ "$?" = "0" ]; then
 	chmod +x ~/.baseline_testing/scripts/setup.sh
 	~/.baseline_testing/scripts/setup.sh
 else
-	echo "${yellow}Baseline system not configured correctly or missing from system${reset}"
+	echo "${YELLOW}Baseline system not configured correctly or missing from system${RESET}"
 	rm -rf ~/.baseline_testing
-	echo "${blue}Cloning repository...${reset}"
+	echo "${BLUE}Cloning repository...${RESET}"
 	git clone https://github.com/techZM/offline_testing.git .baseline_testing > /dev/null
-	cd ~/.baseline_testing/
+	cd ~/.baseline_testing/ || exit
 	git checkout zambia
 
 	#make script executable if it isnt
