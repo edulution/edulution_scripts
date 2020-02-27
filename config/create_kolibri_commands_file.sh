@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if test -f ~/Desktop/kolibri_commands.txt; then
 	echo "Kolibri commands file already exists. Skipping...."
 else
