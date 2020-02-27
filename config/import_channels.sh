@@ -1,6 +1,8 @@
 #!/bin/bash
 echo "Importing numeracy playlists"
 
+# For each channel, always importchannel before importcontent
+
 #Pre Alpha A
 python -m kolibri manage importchannel -- disk 3d6c9d72a2e047d4b7a0ed20699e1b1f /opt/KOLIBRI_DATA/
 python -m kolibri manage importcontent -- disk 3d6c9d72a2e047d4b7a0ed20699e1b1f /opt/KOLIBRI_DATA/

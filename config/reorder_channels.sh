@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # export the python path
-PYTHONPATH=/usr/lib/python2.7
 
 # Order the channels with Pre Alpha channels appearing first and Bravo last
 
