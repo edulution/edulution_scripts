@@ -2,7 +2,7 @@
 
 #make backups and reports directories if they don't exist
 DIRECTORIES=( ~/.reports ~/backups )
-for DIRECTORY in ${DIRECTORIES[@]}; do
+for DIRECTORY in "${DIRECTORIES[@]}"; do
 	if [ ! -d "$DIRECTORY" ]; then
 		mkdir "$DIRECTORY"
 	else
@@ -11,7 +11,7 @@ for DIRECTORY in ${DIRECTORIES[@]}; do
 done
 
 # switch to home directory
-cd ~
+cd ~ || exit
 
 #If bash aliases already exists, replace it with latest version. If not, create it
 if test -f ~/.bash_aliases; then
@@ -44,7 +44,7 @@ else
 fi
 
 # check if postgresql is installed. Alert user to contact support if it is not installed
-if [ $(dpkg-query -W -f='${Status}' postgresql 2>/dev/null | grep -c "ok installed") -eq 0 ];
+if [ "$(dpkg-query -W -f='${Status}' postgresql 2>/dev/null | grep -c 'ok installed')" -eq 0 ];
 then
   echo "${red}${bold}PostgreSQL is not installed. Please contact support${reset}"
   
@@ -65,7 +65,7 @@ touch ~/.reports/test.R
 echo "${white}${bold}Testing report submission...${reset}"
 
 # if connection lost the script will exit with status 1 and output error message
-if sshpass -p $SSHPASS scp ~/.reports/test.R edulution@130.211.93.74:/home/edulution/reports; then
+if sshpass -p "$SSHPASS" scp ~/.reports/test.R edulution@130.211.93.74:/home/edulution/reports; then
 	echo "${green}${bold}Report submitted successfully!${reset}"
 	echo "${green}${bold}Scripts have been set up correctly${reset}"
 else
