@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Go into reports folder
-cd ~/.reports
+cd ~/.reports || exit
 #check reports folder for file most recently created from monthend or alldata and send to google server
-sshpass -p $SSHPASS scp `ls ~/.reports -t | head -n1` edulution@130.211.93.74:/home/edulution/reports
+
 # if connection lost the script will exit with status 1 and output error message
-if [ "$?" = "0" ]; then
-	echo "${green}${bold}Report submitted successfully!${reset}"
+if sshpass -p "$SSHPASS" scp `ls ~/.reports -t | head -n1` edulution@130.211.93.74:/home/edulution/reports; then
+	echo "${GREEN}${BOLD}Report submitted successfully!${RESET}"
 else
-	echo "${red}${bold}Report not submitted. Please check your internet connection and try again 1>&2${reset}"
+	echo "${RED}${BOLD}Report not submitted. Please check your internet connection and try again 1>&2${RESET}"
 	exit 1
 fi
 
