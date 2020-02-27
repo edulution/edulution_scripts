@@ -25,11 +25,11 @@ fi
 
 #If bash colors already exists, replace it with latest version. If not, create it
 if test -f ~/.bash_colors; then
-	echo "${BLUE}Bash aliases file already exists. Replacing with latest version${RESET}"
+	echo "${BLUE}Bash colors file already exists. Replacing with latest version${RESET}"
 	sudo rm .bash_colors
 	sudo cp .scripts/.bash_colors ~
 else
-	echo "${BLUE}${BOLD}Aliases file does not exist. Inserting latest version${RESET}"
+	echo "${BLUE}${BOLD}Colors file does not exist. Inserting latest version${RESET}"
 	sudo cp ~/.scripts/.bash_colors ~
 fi
 
