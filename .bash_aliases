@@ -1,4 +1,7 @@
+#!/bin/bash
 # source the file containing colors and text output styling
+
+# shellcheck source=/dev/null
 source ~/.bash_colors
 
 alias shutdown='kolibri stop;~/.scripts/backupdb/backup.sh;sudo shutdown -h now'
