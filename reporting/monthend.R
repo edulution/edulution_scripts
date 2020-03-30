@@ -119,9 +119,12 @@ dbDisconnect(conn)
 #get the default facility id and from it get the device name(facility name)
 default_facility_id <- default_facility_id$default_facility_id
 
+# keep the default facility as the device name (will be used to name the output file)
 facility_name <- collections %>% filter(id == default_facility_id) %>% select(name)
 device_name <- facility_name$name
 
+# get a df of all of the facilities on the device
+facilities <- collections %>% filter(kind == "facility")
 
 #filter out admins and coaches to get list of users
 # select only the relevant columns
@@ -130,7 +133,10 @@ if(nrow(users) == 0){
   # If there are no users on the device, stop the program and inform the user
   stop('No users found. Nothing to extract')
 } else{
-  users <- users %>% select(id,full_name,username,date_joined,last_login)
+  # select the relevant columns from the users df
+  users <- users %>% select(id,full_name,username,date_joined,last_login,facility_id)
+  # join users to facilities, rename the facility name to centre, then drop the facility_id column
+  users <- users %>% left_join(facilities,c("facility_id" = "id")) %>% rename(centre = name) %>% select(-facility_id)
 }
 
 #join collections to memberships. (used for getting user groups)
@@ -270,7 +276,7 @@ monthend <- function(year_month) {
   rpt <- users %>% left_join(time_spent_by_user,by=c("id"="user_id")) %>% left_join(completed_ex_vid_count,by=c("id"="user_id")) %>% left_join(logins_by_user,by=c("id"="user_id")) %>% left_join(time_by_channel,by=c("id"="user_id")) %>% left_join(prog_by_user_by_channel,by=c("id"="user_id"))
   
   # add month active, module, and centre by mutation
-  rpt <- rpt %>% mutate(month_active = ifelse(total_hours>0, 1, 0), module=rep("numeracy"), centre=rep(device_name))
+  rpt <- rpt %>% mutate(month_active = ifelse(total_hours>0, 1, 0), module=rep("numeracy"))
 
   # Set total exercises and total videos to 0 if total hours is 0
   rpt <- rpt %>% mutate(total_exercises=replace(total_exercises, total_hours == 0, 0)) %>% mutate(total_videos=replace(total_videos, total_hours == 0, 0), month_end=rep(strftime(month_end,"%Y-%m-%d")))
@@ -283,8 +289,8 @@ monthend <- function(year_month) {
   rpt <- rpt %>% mutate(id = str_replace_all(id,'-',''))
 
   #reorder columns. put familiar columns first
-  # rpt <- rpt %>% select(c(id, first_name, last_name, username, group, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
-  rpt <- rpt %>% select(c(id, first_name, last_name, username, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
+  # rpt <- rpt %>% select(c(id, first_name, last_name, username, centre, group, total_hours, total_exercises, total_videos, month_end , last_login, month_active, module, total_logins),everything())
+  rpt <- rpt %>% select(c(id, first_name, last_name, username, centre, total_hours, total_exercises, total_videos, month_end, last_login, month_active, module, total_logins),everything())
   
   #Write report to csv
   write.csv(rpt, file = generate_filename("monthend_",year_month) ,col.names = FALSE, row.names = FALSE,na="0")
