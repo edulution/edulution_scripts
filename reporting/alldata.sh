@@ -9,17 +9,27 @@ git pull origin zambia > /dev/null
 ./upgrade_silent.sh
 
 # check if postgresql is running before attempting to extract a report
+function check_process_running () {
 ps_out=$(ps -ef | grep "$1" | grep -v 'grep' | grep -v "$0")
 result=$(echo "$ps_out" | grep "$1")
-
 if [[ "$result" != "" ]];then
-	if (echo "$1" |\
+    echo "Running"
+else
+    echo "Not Running"
+fi
+}
+
+
+psql_running=$( check_process_running postgresql )
+
+if [[ "$psql_running" == 'Running' ]];then
+  if (echo "$1" |\
     grep -E '^(1[0-2]|0[0-9])[-/][0-9]{2}' > /dev/null
-	); then
-	   echo Stopping ka lite server 
-	   sudo service ka-lite stop > /dev/null
-	   sudo service nginx stop > /dev/null
-       echo "${GREEN}Extracting all data until $1${RESET}"
+  ); then
+     echo Stopping Kolibri server 
+     python -m kolibri stop > /dev/null
+     sudo service nginx stop > /dev/null
+       echo "${GREEN}Extracting data for month $1${RESET}"
        #echo Checking and fixing students with abnormal hours
        #~/.scripts/reporting/fix_crazy/fixcrazy
        echo Beginning report extraction.....
