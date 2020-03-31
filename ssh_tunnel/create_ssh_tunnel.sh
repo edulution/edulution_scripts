@@ -10,7 +10,7 @@ createTunnel() {
 }
 
 # if there is no process id for ssh, create a new tunnel connection
-if /bin/pidof ssh; then
+if ! /bin/pidof ssh; then
 	echo "Creating a tunnel connection to Edulution..."
 	echo "Press CTRL + C or close this terminal to stop"
 	createTunnel
