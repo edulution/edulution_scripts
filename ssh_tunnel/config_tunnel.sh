@@ -4,7 +4,7 @@
 ssh-keygen -t dsa
 #if ssh keys already exist, don't overwrite!
 # add ssh keys to known hosts on our google server
-cat ~/.ssh/id_dsa.pub | sshpass -p "$SSHPASS" ssh -l edulution 130.211.93.74 "[ -d /home/edulution/.ssh ] || mkdir -m 700 /home/edulution/.ssh; cat >> /home/edulution/.ssh/authorized_keys"
+sshpass -p "$SSHPASS" ssh -l edulution 130.211.93.74 "[ -d /home/edulution/.ssh ] || mkdir -m 700 /home/edulution/.ssh; cat >> /home/edulution/.ssh/authorized_keys" < ~/.ssh/id_dsa.pub
 # install openssh server if not already installed
 sudo apt-get install -y openssh-server
 #allow incoming connections on port 22
