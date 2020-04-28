@@ -108,14 +108,12 @@ monthend <- function(year_month) {
     logins_by_user <- content_sessionlogs %>%
       filter(start_timestamp >= month_start & end_timestamp <= month_end) %>%
       distinct(user_id,start_date_only) %>%
-      group_by(user_id) %>%
-      summarize(total_logins = n())
+      count(user_id, name = "total_logins")
     
     # get the total number of completed exercises and videos between month start and month end
     completed_ex_vid_count <- content_sessionlogs %>%
       filter(start_timestamp >= month_start, end_timestamp <= month_end, progress >= 0.99) %>%
-      group_by(user_id,kind) %>%
-      summarize(count = n())
+      count(user_id,kind, name = "count")
 
   # check if 
   if(nrow(completed_ex_vid_count) == 0){
@@ -331,8 +329,7 @@ names(course_name_id_progress) <- unlist(channel_metadata$id)
 #filter 
 num_contents_by_channel <- channel_contents %>%
   filter(!kind %in% c('topic','channel')) %>%
-  group_by(channel_id) %>%
-  summarise(total_items = n())
+  count(channel_id, name = "total_items")
 #############################################################################################
 
 input<- commandArgs(TRUE)

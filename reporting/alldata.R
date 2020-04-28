@@ -140,9 +140,7 @@ names(course_name_id_progress) <- unlist(channel_metadata$id)
 #filter 
 num_contents_by_channel <- channel_contents %>%
   filter(!kind %in% c('topic','channel')) %>%
-  group_by(channel_id) %>%
-  summarise(total_items = n())
-
+  count(channel_id, name = "total_items")
 
 # Simple function to generate filename of csv report in desired format
 generate_filename <- function(report,date){
@@ -180,12 +178,11 @@ alldata <- function(year_month) {
   # get the number of distinct days a user logeed in using the start_timestamp date only
   logins_by_user <- content_summarylogs %>%
     distinct(user_id,start_date_only) %>%
-    group_by(user_id) %>%
-    summarize(total_logins = n()) %>%
+    count(user_id, name = "total_logins")
+    
   # get the total number of completed exercises and videos between month start and month end
     filter(progress >= 0.99) %>%
-    group_by(user_id,kind) %>%
-    summarize(count = n())
+    count(user_id, kind, name = "count")
   
   # transpose the rows into columns by user_id
   # exercise and video counts become columns
