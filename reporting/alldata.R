@@ -123,9 +123,9 @@ learners_and_groups <- learners_and_groups %>%
 #join channel metadata to channel_module
 channel_metadata <- channel_metadata %>%
   left_join(channel_module,by=c("id" = "channel_id")) %>%
-# create new column with module and abbreviated playlist name
+  # create new column with module and abbreviated playlist name
   mutate(abbr_name = paste(module,'_',abbreviate(name))) %>%
-#create new column with abbr name and the word progress which will be used as the column name for channel progress in final report
+  #create new column with abbr name and the word progress which will be used as the column name for channel progress in final report
   mutate(abbr_name_progress = paste(abbr_name,'_progress'))
 
 #create named vector with channel_ids and abbreviated playlist names
@@ -191,7 +191,10 @@ alldata <- function(year_month) {
   # rename the columns to read total_exercises, total_videos
   if("video" %in% colnames(completed_ex_vid_count)){
     completed_ex_vid_count <- completed_ex_vid_count %>%
-      rename(total_exercises = exercise, total_videos = video)
+      rename(
+        total_exercises = exercise,
+        total_videos = video
+        )
   }
 
   else{
@@ -217,11 +220,11 @@ alldata <- function(year_month) {
     summarise(max_prog = max(progress)) %>%
     group_by(user_id,channel_id) %>%
     summarise(total_prog=sum(max_prog)) %>%
-  # join total prog by channel to number of items by channel. used to get percent progress in channel
+    # join total prog by channel to number of items by channel. used to get percent progress in channel
     left_join(num_contents_by_channel)
-  # create a column for the percent progress by channel
+    # create a column for the percent progress by channel
     mutate(pct_progress = total_prog/total_items) %>%
-  # get rid of the columns for total prog and total_items then turn the progress for each channel into a separate column
+    # get rid of the columns for total prog and total_items then turn the progress for each channel into a separate column
     select(-c(total_prog,total_items)) %>%
     spread(channel_id, pct_progress)
   
@@ -236,11 +239,20 @@ alldata <- function(year_month) {
     left_join(time_by_channel,by=c("id"="user_id")) %>%
     left_join(prog_by_user_by_channel,by=c("id"="user_id")) %>%
     left_join(learners_and_groups,by=c("id"="user_id"))
-  # add month active, module, and centre by mutation
-    mutate(month_active = ifelse(total_hours>0, 1, 0), module=rep("numeracy"), centre=rep(device_name)) %>%
-  # Set total exercises and total videos to 0 if total hours is 0
-    mutate(total_exercises=replace(total_exercises, total_hours == 0, 0)) %>%
-    mutate(total_videos=replace(total_videos, total_hours == 0, 0), month_end=rep(strftime(month_end,"%Y-%m-%d")))
+    # add month active, module, and centre by mutation
+    mutate(
+      month_active = ifelse(total_hours>0, 1, 0),
+      module=rep("numeracy"), centre=rep(device_name)
+      ) %>%
+    # Set total exercises and total videos to 0 if total hours is 0
+    mutate(
+      total_exercises=replace(total_exercises,
+        total_hours == 0, 0)
+      ) %>%
+    mutate(
+      total_videos=replace(total_videos, total_hours == 0, 0),
+      month_end=rep(strftime(month_end,"%Y-%m-%d"))
+      )
 
   #derive the first name and last name columns using helper functions
   rpt$first_name <- sapply(rpt$full_name,get_first_name)
@@ -249,8 +261,24 @@ alldata <- function(year_month) {
   # convert id column from uuid to character string
   rpt <- rpt %>%
     mutate(id = str_replace_all(id,'-','')) %>%
-  #reorder columns. put familiar columns first
-    select(c(id, first_name, last_name, username, group, total_hours, total_exercises, total_videos, month_end, centre, last_login, month_active, module, total_logins),everything())
+    #reorder columns. put familiar columns first, all new columns last
+    select(
+      id,
+      first_name,
+      last_name,
+      username,
+      group,
+      total_hours,
+      total_exercises,
+      total_videos,
+      month_end,
+      centre,
+      last_login,
+      month_active,
+      module,
+      total_logins,
+      everything()
+    )
   
   #Write report to csv
   write.csv(rpt, file = generate_filename("alldata_",year_month) ,col.names = FALSE, row.names = FALSE,na="0")
