@@ -59,7 +59,7 @@ generate_filename <- function(report,date){
 # Function to check if userlogs exist for the current month
 check_content_logs_in_curr_month <- function(year_month,month_start,month_end){
   # Get the number of sessionlogs in the dates between month start and month end
-  num_logs <- nrow(content_sessionlogs %>% 
+  num_logs <- nrow(content_sessionlogs %>%
     filter(
       start_timestamp >= month_start,
       end_timestamp <= month_end
