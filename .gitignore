@@ -1,2 +1,6 @@
 backupdb/*.log
 crazyhours.txt
+*.Rproj
+.Rproj
+.Rproj.*
+
