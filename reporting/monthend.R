@@ -1,59 +1,22 @@
-# Import tables and generate filename script
-#prevent displaying warning messages from script on console(errors will still show)
-
-# clear workspace
+# Clear workspace
 rm(list=ls())
 
-options(warn=-1)
-#suppress messages when loading package
-suppressMessages(library(timeDate))
+# Source helper functions
+source("helpers.R")
+source("get_db_tables.R")
+source("preproc_tables.R")
 
+# Prevent displaying warning messages from script on console(errors will still show)
+options(warn=-1)
+
+# Suppress messages when loading packages
+suppressMessages(library(timeDate))
 suppressMessages(library(tidyr))
 suppressMessages(library(plyr))
 suppressMessages(library(dplyr))
-
-# load new packages for kolibri data extraction
 suppressMessages(library(tools))
 suppressMessages(library(gsubfn))
-
-# load postgresql library
-suppressMessages(library(DBI))
-suppressMessages(library(RPostgreSQL))
 suppressMessages(library(stringr))
-
-
-# helper function to get last name
-get_last_name <- function(full_name) {
-  # if the full name is blank or there is only one name
-  if(nchar(full_name) == 0 || length(strsplit(full_name,' ')[[1]]) == 1){
-    last_name <- ''  
-  }
-  
-  else{
-    last_name <- paste(strsplit(full_name,' ')[[1]][-1],collapse = ' ')
-  }
-  return(last_name)
-}
-
-
-# helper function to get first name
-get_first_name <- function(full_name) {
-  
-  if(nchar(full_name) == 0 || length(strsplit(full_name,' ')[[1]]) == 1){
-    first_name <- ''  
-  }
-  else{
-    first_name <- paste(strsplit(full_name,' ')[[1]][1],collapse = ' ')
-  }
-  return(toString(first_name))
-}
-
-
-# Simple function to generate filename of csv report in desired format
-generate_filename <- function(report,date){
-  # put generated file in a folder called reports in home directory, and generate filename based on name of report and user input
-  filename <- paste("~/.reports/",report,device_name,"_numeracy_",date,".csv",sep = "")
-}
 
 
 # Function to check if userlogs exist for the current month
@@ -163,18 +126,9 @@ check_completed_ex_vid_count <- function(summary_df){
 monthend <- function(year_month) {
   # With user input from the command line, create complete date by prefixing with 01
   upper_limit <- paste("01-",year_month,sep="")
-  # Regular expression to check if the user input is a valid month and year, and in the form mm-yy
-  # TODO: 
-    # Install rebus on all devices
-    # Rewrite with rebus for easier readability
-  regexp <-'((?:(?:[0-2]?\\d{1})|(?:[3][01]{1}))[-:\\/.](?:[0]?[1-9]|[1][012])[-:\\/.](?:(?:\\d{1}\\d{1})))(?![\\d])'
   
-  # Check if the inputted date satisfies the regex
-  if(!(str_detect(upper_limit,regexp)) | (nchar(upper_limit) > 8)){
-    # If the regex is not satisfied
-    # Stop the program and print out an error message to the console
-    stop("Please enter a valid month and year mm-yy e.g 02-17")
-  }
+  # Check if the user input is a valid month and year, and in the form mm-yy
+  check_date_valid(upper_limit)
     
   # Get month start and month end as correctly formatted strings
   month_end <- as.Date(timeLastDayInMonth(strftime(upper_limit,"%d-%m-%y"),format = "%y-%m-%d"))
@@ -227,19 +181,19 @@ monthend <- function(year_month) {
   # using the named vector created outside the function
   names(time_by_channel) <- c("user_id",recode(names(time_by_channel)[-1],!!!course_name_id))
   
-  # get total_progress by channel_id (no need to filter for the month requested)
+  # get total_progress by channel_id for all time
   prog_by_user_by_channel <- content_sessionlogs %>%
     group_by(user_id,channel_id,content_id) %>%
     summarise(max_prog = max(progress)) %>%
     group_by(user_id,channel_id) %>%
     summarise(total_prog=sum(max_prog)) %>%
-  # join total prog by channel to number of items by channel
-  # used to get percent progress in channel
+    # join total prog by channel to number of items by channel
+    # used to get percent progress in channel
     left_join(num_contents_by_channel) %>%
-  # create a column for the percent progress by channel
+    # create a column for the percent progress by channel
     mutate(pct_progress = total_prog/total_items) %>%
-  # get rid of the columns for total prog and total_items
-  # turn the progress for each channel into a separate column
+    # get rid of the columns for total prog and total_items
+    # turn the progress for each channel into a separate column
     select(-c(total_prog,total_items)) %>%
     spread(channel_id, pct_progress)
   
@@ -303,86 +257,6 @@ monthend <- function(year_month) {
   quit(save="no")
 }
 
-#############################################################################################
-# Get database credentials from environment variables
-db_name = Sys.getenv("KOLIBRI_DATABASE_NAME")
-db_host = Sys.getenv("KOLIBRI_DATABASE_HOST")
-db_user = Sys.getenv("KOLIBRI_DATABASE_USER")
-db_passwd = Sys.getenv("KOLIBRI_DATABASE_PASSWORD")
-db_port = Sys.getenv("KOLIBRI_DATABASE_PORT")
-
-# connect to Kolibri database 
-pg <- dbDriver("PostgreSQL")
-conn <-  dbConnect(pg, dbname=db_name, host = db_host, port = db_port, user=db_user, password=db_passwd)
-
-#facilityysers
-facilityusers <- dbGetQuery(conn,"SELECT * FROM kolibriauth_facilityuser")
-
-#collections
-collections <- dbGetQuery(conn,"SELECT * FROM kolibriauth_collection")
-
-#memberships
-memberships <- dbGetQuery(conn,"SELECT * FROM kolibriauth_membership")
-
-#roles
-roles <- dbGetQuery(conn,"SELECT * FROM kolibriauth_role")
-
-
-#get the default facility id and from it get the device name(facility name)
-default_facility_id <- dbGetQuery(conn,"SELECT default_facility_id FROM device_devicesettings")
-
-# get module for each channel
-channel_module <- dbGetQuery(conn,"select * from channel_module")
-
-#content session logs
-content_sessionlogs <- dbGetQuery(conn,"select * from logger_contentsessionlog")
-
-#get channel content
-channel_contents <- dbGetQuery(conn,"select * from content_contentnode")
-
-channel_metadata <- dbGetQuery(conn,"select * from content_channelmetadata")
-
-#clean up and close database connection
-dbDisconnect(conn)
-
-
-#get the default facility id and from it get the device name(facility name)
-default_facility_id <- default_facility_id$default_facility_id
-
-# keep the default facility as the device name (will be used to name the output file)
-facility_name <- collections %>%
-  filter(id == default_facility_id) %>%
-  select(name)
-
-device_name <- facility_name$name
-
-# get a df of all of the facilities on the device
-facilities <- collections %>% filter(kind == "facility")
-
-#filter out admins and coaches to get list of users
-# select only the relevant columns
-users <- facilityusers %>% filter(!id %in% roles$user_id)
-if(nrow(users) == 0){
-  # If there are no users on the device, stop the program and inform the user
-  stop('No users found. Nothing to extract')
-} else{
-  # select the relevant columns from the users df
-  users <- users %>%
-  # join users to facilities, rename the facility name to centre, then drop the facility_id column
-    left_join(facilities,c("facility_id" = "id")) %>%
-    rename(centre = name) %>%
-    select(id,full_name,username,date_joined,last_login,facility_id) %>%
-    select(-facility_id)
-}
-
-#join collections to memberships. (used for getting user groups)
-memberships <- memberships %>% left_join(collections,by=c("collection_id"= "id"))
-
-# get dataframe containing learners and groups they belong to
-learners_and_groups <- memberships %>%
-  filter(kind == 'learnergroup') %>%
-  distinct(user_id,.keep_all = TRUE) %>%
-  select(c(name,user_id))
 
 # select only the name of the group and the user_id
 if(nrow(learners_and_groups) == 0){
@@ -409,28 +283,6 @@ if(nrow(content_sessionlogs) == 0){
   content_sessionlogs <- content_sessionlogs %>% mutate(start_date_only = strftime(start_timestamp,"%Y-%m-%d"))
 }
 
-#join channel metadata to channel_module
-channel_metadata <- channel_metadata %>%
-  left_join(channel_module,by=c("id" = "channel_id")) %>%
-# create new column with module and abbreviated playlist name
-  mutate(abbr_name = paste(module,'_',abbreviate(name))) %>%
-#create new column with abbr name and the word progress which will be used as the column name for channel progress in final report
-  mutate(abbr_name_progress = paste(abbr_name,'_progress'))
-
-#create named vector with channel_ids and abbreviated playlist names
-course_name_id <- unlist(channel_metadata$abbr_name)
-names(course_name_id) <- unlist(channel_metadata$id)
-
-#create named vector with abbr_name_progress and make the channel ids the names of each of the elements
-course_name_id_progress <- unlist(channel_metadata$abbr_name_progress)
-names(course_name_id_progress) <- unlist(channel_metadata$id)
-
-#get number of content items by channel.used to compute overall progress in channel
-#filter 
-num_contents_by_channel <- channel_contents %>%
-  filter(!kind %in% c('topic','channel')) %>%
-  count(channel_id, name = "total_items")
-#############################################################################################
 
 input<- commandArgs(TRUE)
 
