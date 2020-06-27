@@ -19,5 +19,5 @@ alias getkousers='chmod +x ~/.baseline_testing/scripts/start_users_extraction.sh
 alias assign_learners='~/.kolibri_helper_scripts/assign_learners.sh;chmod +x ~/.baseline_testing/scripts/startup_script;~/.baseline_testing/scripts/startup_script'
 
 #Importing numeracy playlists from the internet
-alias update_kolibri='chmod +x ~/.scripts/config/import_channels_network.sh'
+alias update_kolibri='~/.scripts/config/import_channels_network.sh'
 
