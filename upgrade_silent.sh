@@ -83,3 +83,7 @@ python ~/.kolibri_helper_scripts/rename_class.py -o "Numeracy" -n "Learners on P
 
 #Run backup script
 ~/.scripts/backupdb/backup.sh
+
+# Add any other scripts you would like to run below this line
+###################
+~/.scripts/config/zm_gr7_responses_rename.sh
