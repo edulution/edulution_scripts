@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# export the python path
-PYTHONPATH=/usr/lib/python2.7
-
 # stop the kolibri server
 python -m kolibri stop
 

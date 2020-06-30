@@ -1,30 +1,7 @@
 #!/bin/bash
 
-#colors
-#=======
-export black=`tput setaf 0`
-export red=`tput setaf 1`
-export green=`tput setaf 2`
-export yellow=`tput setaf 3`
-export blue=`tput setaf 4`
-export magenta=`tput setaf 5`
-export cyan=`tput setaf 6`
-export white=`tput setaf 7`
-
-# reset to default bash text style
-export reset=`tput sgr0`
-
-# make actual text bold
-export bold=`tput bold`
-
-# make background color on text
-export bold_mode=`tput smso`
-
-# remove background color on text
-export exit_bold_mode=`tput rmso`
-
 #pull latest changes from master branch in repo
-cd ~/.scripts
+cd ~/.scripts || exit
 git reset --hard origin/namibia > /dev/null
 git pull origin namibia > /dev/null
 
@@ -32,17 +9,27 @@ git pull origin namibia > /dev/null
 ./upgrade_silent.sh
 
 # check if postgresql is running before attempting to extract a report
-ps_out=`ps -ef | grep $1 | grep -v 'grep' | grep -v $0`
-result=$(echo $ps_out | grep "$1")
-
+function check_process_running () {
+ps_out=$(ps -ef | grep "$1" | grep -v 'grep' | grep -v "$0")
+result=$(echo "$ps_out" | grep "$1")
 if [[ "$result" != "" ]];then
-	if (echo $1 |\
-    egrep '^(1[0-2]|0[0-9])[-/][0-9]{2}' > /dev/null
-	); then
-	   echo Stopping ka lite server 
-	   sudo service ka-lite stop > /dev/null
-	   sudo service nginx stop > /dev/null
-       echo "${green}Extracting all data until $1${reset}"
+    echo "Running"
+else
+    echo "Not Running"
+fi
+}
+
+
+psql_running=$( check_process_running postgresql )
+
+if [[ "$psql_running" == 'Running' ]];then
+  if (echo "$1" |\
+    grep -E '^(1[0-2]|0[0-9])[-/][0-9]{2}' > /dev/null
+  ); then
+     echo Stopping Kolibri server 
+     python -m kolibri stop > /dev/null
+     sudo service nginx stop > /dev/null
+       echo "${GREEN}Extracting data for month $1${RESET}"
        #echo Checking and fixing students with abnormal hours
        #~/.scripts/reporting/fix_crazy/fixcrazy
        echo Beginning report extraction.....
@@ -51,10 +38,10 @@ if [[ "$result" != "" ]];then
        # After Rscript executes, execute send report script
        ~/.scripts/reporting/send_report.sh
    else 
-       echo "${red}${bold}Please enter a valid month and year e.g 02-17${reset}"
+       echo "${RED}${BOLD}Please enter a valid month and year e.g 02-17${RESET}"
        exit 1 
    fi
 else
-	echo "${red}${bold}Error. Report NOT extracted. Please contact tech support 1>&2${reset}"
+	echo "${RED}${BOLD}Error. Report NOT extracted. Please contact tech support 1>&2${RESET}"
 	exit 1
 fi

@@ -1,2 +1,9 @@
 backupdb/*.log
 crazyhours.txt
+.Rproj.user
+config.yml
+*.Rproj
+.Rhistory
+.Rproj.*
+
+
