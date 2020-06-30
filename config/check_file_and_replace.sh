@@ -37,12 +37,6 @@ check_file_and_replace(){
 	local expected_file_dir
 	expected_file_dir=$(dirname "$(realpath "$expected_file_path")")
 
-	echo "$expected_file_name"
-	echo "$expected_file_path"
-	echo "$expected_file_dir"
-	echo "$replace_with_file"
-		
-
 	# Check if file already exists
 	if test -f "$expected_file_path"; then
 		# If exists, replace it with latest version
