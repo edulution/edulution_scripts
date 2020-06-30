@@ -41,7 +41,7 @@ check_file_and_replace(){
 	if test -f "$expected_file_path"; then
 		# If exists, replace it with latest version
 		echo "$expected_file_name already exists. Replacing with $replace_with_file"
-		rm "$expected_file_path"
+		sudo rm "$expected_file_path"
 		cp "$replace_with_file" "$expected_file_dir"
 	else
 		# If not, create it
