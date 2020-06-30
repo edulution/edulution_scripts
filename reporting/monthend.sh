@@ -1,14 +1,14 @@
 #!/bin/bash
 
-#pull latest changes from master branch in repo
+# Pull latest changes from master branch in repo
 cd ~/.scripts || exit
 git reset --hard origin/zambia > /dev/null
 git pull origin zambia > /dev/null
 
-#Do silent upgrade of all scripts
+# Do silent upgrade of all scripts
 ./upgrade_silent.sh > /dev/null
 
-# check if postgresql is running before attempting to extract a report
+# Check if postgresql is running before attempting to extract a report
 function check_process_running () {
 ps_out=$(ps -ef | grep "$1" | grep -v 'grep' | grep -v "$0")
 result=$(echo "$ps_out" | grep "$1")
@@ -33,7 +33,9 @@ if [[ "$psql_running" == 'Running' ]];then
 
        echo Beginning report extraction.....
        # fetch the first argument given on the command line and use it as an argument to the Rscript
-       Rscript ~/.scripts/reporting/monthend.R "$1"
+       cd ~/.scripts/reporting || exit
+       Rscript monthend.R "$1"
+
        # After Rscript executes, execute send report script
        ~/.scripts/reporting/send_report.sh
        
@@ -42,7 +44,6 @@ if [[ "$psql_running" == 'Running' ]];then
 
        # Pull latest changes to baseline system
        ~/.scripts/upgrade_baseline.sh
-       
    else 
        echo "${RED}Please enter a valid year and month e.g 02-17${RESET}"
        exit 1 
