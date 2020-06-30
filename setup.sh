@@ -6,8 +6,12 @@
 # shellcheck source=/dev/null
 # source helper function to create or replace config files
 source ~/.scripts/config/check_file_and_replace.sh
+
 # shellcheck source=/dev/null
 source ~/.scripts/config/check_or_create_dirs.sh
+
+# shellcheck source=/dev/null
+source ~/.scripts/config/test_report_submission.sh
 
 # List of directories to be checked for
 DIRECTORIES=( ~/.reports ~/backups )
@@ -26,3 +30,6 @@ check_file_and_replace ~/.bash_aliases ~/.scripts/config/.bash_aliases 0
 
 # Run backup script
 ~/.scripts/backupdb/backup.sh > /dev/null
+
+# Test report submission
+test_report_submission
