@@ -53,7 +53,7 @@ check_file_and_replace(){
 	# # If -s flag was passed in, source the file after creating/replacing it
 	if [ "$source_flag" -eq 1 ]; then
 		echo "sourcing $expected_file_path"
-	    . ./"$expected_file_path"
+	    . "$expected_file_path"
 	fi
  
 }
