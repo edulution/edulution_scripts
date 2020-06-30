@@ -4,4 +4,6 @@ crazyhours.txt
 config.yml
 *.Rproj
 .Rhistory
+.Rproj.*
+
 
