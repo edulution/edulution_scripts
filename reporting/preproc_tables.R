@@ -47,6 +47,7 @@ if(nrow(users) == 0){
       username,
       date_joined,
       last_login,
+      centre,
       facility_id) %>%
     select(-facility_id)
 }
