@@ -17,7 +17,7 @@ else
 	echo "${YELLOW}Baseline system not configured correctly or missing from system${RESET}"
 	rm -rf ~/.baseline_testing
 	echo "${BLUE}Cloning repository...${RESET}"
-	git clone https://github.com/techZM/offline_testing.git .baseline_testing > /dev/null
+	git clone https://github.com/edulution/offline_testing.git .baseline_testing > /dev/null
 	cd ~/.baseline_testing/ || exit
 	git checkout zambia
 

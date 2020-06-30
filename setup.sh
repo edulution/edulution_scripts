@@ -1,77 +1,28 @@
 #!/bin/bash
 
-#make backups and reports directories if they don't exist
+# exit if anything returns a non-zero code
+# set -e
+
+# shellcheck source=/dev/null
+# source helper function to create or replace config files
+source ~/.scripts/config/check_file_and_replace.sh
+# shellcheck source=/dev/null
+source ~/.scripts/config/check_or_create_dirs.sh
+
+# List of directories to be checked for
 DIRECTORIES=( ~/.reports ~/backups )
-for DIRECTORY in "${DIRECTORIES[@]}"; do
-	if [ ! -d "$DIRECTORY" ]; then
-		mkdir "$DIRECTORY"
-	else
-		echo "${BLUE}$DIRECTORY already exists. Skipping this step${RESET}"
-	fi
-done
 
-# switch to home directory
-cd ~ || exit
+# Make backups and reports directories if they don't exist
+check_or_create_dirs "${DIRECTORIES[@]}"
 
-#If bash aliases already exists, replace it with latest version. If not, create it
-if test -f ~/.bash_aliases; then
-	echo "${BLUE}Bash aliases file already exists. Replacing with latest version${RESET}"
-	sudo rm .bash_aliases
-	sudo cp .scripts/.bash_aliases ~
-else
-	echo "${BLUE}${BOLD}Aliases file does not exist. Inserting latest version${RESET}"
-	sudo cp ~/.scripts/.bash_aliases ~
-fi
+# Create or replace the bash colors file
+check_file_and_replace ~/.bash_colors ~/.scripts/config/.bash_colors 1
 
-#If bash colors already exists, replace it with latest version. If not, create it
-if test -f ~/.bash_colors; then
-	echo "${BLUE}Bash colors file already exists. Replacing with latest version${RESET}"
-	sudo rm .bash_colors
-	sudo cp .scripts/.bash_colors ~
-else
-	echo "${BLUE}${BOLD}Colors file does not exist. Inserting latest version${RESET}"
-	sudo cp ~/.scripts/.bash_colors ~
-fi
+# Create or replace the upgrade script
+check_file_and_replace ~/upgrade ~/.scripts/upgrade 0
 
-#test if upgrade script exists. If not add it
-if test -f ~/upgrade; then
-	echo "${BLUE}Upgrade script already exists. Replacing with latest version${RESET}"
-	sudo rm upgrade
-	sudo cp .scripts/upgrade ~
-else
-	echo "${BLUE}${BOLD}Upgrade script does not exist. Inserting it now${RESET}"
-	sudo cp ~/.scripts/upgrade ~
-fi
-
-# check if postgresql is installed. Alert user to contact support if it is not installed
-if [ "$(dpkg-query -W -f='${Status}' postgresql 2>/dev/null | grep -c 'ok installed')" -eq 0 ];
-then
-  echo "${RED}${BOLD}PostgreSQL is not installed. Please contact support${RESET}"
-  
-else
-  echo "${BLUE}PostgreSQL is already installed. Skipping..${RESET}"
-fi
+# Create or replace the bash aliases
+check_file_and_replace ~/.bash_aliases ~/.scripts/config/.bash_aliases 0
 
 # Run backup script
 ~/.scripts/backupdb/backup.sh > /dev/null
-
-#Send testfile to make sure scripts are correctly set up
-touch ~/.reports/test.R
-
-# Populate the test file with the output of the whoru script
-~/.scripts/identify/whoru >> ~/.reports/test.R
-
-# Test the report submission by sending the test file
-echo "${WHITE}${BOLD}Testing report submission...${RESET}"
-
-# if connection lost the script will exit with status 1 and output error message
-if sshpass -p "$SSHPASS" scp ~/.reports/test.R edulution@130.211.93.74:/home/edulution/reports; then
-	echo "${GREEN}${BOLD}Report submitted successfully!${RESET}"
-	echo "${GREEN}${BOLD}Scripts have been set up correctly${RESET}"
-else
-	echo "${RED}${BOLD}Something went wrong or internet connection was lost${RESET}" 1>&2
-	exit 1
-fi
-
-# Delete testfile
-rm ~/.reports/test.R

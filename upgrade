@@ -1,6 +1,17 @@
 #!/bin/bash
 
-cd ~/.scripts
+# Pull latest changes to main scripts
+cd ~/.scripts || exit
 git reset --hard origin/zambia
 git pull origin zambia
 ./setup.sh
+
+# Pull latest changes to baseline_testing
+cd ~/.baseline_testing || exit
+git reset --hard origin/zambia
+git pull origin zambia
+
+# Pull latest changes to Kolibri helper scripts
+cd ~/.kolibri_helper_scripts || exit
+git reset --hard origin/master
+git pull origin master
