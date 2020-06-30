@@ -181,6 +181,19 @@ monthend <- function(year_month) {
   # using the named vector created outside the function
   names(time_by_channel) <- c("user_id",recode(names(time_by_channel)[-1],!!!course_name_id))
   
+  # Get exercises and videos for each channel
+  ex_vid_by_channel <- content_sessionlogs %>%
+    filter(
+      start_timestamp >= month_start,
+      end_timestamp <= month_end,
+      progress >= 0.99
+    ) %>%
+    group_by(user_id,channel_id) %>% 
+    count(user_id,kind, name = "count") %>%
+    unite("act_channel",c(channel_id,kind)) %>%
+    spread(act_channel,count)
+  
+  
   # get total_progress by channel_id for all time
   prog_by_user_by_channel <- content_sessionlogs %>%
     group_by(user_id,channel_id,content_id) %>%
@@ -208,6 +221,7 @@ monthend <- function(year_month) {
     left_join(logins_by_user,by=c("id"="user_id")) %>%
     left_join(time_by_channel,by=c("id"="user_id")) %>%
     left_join(prog_by_user_by_channel,by=c("id"="user_id")) %>%
+    left_join(ex_vid_by_channel,by=c("id"="user_id")) %>% 
   # add month active, module, and centre by mutation
     mutate(
       month_active = ifelse(total_hours>0, 1, 0),
