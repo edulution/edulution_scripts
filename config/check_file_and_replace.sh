@@ -8,23 +8,7 @@ check_file_and_replace(){
 	# 	$2 file to create or replace it with
 	# 	$3 (1 or 0) Source the file immediately after creating or replacing it
 
-
-	# TODO: use optional flag instead of 3rd sysarg
-	# 	-s (optional) : Source the file immediately after creating or replacing it
-	# variable to hold boolean of whether or not function was run with -s
-	# local source_flag=0
-	# # Check if the function was run with -s to set the source_flag variable
-	# while getopts ':s' opt; do
-	#     case ${opt} in
-	#         s) source_flag=1 ;;
-	#         *) echo 'Illegal argument with this function' >&2
-	#            exit 1
-	#     esac
-	# done
-
-	# shift "$(( OPTIND - 1 ))"
-
-
+	# convert command line args to local vars
 	local expected_file_path=$1
 	local replace_with_file=$2
 	local source_flag=$3
@@ -49,8 +33,7 @@ check_file_and_replace(){
 		cp "$replace_with_file" "$expected_file_dir"
 	fi
 
-
-	# # If -s flag was passed in, source the file after creating/replacing it
+	# If -s flag was passed in, source the file after creating/replacing it
 	if [ "$source_flag" -eq 1 ]; then
 		echo "sourcing $expected_file_path"
 	    . "$expected_file_path"
