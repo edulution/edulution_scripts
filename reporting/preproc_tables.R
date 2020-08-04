@@ -56,10 +56,10 @@ if(nrow(users) == 0){
 channel_metadata <<- channel_metadata %>%
   left_join(channel_module, by=c("id" = "channel_id")) %>%
   # create new column with module and abbreviated playlist name
-  mutate(abbr_name = paste(module,'_',abbreviate(name))) %>%
+  mutate(abbr_name = paste0(module,'_',abbreviate(name))) %>%
   # create new column with abbr name and the word progress
   # will be used as the column name for channel progress in final report
-  mutate(abbr_name_progress = paste(abbr_name,'_progress'))
+  mutate(abbr_name_progress = paste0(abbr_name,'_progress'))
 
 #create named vector with channel_ids and abbreviated playlist names
 course_name_id <- unlist(channel_metadata$abbr_name)
