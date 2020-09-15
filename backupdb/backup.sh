@@ -3,6 +3,9 @@
 # File extension for backup files is custom format with extension .backup
 file_extension=".backup"
 
+# Directory to store backups
+backups_dir=~/backups/
+
 # Get today's date and use it as timestamp for database backup file
 timestamp=$(date +"%Y%m%d")
 
@@ -20,17 +23,17 @@ zip_file_name=${database_name}_backups_${timestamp}
 
 # Create database backup using credentials from environment variables 
 echo "Creating Kolibri database backup"
-PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD pg_dump "$KOLIBRI_DATABASE_NAME" -U "$KOLIBRI_DATABASE_USER" -h "$KOLIBRI_DATABASE_HOST" -p "$KOLIBRI_DATABASE_PORT" -Fc > ~/backups/"$kolibri_backup_name"
+PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD pg_dump "$KOLIBRI_DATABASE_NAME" -U "$KOLIBRI_DATABASE_USER" -h "$KOLIBRI_DATABASE_HOST" -p "$KOLIBRI_DATABASE_PORT" -Fc > "$backups_dir/$kolibri_backup_name"
 
 echo "Creating Baseline database backup"
-PGPASSWORD=$BASELINE_DATABASE_PASSWORD pg_dump "$BASELINE_DATABASE_NAME" -U "$BASELINE_DATABASE_USER" -h "$BASELINE_DATABASE_HOST" -p "$BASELINE_DATABASE_PORT" -Fc > ~/backups/"$baseline_backup_name"
+PGPASSWORD=$BASELINE_DATABASE_PASSWORD pg_dump "$BASELINE_DATABASE_NAME" -U "$BASELINE_DATABASE_USER" -h "$BASELINE_DATABASE_HOST" -p "$BASELINE_DATABASE_PORT" -Fc > "$backups_dir/$baseline_backup_name"
 
 echo "Creating zip file with backups"
 # create zip file containing both backups taken above and remove the original files
-zip -jm ~/backups/"$zip_file_name" ~/backups/"$kolibri_backup_name" ~/backups/"$baseline_backup_name"
+zip -jm "$backups_dir/$zip_file_name" "$backups_dir/$kolibri_backup_name" "$backups_dir/$baseline_backup_name"
 
 # Remove spaces from names of backups
-rename "s/ //g" ~/backups/*.backup
+rename "s/ //g" "$backups_dir"*.backup
 
 # Call script to remove backups older than 40 days
 ~/.scripts/backupdb/remove_old_backups.sh
