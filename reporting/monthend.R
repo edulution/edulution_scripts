@@ -181,7 +181,7 @@ monthend <- function(year_month) {
   # using the named vector created outside the function
   names(time_by_channel) <- c("user_id",recode(names(time_by_channel)[-1],!!!course_name_id))
   
-  # Get exercises and videos for each channel
+  # Get exercises and videos completed for each channel
   ex_vid_by_channel <- content_sessionlogs %>%
     filter(
       start_timestamp >= month_start,

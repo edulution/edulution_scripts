@@ -55,3 +55,5 @@ fi
 # Add any other scripts you would like to run below this line
 ###################
 ~/.scripts/config/zm_gr7_responses_rename.sh
+
+~/.scripts/config/insert_zm_gr7_revision_into_channel_module.sh
