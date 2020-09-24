@@ -102,3 +102,80 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
   
   return(prog_by_user_by_channel)
 }
+
+# Summary timespent and progress by topic and content kind for all time
+get_summary_act_by_topic <- function(summarylogs, contentnodes_topics, topic_nodes_count){
+  summary_act_by_topic <- summarylogs %>%
+    left_join(
+      contentnodes_topics,
+      by=c("content_id","channel_id","kind")) %>%
+    unite(
+      "topic_act_type",
+      c("channel_id", "topic_id", "kind"),
+      sep = "_") %>%
+    group_by(user_id, topic_act_type) %>%
+    summarise(
+      topic_act_timespent = sum(time_spent),
+      topic_act_totalprog = sum(progress)) %>%
+    ungroup() %>%
+    left_join(
+      topic_nodes_count,
+      by=c("topic_act_type"="channel_topic_kind")) %>%
+    mutate(
+      topic_act_progpct = topic_act_totalprog/nodes_count
+    ) %>%
+    # Only get user_id, topic_act_type and progpct
+    select(
+      user_id,
+      topic_act_type,
+      topic_act_progpct
+    )
+}
+
+
+
+get_month_summary_time_by_topic <- function(sessiologs, contentnodes_topics){
+  month_summary_time_by_topic <- sessionlogs %>%
+    filter(start_timestamp >= lower_lim,
+           end_timestamp <= upper_lim) %>%
+    left_join(
+      contentnodes_topics,
+      by=c("content_id","channel_id","kind")) %>%
+    unite(
+      "topic_act_type",
+      c("channel_id", "topic_id", "kind"),
+      sep = "_") %>%
+    group_by(user_id, topic_act_type) %>%
+    summarise(
+      topic_act_timespent = sum(time_spent)/3600) %>%
+    ungroup() %>%
+    mutate(topic_act_type = str_c(
+      # Add the word timespent to topic_act_type
+      topic_act_type,"timespent"
+    )) %>%
+    spread(topic_act_type,topic_act_timespent)
+}
+
+
+
+get_month_summary_exvid_by_topic <- function(sessionlogs, contentnodes_topics){
+  month_summary_exvid_by_topic <- sessionlogs %>%
+    filter(
+      start_timestamp >= lower_lim,
+      end_timestamp <= upper_lim,
+      progress >= 0.99) %>%
+    left_join(
+      contentnodes_topics,
+      by=c("content_id","channel_id","kind")) %>%
+    unite(
+      "topic_act_type",
+      c("channel_id", "topic_id", "kind"),
+      sep = "_") %>%
+    count(user_id, topic_act_type, name = "num_completed") %>%
+    ungroup() %>%
+    mutate(topic_act_type = str_c(
+      # Add the word completed to topic_act_type
+      topic_act_type,"completed"
+    )) %>%
+    spread(topic_act_type,num_completed)
+}
