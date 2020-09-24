@@ -40,15 +40,19 @@ get_first_name <- function(full_name) {
 }
 
 
-# Simple function to generate filename of csv report in desired format
-generate_filename <- function(report, date) {
-  # put generated file in a folder called reports in home directory, and generate filename based on name of report and user input
-  filename <-
-    paste("~/.reports/",
-          report,
-          device_name,
-          "_numeracy_",
-          date,
-          ".csv",
-          sep = "")
+# Simple function to generate file name of csv report in desired format
+generate_filename <- function(report_name, date, device_name, reports_dir = "~/.reports/") {
+  # generate file name based on name of report and date the user supplies
+  # default reports dir is ~/.reports
+  
+  filename <- paste(
+    reports_dir,
+    report_name,
+    device_name,
+    "_numeracy_",
+    date,
+    ".csv",
+    sep = "")
+  
+  return(filename)
 }
