@@ -1,19 +1,7 @@
 # Clear work space
 rm(list = ls())
 
-# Source helper functions
-source("helpers.R")
-source("get_db_tables.R")
-source("preproc_tables.R")
-source("check_completed_ex_vid_count.R")
-source("check_sessionlogs.R")
-source("transforms.R")
-source("process_dateinput.R")
-
-# Prevent displaying warning messages from script on console(errors will still show)
-options(warn = -1)
-
-# Suppress messages when loading packages
+# Load libraries
 suppressMessages(library(timeDate))
 suppressMessages(library(tidyr))
 suppressMessages(library(plyr))
@@ -22,13 +10,29 @@ suppressMessages(library(tools))
 suppressMessages(library(gsubfn))
 suppressMessages(library(stringr))
 
+# Source helper functions
+source("helpers.R")
+source("get_db_tables.R")
+source("preproc_tables.R")
+source("preproc_topics.R")
+source("check_completed_ex_vid_count.R")
+source("check_sessionlogs.R")
+source("transforms.R")
+source("process_dateinput.R")
+
+# Prevent displaying warning messages from script on console(errors will still show)
+options(warn = -1)
 
 # Function to get data extract only for month that user inputs
-monthend <- function(dates, sessionlogs, summarylogs, device_name) {
+monthend <- function(dates, sessionlogs, summarylogs, topics, device_name) {
   # Get the dates needed from the dates vector supplied
   year_month <- dates$year_month
   month_start <- dates$month_start
   month_end <- dates$month_end
+  
+  # Add start_date_only to session logs
+  sessionlogs <- sessionlogs %>%
+    mutate(start_date_only = strftime(start_timestamp,"%Y-%m-%d"))
   
   # Get total time spent by each user between month start and month end
   time_spent_by_user <- get_time_spent_by_user(sessionlogs,month_start,month_end) 
@@ -37,7 +41,7 @@ monthend <- function(dates, sessionlogs, summarylogs, device_name) {
   logins_by_user <- get_logins_by_user(sessionlogs, month_start, month_end)
   
   # Get the total number of completed exercises and videos between month start and month end
-  completed_ex_vid_count <- get_completed_ex_vid_count(sessionlogs)
+  completed_ex_vid_count <- get_completed_ex_vid_count(sessionlogs, month_start, month_end)
   
   # get total time spent by channel
   time_by_channel <- get_time_by_channel(sessionlogs, month_start, month_end)
@@ -47,6 +51,21 @@ monthend <- function(dates, sessionlogs, summarylogs, device_name) {
   
   # get total_progress by channel_id for all time
   prog_by_user_by_channel <- get_prog_by_user_by_channel(sessionlogs)
+  
+  # Exercises and videos completed by topic for the dates supplied
+  month_summary_exvid_by_topic <- get_month_summary_exvid_by_topic(
+    sessionlogs,
+    topics,
+    month_start,
+    month_end)
+  
+  # Time spent by topic for the dates supplied
+  month_summary_time_by_topic <- get_month_summary_time_by_topic(
+    sessionlogs,
+    topics,
+    month_start,
+    month_end
+  )
   
   # change the column names to be the name of the channel + _progress
   #names(prog_by_user_by_channel) <- c("user_id",recode(names(prog_by_user_by_channel)[-1],!!!course_name_id_progress))
@@ -60,7 +79,7 @@ monthend <- function(dates, sessionlogs, summarylogs, device_name) {
     left_join(prog_by_user_by_channel, by = c("id" = "user_id")) %>%
     left_join(ex_vid_by_channel, by = c("id" = "user_id")) %>%
     left_join(month_summary_exvid_by_topic,by = c("id" = "user_id")) %>%
-    left_join(month_summary_time_by_topic,by = c("id" = "user_id")) %>% 
+    left_join(month_summary_time_by_topic,by = c("id" = "user_id")) %>%
     # add month active, module, and centre by mutation
     mutate(month_active = ifelse(total_hours > 0, 1, 0),
            module = rep("numeracy")) %>%
@@ -116,7 +135,12 @@ input <- commandArgs(TRUE)
 dates_vec <- process_dateinput(input)
 
 # Check if content logs exist between the month start and month end
-check_sessionlogs(sessionlogs, dates_vec, device_name)
+check_sessionlogs(content_sessionlogs, dates_vec, device_name)
 
 # Extract the month end report
-monthend(dates_vec, content_sessionlogs, content_summarylogs, device_name)
+monthend(
+  dates = dates_vec,
+  sessionlogs = content_sessionlogs,
+  summarylogs = content_summarylogs,
+  topics = topics,
+  device_name = device_name)
