@@ -31,6 +31,12 @@ check_completed_ex_vid_count <- function(summary_df) {
       summary_df <- summary_df %>% mutate(total_videos = 0)
     }
     
+    if ("document" %in% colnames(summary_df)) {
+      summary_df <- summary_df %>% rename(total_documents = document)
+    } else{
+      summary_df <- summary_df %>% mutate(total_documents = 0)
+    }
+    
   }
   return(summary_df)
 }
