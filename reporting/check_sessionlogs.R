@@ -2,7 +2,7 @@
 check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = F) {
   year_month <- dates$year_month
   month_start <- dates$month_start
-  month_end <- date$month_end
+  month_end <- dates$month_end
   
   
   if(all_time == T){
@@ -78,5 +78,7 @@ check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = F) {
       na = "0"
     )
     quit(save = "no")
+  }else{
+    print("Session logs found for the dates supplied")
   }
 }
