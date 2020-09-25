@@ -1,5 +1,9 @@
 # Preprocessing of topics
-topics <- channel_contents %>%
+
+# Get topics from content nodes
+# Then get full contentnode information joined to channel metadata
+get_topics  <- function(contentnodes, channelmetadata){
+  topics <- contentnodes %>%
   filter(
     kind == 'topic',
     id != channel_id) %>%
@@ -17,8 +21,8 @@ topics <- channel_contents %>%
   # consists of channel_id and topic_id separated by underscore
   mutate(channel_topic = paste0(channel_id,"_",topic_id))
 
-# Join contentnodes and channelmetadata to topics
-contentnodes_topics <- channel_contents %>%
+  # Join contentnodes and channelmetadata to topics
+  topics_full <- contentnodes %>%
   left_join(
     topics,
     c("parent_id"="topic_id","channel_id")) %>%
@@ -39,8 +43,13 @@ contentnodes_topics <- channel_contents %>%
     topic_title
   )
 
+  return(topics_full)
+}
+
+
 # Count of contentnodes for each topic and content kind
-topic_nodes_count <- contentnodes_topics %>%
+get_topic_nodes_count  <- function(topics){
+  topic_nodes_count <- topics %>%
   filter(
     kind != 'topic',
     content_id != channel_id) %>%
@@ -50,3 +59,7 @@ topic_nodes_count <- contentnodes_topics %>%
     c("channel_id","topic_id","kind"),
     sep = "_",
     remove = F)
+}
+
+topics  <- get_topics(channel_contents, channel_metadata)
+topic_nodes_count  <- get_topic_nodes_count(topics)
