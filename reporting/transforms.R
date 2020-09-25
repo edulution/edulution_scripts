@@ -6,6 +6,12 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
       group_by(user_id) %>%
       summarize(total_hours = sum(time_spent) / 3600)
     
+    print(paste(
+      "Sucessfully retrieved time spent by user between",
+      lower_lim,
+      "and",
+      upper_lim))
+    
     return(time_spent_by_user)
 }
 
@@ -17,18 +23,30 @@ get_logins_by_user <- function(sessionlogs, lower_lim, upper_lim) {
     distinct(user_id, start_date_only) %>%
     count(user_id, name = "total_logins")
   
+  print(paste(
+    "Sucessfully retrieved logins by user between",
+    lower_lim,
+    "and",
+    upper_lim))
+  
   return(logins_by_user)
 }
 
 
 # Get the total number of completed exercises and videos between month start and month end
-get_completed_ex_vid_count <- function(sessionlogs) {
+get_completed_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
   completed_ex_vid_count <- sessionlogs %>%
     filter(start_timestamp >= lower_lim,
            end_timestamp <= upper_lim,
            progress >= 0.99) %>%
     count(user_id, kind, name = "count") %>%
     check_completed_ex_vid_count()
+  
+  print(paste(
+    "Sucessfully retrieved exercises and videos completed by user between",
+    lower_lim,
+    "and",
+    upper_lim))
   
   return(completed_ex_vid_count)
 }
@@ -46,6 +64,13 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
                 function(x)
                   paste0(x, "_playlist_timespent")) %>%
       ungroup()
+    
+    print(paste(
+      "Sucessfully retrieved total time by channel by user between",
+      lower_lim,
+      "and",
+      upper_lim))
+    
     
     return(time_by_channel)
     # result of above is a data frame
@@ -75,6 +100,13 @@ get_ex_vid_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
                 str_replace("_document", "_playlist_document")) %>%
     ungroup()
   
+  print(paste(
+    "Sucessfully retrieved exercises and videos by channel by user between",
+    lower_lim,
+    "and",
+    upper_lim))
+  
+  
   return(ex_vid_by_channel)
 }
 
@@ -100,14 +132,17 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
                 paste0(x, "_playlist_progress")) %>%
     ungroup()
   
+  print("Sucessfully retrieved summary channel progress by user")
+  
   return(prog_by_user_by_channel)
 }
 
+
 # Summary timespent and progress by topic and content kind for all time
-get_summary_act_by_topic <- function(summarylogs, contentnodes_topics, topic_nodes_count){
+get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count){
   summary_act_by_topic <- summarylogs %>%
     left_join(
-      contentnodes_topics,
+      topics,
       by=c("content_id","channel_id","kind")) %>%
     unite(
       "topic_act_type",
@@ -130,16 +165,20 @@ get_summary_act_by_topic <- function(summarylogs, contentnodes_topics, topic_nod
       topic_act_type,
       topic_act_progpct
     )
+  
+  print("Sucessfully retrieved summary activity by topic")
+  
+  return(summary_act_by_topic)
 }
 
 
 
-get_month_summary_time_by_topic <- function(sessiologs, contentnodes_topics){
+get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, upper_lim){
   month_summary_time_by_topic <- sessionlogs %>%
     filter(start_timestamp >= lower_lim,
            end_timestamp <= upper_lim) %>%
     left_join(
-      contentnodes_topics,
+      topics,
       by=c("content_id","channel_id","kind")) %>%
     unite(
       "topic_act_type",
@@ -150,22 +189,30 @@ get_month_summary_time_by_topic <- function(sessiologs, contentnodes_topics){
       topic_act_timespent = sum(time_spent)/3600) %>%
     ungroup() %>%
     mutate(topic_act_type = str_c(
-      # Add the word timespent to topic_act_type
+      # Add the word time spent to topic_act_type
       topic_act_type,"timespent"
     )) %>%
     spread(topic_act_type,topic_act_timespent)
+  
+  print(paste(
+    "Sucessfully retrieved summary_progress by user between",
+    lower_lim,
+    "and",
+    upper_lim))
+  
+  return(month_summary_time_by_topic)
 }
 
 
 
-get_month_summary_exvid_by_topic <- function(sessionlogs, contentnodes_topics){
+get_month_summary_exvid_by_topic <- function(sessionlogs, topics, lower_lim, upper_lim){
   month_summary_exvid_by_topic <- sessionlogs %>%
     filter(
       start_timestamp >= lower_lim,
       end_timestamp <= upper_lim,
       progress >= 0.99) %>%
     left_join(
-      contentnodes_topics,
+      topics,
       by=c("content_id","channel_id","kind")) %>%
     unite(
       "topic_act_type",
@@ -178,4 +225,12 @@ get_month_summary_exvid_by_topic <- function(sessionlogs, contentnodes_topics){
       topic_act_type,"completed"
     )) %>%
     spread(topic_act_type,num_completed)
+  
+  print(paste(
+    "Sucessfully retrieved summary exercises and videos by topic by user between",
+    lower_lim,
+    "and",
+    upper_lim))
+  
+  return(month_summary_exvid_by_topic)
 }
