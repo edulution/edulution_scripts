@@ -10,7 +10,13 @@ db_port = Sys.getenv("KOLIBRI_DATABASE_PORT")
 
 # connect to Kolibri database 
 pg <- dbDriver("PostgreSQL")
-conn <-  dbConnect(pg, dbname=db_name, host = db_host, port = db_port, user=db_user, password=db_passwd)
+conn <-  dbConnect(
+  pg,
+  dbname = db_name,
+  host = db_host,
+  port = db_port,
+  user = db_user,
+  password = db_passwd)
 
 #facilityysers
 facilityusers <- dbGetQuery(conn,"SELECT * FROM kolibriauth_facilityuser")
