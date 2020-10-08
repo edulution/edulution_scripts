@@ -1,5 +1,6 @@
 backupdb/*.log
 crazyhours.txt
+*.csv
 .Rproj.user
 config.yml
 *.Rproj
