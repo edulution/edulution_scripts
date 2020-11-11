@@ -57,3 +57,6 @@ fi
 ~/.scripts/config/zm_gr7_responses_rename.sh
 
 ~/.scripts/config/insert_zm_gr7_revision_into_channel_module.sh
+
+# set coach_content flag to true on all coach professional development content
+~/.kolibri_helper_scripts/channel_setup/set_coach_content.sh
