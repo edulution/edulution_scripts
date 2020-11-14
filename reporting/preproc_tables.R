@@ -72,3 +72,5 @@ names(course_name_id_progress) <- unlist(channel_metadata$id)
 num_contents_by_channel <<- channel_contents %>%
   filter(!kind %in% c('topic', 'channel')) %>%
   count(channel_id, name = "total_items")
+
+coach_content <<- channel_contents  %>% filter(coach_content == TRUE)
