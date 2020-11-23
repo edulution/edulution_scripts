@@ -56,7 +56,11 @@ fi
 ###################
 ~/.scripts/config/zm_gr7_responses_rename.sh
 
+# Insert grade 7 revision into channel module table with right module
 ~/.scripts/config/insert_zm_gr7_revision_into_channel_module.sh
+
+# Insert numeracy grade 7 mock 3 config
+~/.scripts/config/insert_gr7_mock3_config.sh
 
 # set coach_content flag to true on all coach professional development content
 ~/.kolibri_helper_scripts/channel_setup/set_coach_content.sh
