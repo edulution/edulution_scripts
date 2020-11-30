@@ -61,6 +61,8 @@ fi
 
 # Insert numeracy grade 7 mock 3 config
 ~/.scripts/config/insert_gr7_mock3_config.sh
+# Insert numeracy grade 7 mock 4 config
+~/.scripts/config/insert_gr7_mock4_config.sh
 
 # set coach_content flag to true on all coach professional development content
 ~/.kolibri_helper_scripts/channel_setup/set_coach_content.sh
