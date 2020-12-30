@@ -12,5 +12,5 @@ git pull origin namibia
 
 # Pull latest changes to Kolibri helper scripts
 cd ~/.kolibri_helper_scripts || exit
-git reset --hard origin/master
-git pull origin master
+git reset --hard origin/develop
+git pull origin develop
