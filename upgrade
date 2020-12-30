@@ -2,16 +2,16 @@
 
 # Pull latest changes to main scripts
 cd ~/.scripts || exit
-git reset --hard origin/zambia
-git pull origin zambia
+git reset --hard origin/develop
+git pull origin develop
 ./setup.sh
 
 # Pull latest changes to baseline_testing
 cd ~/.baseline_testing || exit
-git reset --hard origin/zambia
-git pull origin zambia
+git reset --hard origin/develop
+git pull origin develop
 
 # Pull latest changes to Kolibri helper scripts
 cd ~/.kolibri_helper_scripts || exit
-git reset --hard origin/master
-git pull origin master
+git reset --hard origin/develop
+git pull origin develop
