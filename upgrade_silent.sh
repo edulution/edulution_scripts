@@ -33,7 +33,7 @@ check_file_and_replace ~/.bash_aliases ~/.scripts/config/.bash_aliases 0 > /dev/
 # Check if postgresql is installed and alert user if it is not installed
 if [ "$(dpkg-query -W -f='${Status}' postgresql 2>/dev/null | grep -c 'ok installed')" -eq 0 ];
 then
-  echo "PostgreSQL is not installed. Please contact support"
+  echo "PostgreSQL is not installed or service is not running. Please contact support"
   
 else
   echo "PostgreSQL is already installed. Skipping.."
@@ -54,15 +54,9 @@ fi
 
 # Add any other scripts you would like to run below this line
 ###################
-~/.scripts/config/zm_gr7_responses_rename.sh
 
 # Insert grade 7 revision into channel module table with right module
 ~/.scripts/config/insert_zm_gr7_revision_into_channel_module.sh
-
-# Insert numeracy grade 7 mock 3 config
-~/.scripts/config/insert_gr7_mock3_config.sh
-# Insert numeracy grade 7 mock 4 config
-~/.scripts/config/insert_gr7_mock4_config.sh
 
 # set coach_content flag to true on all coach professional development content
 ~/.kolibri_helper_scripts/channel_setup/set_coach_content.sh
