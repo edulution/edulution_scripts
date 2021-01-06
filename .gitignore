@@ -8,4 +8,5 @@ config.yml
 renv/
 .Rprofile
 *.csv
+renv.lock
 
