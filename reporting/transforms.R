@@ -70,7 +70,7 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
     ) %>%
     group_by(user_id, channel_id) %>%
     summarise(total_time = sum(time_spent) / 3600) %>%
-    spread(channel_id, total_time) %>%
+    pivot_wider(names_from = channel_id, values_from = total_time) %>% 
     rename_at(
       vars(-user_id),
       function(x) {
@@ -108,7 +108,7 @@ get_ex_vid_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
     group_by(user_id, channel_id) %>%
     count(user_id, kind, name = "count") %>%
     unite("act_channel", c(channel_id, kind)) %>%
-    spread(act_channel, count) %>%
+    pivot_wider(names_from = act_channel, values_from = count) %>%
     rename_at(
       vars(-user_id),
       function(x) {
@@ -146,7 +146,7 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
     # get rid of the columns for total prog and total_items
     # turn the progress for each channel into a separate column
     select(-c(total_prog, total_items)) %>%
-    spread(channel_id, pct_progress) %>%
+    pivot_wider(names_from = channel_id, values_from = pct_progress) %>%
     rename_at(
       vars(-user_id),
       function(x) {
@@ -191,7 +191,8 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
       user_id,
       topic_act_type,
       topic_act_progpct
-    )
+    ) %>%
+    replace_na(list(topic_act_progpct = 0L))
 
   print("Sucessfully retrieved summary activity by topic")
 
@@ -224,7 +225,7 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
       # Add the word time spent to topic_act_type
       topic_act_type, "timespent"
     )) %>%
-    spread(topic_act_type, topic_act_timespent)
+    pivot_wider(names_from = topic_act_type, values_from = topic_act_timespent)
 
   print(paste(
     "Sucessfully retrieved summary_progress by user between",
@@ -260,7 +261,7 @@ get_month_summary_exvid_by_topic <- function(sessionlogs, topics, lower_lim, upp
       # Add the word completed to topic_act_type
       topic_act_type, "completed"
     )) %>%
-    spread(topic_act_type, num_completed)
+    pivot_wider(names_from = topic_act_type, values_from = num_completed)
 
   print(paste(
     "Sucessfully retrieved summary exercises and videos by topic by user between",
