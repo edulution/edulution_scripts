@@ -16,6 +16,7 @@ suppressMessages(library(dplyr))
 suppressMessages(library(tools))
 suppressMessages(library(gsubfn))
 suppressMessages(library(stringr))
+suppressMessages(library(rebus))
 
 
 # Function to get all data in db from beginning of time until month that user specifies
@@ -56,7 +57,7 @@ alldata <- function(year_month) {
 
   # transpose the rows into columns by user_id
   # exercise and video counts become columns
-  completed_ex_vid_count <- tidyr::spread(completed_ex_vid_count, kind, count)
+  completed_ex_vid_count <- completed_ex_vid_count %>% tidyr::pivot_wider(names_from = kind, values_from = count)
 
   # rename the columns to read total_exercises, total_videos
   if ("video" %in% colnames(completed_ex_vid_count)) {
@@ -77,7 +78,7 @@ alldata <- function(year_month) {
   time_by_channel <- content_summarylogs %>%
     group_by(user_id, channel_id) %>%
     summarise(total_time = sum(time_spent) / 3600) %>%
-    spread(channel_id, total_time)
+    pivot_wider(names_from = channel_id, values_from = total_time)
   # this produces a data frame with time spent on each channel as a separate column with the channel id as the column name
 
   # change column names which are channel_ids from channel_ids to readable course names
@@ -98,7 +99,7 @@ alldata <- function(year_month) {
     # get rid of the columns for total prog and total_items
     # then turn the progress for each channel into a separate column
     select(-c(total_prog, total_items)) %>%
-    spread(channel_id, pct_progress)
+    pivot_wider(names_from = channel_id, values_from = pct_progress)
 
   # change the column names to be the name of the channel + _progress
   names(prog_by_user_by_channel) <- c("user_id", recode(names(prog_by_user_by_channel)[-1], !!!course_name_id_progress))
