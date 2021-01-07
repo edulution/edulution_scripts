@@ -9,6 +9,7 @@ suppressMessages(library(dplyr))
 suppressMessages(library(tools))
 suppressMessages(library(gsubfn))
 suppressMessages(library(stringr))
+suppressMessages(library(rebus))
 
 # Source helper functions
 source("helpers.R")
