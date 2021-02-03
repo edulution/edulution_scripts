@@ -30,4 +30,7 @@ function flyway_bl(){
 	cd || exit
 }
 
+# Call the function above with the command line argument supplied
+# e.g info - show information about all migrations that have been run on the database
+#	  migrate - run migrations
 flyway_bl "$1"
