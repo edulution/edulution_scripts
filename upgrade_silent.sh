@@ -13,11 +13,6 @@ source ~/.scripts/config/check_file_and_replace.sh
 # shellcheck source=/dev/null
 source ~/.scripts/config/check_or_create_dirs.sh
 
-# Source flyway bl script
-# shellcheck source=/dev/null
-source ~/.scripts/config/flyway_bl.sh
-
-
 DIRECTORIES=( ~/.reports ~/backups )
 
 #make backups and reports directories if they don't exist
