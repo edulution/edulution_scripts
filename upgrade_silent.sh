@@ -43,7 +43,7 @@ fi
 
 # Check if kolibri helper scripts directory exists. pull it if it does not
 if [ -d "$kolibri_helper_scripts_dir" ]; then
-	cd $kolibri_helper_scripts_dir && git reset --hard origin/master && git pull origin master && cd ~ || exit
+	cd $kolibri_helper_scripts_dir && git reset --hard origin/develop && git pull origin develop && cd ~ || exit
 else
 	echo "Helper scripts directory does not exist. Cloning now..."
 	git clone https://github.com/edulution/kolibri_helper_scripts.git $kolibri_helper_scripts_dir
