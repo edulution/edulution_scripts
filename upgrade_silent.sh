@@ -13,6 +13,11 @@ source ~/.scripts/config/check_file_and_replace.sh
 # shellcheck source=/dev/null
 source ~/.scripts/config/check_or_create_dirs.sh
 
+# Source flyway bl script
+# shellcheck source=/dev/null
+source ~/.scripts/config/flyway_bl.sh
+
+
 DIRECTORIES=( ~/.reports ~/backups )
 
 #make backups and reports directories if they don't exist
@@ -52,6 +57,10 @@ fi
 
 # Run backup script
 ~/.scripts/backupdb/backup.sh
+
+# Run flyway migrations for baseline_testing silently
+~/.scripts/config/flyway_bl.sh migrate > /dev/null
+
 
 # Add any other scripts you would like to run below this line
 ###################
