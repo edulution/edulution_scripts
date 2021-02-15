@@ -20,6 +20,7 @@ alias swapdb='~/.scripts/swapdb/swapdb.sh'
 alias baseline='~/.baseline_testing/scripts/reporting/baseline.sh'
 alias restartbl='~/.baseline_testing/scripts/startup_script'
 alias getkousers='~/.baseline_testing/scripts/start_users_extraction.sh'
+alias flyway_bl='~/.scripts/config/flyway_bl.sh'
 
 # assign live learners to the right groups
 alias assign_learners='~/.kolibri_helper_scripts/assign_learners.sh;~/.baseline_testing/scripts/startup_script'
