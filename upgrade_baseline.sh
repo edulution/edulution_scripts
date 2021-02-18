@@ -8,7 +8,7 @@ if test -f ~/.baseline_testing/scripts/startup_script; then
 	echo "${BLUE}Baseline Testing already configured${RESET}"
 	cd ~/.baseline_testing/ || exit
 	echo "Pulling latest changes to Baseline system..."
-	git pull origin zambia > /dev/null
+	git pull origin south_africa > /dev/null
 
 	#make script executable if it isnt
 	chmod +x ~/.baseline_testing/scripts/setup.sh
