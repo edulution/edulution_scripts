@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Check if postgresql is running before attempting to extract a report
+# Check if postgresql is running before attempting to extract a Archive Learner report
 function check_process_running () {
 ps_out=$(ps -ef | grep "$1" | grep -v 'grep' | grep -v "$0")
 result=$(echo "$ps_out" | grep "$1")
@@ -28,14 +28,14 @@ if [[ "$psql_running" == 'Running' ]];then
        cd ~/.scripts/reporting || exit
        Rscript archive_learners.R "$1"
 
-    #    # After Rscript executes, execute send report script
+        # After Rscript executes, execute send report script
         # ~/.scripts/reporting/send_report.sh
 
         # Send Archive Learner Report
         ~/.scripts/reporting/send_archive_learner_report.sh
        
        # submit baseline tests for the selected month
-       ~/.baseline_testing/scripts/reporting/archive_baseline.sh "$1"
+       # ~/.baseline_testing/scripts/reporting/archive_baseline.sh "$1"
 
     #    # Pull latest changes to baseline system
     #    ~/.scripts/upgrade_baseline.sh

@@ -56,10 +56,10 @@ get_first_name <- function(full_name) {
 }
 
 
-# Simple function to generate file name of csv Archive_Learnerin desired format
+# Simple function to generate file name of csv Archive_Learner in desired format
 generate_filename <- function(report_name, date, device_name, reports_dir = "~/Archive_Learner/") {
   # generate file name based on name of Archive_Learner and date the user supplies
-  # default reports dir is ~/.Archive_Learner
+  # default Archive Learner dir is ~/Archive_Learner
 
   filename <- paste(
     reports_dir,

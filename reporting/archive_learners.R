@@ -106,6 +106,7 @@ archives <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
     # Reorder columns. put familiar columns first
     select(
       id,
+      full_name,
       first_name,
       last_name,
       username,
@@ -134,7 +135,7 @@ dates_vec <- process_dateinput(input)
 # Check if content logs exist between the month start and month end
 check_sessionlogs(content_sessionlogs, dates_vec, device_name)
 
-# Extract the month end report
+# Extract the Archive Learner Report
 archives(
   dates = dates_vec,
   sessionlogs = content_sessionlogs,
