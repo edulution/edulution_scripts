@@ -10,6 +10,7 @@ MOST_REC_FILEPATH=$( ls ~/.reports -t | head -n1 )
 MOST_REC_FILENAME=$( basename "$MOST_REC_FILEPATH" .csv)
 
 # Create a zip file with this file in the current directory
+# bzip2 compression reduces file size by ~ 88%
 # Expected output is $MOST_REC_FILENAME.zip and the original csv file deleted
 zip -jm -Z bzip2 "$MOST_REC_FILENAME" "$MOST_REC_FILEPATH" 
 
