@@ -10,8 +10,9 @@ MOST_REC_FILEPATH=$( ls ~/.reports -t | head -n1 )
 MOST_REC_FILENAME=$( basename "$MOST_REC_FILEPATH" .csv)
 
 # Create a zip file with this file in the current directory
+# bzip2 compression reduces file size by ~ 88%
 # Expected output is $MOST_REC_FILENAME.zip and the original csv file deleted
-zip -jm "$MOST_REC_FILENAME" "$MOST_REC_FILEPATH" 
+zip -jm -Z bzip2 "$MOST_REC_FILENAME" "$MOST_REC_FILEPATH" 
 
 # if connection lost the script will exit with status 1 and output error message
 if sshpass -p "$SSHPASS" scp "$MOST_REC_FILENAME.zip" edulution@130.211.93.74:/home/edulution/reports; then
