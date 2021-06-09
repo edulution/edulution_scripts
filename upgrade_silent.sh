@@ -70,5 +70,6 @@ cd $kolibri_helper_scripts_dir || exit
 python create_classes_and_groups.py -f 20210609_centres_grades.csv
 python enroll_learners_into_class.py -f 20210609_class_mig.csv
 python delete_learners.py -f 20210607_learners_to_delete.csv
+python setup.py
 
 
