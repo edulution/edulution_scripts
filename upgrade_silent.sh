@@ -59,17 +59,3 @@ fi
 
 # Add any other scripts you would like to run below this line
 ###################
-
-# Insert grade 7 revision into channel module table with right module
-#~/.scripts/config/insert_zm_gr7_revision_into_channel_module.sh
-
-# set coach_content flag to true on all coach professional development content
-#~/.kolibri_helper_scripts/channel_setup/set_coach_content.sh
-
-cd $kolibri_helper_scripts_dir || exit
-python create_classes_and_groups.py -f 20210609_centres_grades.csv
-python enroll_learners_into_class.py -f 20210609_class_mig.csv
-python delete_learners.py -f 20210607_learners_to_delete.csv
-python setup.py
-
-
