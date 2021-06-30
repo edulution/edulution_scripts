@@ -8,6 +8,7 @@ cd ~/.scripts || exit
 git reset --hard origin/namibia > /dev/null
 git pull origin namibia > /dev/null
 
+
 # Do silent upgrade of all scripts
 ./upgrade_silent.sh > /dev/null
 
