@@ -43,11 +43,11 @@ fi
 
 # Check if kolibri helper scripts directory exists. pull it if it does not
 if [ -d "$kolibri_helper_scripts_dir" ]; then
-	cd $kolibri_helper_scripts_dir && git reset --hard origin/zambia && git pull origin zambia && cd ~ || exit
+	cd $kolibri_helper_scripts_dir && git reset --hard origin/south_africa && git pull origin south_africa && cd ~ || exit
 else
 	echo "Helper scripts directory does not exist. Cloning now..."
 	git clone https://github.com/edulution/kolibri_helper_scripts.git $kolibri_helper_scripts_dir
-	cd $kolibri_helper_scripts_dir && git reset --hard origin/zambia && git pull origin zambia && cd ~ || exit
+	cd $kolibri_helper_scripts_dir && git reset --hard origin/south_africa && git pull origin south_africa && cd ~ || exit
 fi
 
 # Run backup script
@@ -59,9 +59,3 @@ fi
 
 # Add any other scripts you would like to run below this line
 ###################
-
-# Insert grade 7 revision into channel module table with right module
-~/.scripts/config/insert_zm_gr7_revision_into_channel_module.sh
-
-# set coach_content flag to true on all coach professional development content
-~/.kolibri_helper_scripts/channel_setup/set_coach_content.sh

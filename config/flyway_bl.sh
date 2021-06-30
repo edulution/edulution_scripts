@@ -9,7 +9,7 @@ function flyway_bl(){
 	# Switch to baseline testing directory
 	cd $BL_DIR || exit
 	# Reset the code to match the remote branch
-	git reset --hard origin/zambia
+	git reset --hard origin/south_africa
 
 	# path to migrations for baseline testing database
 	BL_SQL_PATH=$BL_DIR/migrations
@@ -25,7 +25,7 @@ function flyway_bl(){
 	sudo flyway -locations="filesystem:$BL_SQL_PATH" -url=jdbc:postgresql://$BASELINE_DATABASE_HOST:$BASELINE_DATABASE_PORT/$BASELINE_DATABASE_NAME -user=$BASELINE_DATABASE_USER  -password=$BASELINE_DATABASE_PASSWORD "$1"
 
 	# Reset the code to match the remote branch once again
-	git reset --hard origin/zambia
+	git reset --hard origin/south_africa
 	# switch to the home directory or exit
 	cd || exit
 }
