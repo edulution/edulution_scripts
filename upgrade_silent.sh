@@ -60,3 +60,4 @@ fi
 
 # Add any other scripts you would like to run below this line
 ###################
+~/.scripts/config/add_pgtune_settings.sh
