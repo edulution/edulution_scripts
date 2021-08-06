@@ -60,3 +60,6 @@ fi
 # Add any other scripts you would like to run below this line
 ###################
 ~/.scripts/config/add_pgtune_settings.sh
+
+# Delete learner activity for all learners except grade 7
+python ~/.kolibri_helper_scripts/delete_activity_EZL.py
