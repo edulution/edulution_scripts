@@ -63,3 +63,6 @@ fi
 
 # Delete learner activity for all learners except grade 7
 python ~/.kolibri_helper_scripts/delete_activity_EZL.py
+
+# Do channel subscriptions
+~/.kolibri_helper_scripts/channel_setup/insert_channel_subscriptions.sh
