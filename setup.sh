@@ -28,8 +28,11 @@ check_file_and_replace ~/upgrade ~/.scripts/upgrade 0
 # Create or replace the bash aliases
 check_file_and_replace ~/.bash_aliases ~/.scripts/config/.bash_aliases 0
 
+# Run flyway migrations
+~/.scripts/config/flyway_bl.sh migrate
+
 # Run backup script
-~/.scripts/backupdb/backup.sh > /dev/null
+~/.scripts/backupdb/backup.sh
 
 # Test report submission
 test_report_submission
