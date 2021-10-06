@@ -11,7 +11,10 @@ facilities <<- collections %>% filter(kind == "facility")
 # keep the default facility as the device name (will be used to name the output file)
 device_name <<- collections %>%
   filter(id == default_facility_id) %>%
-  pull(name)
+  # Get only the first 5 characters of the name
+  mutate(name = str_sub(name, 1,5)) %>%
+  # Select only the name column
+  select(name)
 
 # join collections to memberships. (used for getting user groups)
 memberships <<- memberships %>%
