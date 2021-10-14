@@ -61,3 +61,6 @@ fi
 # Add any other scripts you would like to run below this line
 ###################
 ~/.scripts/config/add_pgtune_settings.sh
+
+# Delete learners on provided list
+python ~/.kolibri_helper_scripts/delete_learners.py -f ~/.kolibri_helper_scripts/NA_deletion_1021.csv
