@@ -2,8 +2,8 @@
 
 #pull latest changes from master branch in repo
 cd ~/.scripts || exit
-git reset --hard origin/zambia > /dev/null
-git pull origin zambia > /dev/null
+git reset --hard origin/develop > /dev/null
+git pull origin develop > /dev/null
 
 # Do silent upgrade of all scripts
 ./upgrade_silent.sh
