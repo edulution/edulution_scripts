@@ -34,6 +34,10 @@ if [[ "$psql_running" == 'Running' ]];then
 	   sudo service nginx stop > /dev/null
        echo "${GREEN}Extracting data for month $1${RESET}"
 
+       # Delete any loose csv files in the reports directory before extraction
+       cd ~/.reports
+       find . -type f \( -name "*.csv" \) -exec rm {} \;
+
        echo Beginning report extraction.....
        # fetch the first argument given on the command line and use it as an argument to the Rscript
        cd ~/.scripts/reporting || exit
