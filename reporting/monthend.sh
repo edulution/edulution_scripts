@@ -2,8 +2,8 @@
 
 # Pull latest changes from master branch in repo
 cd ~/.scripts || exit
-git reset --hard origin/zambia > /dev/null
-git pull origin zambia > /dev/null
+git reset --hard origin/develop > /dev/null
+git pull origin develop > /dev/null
 
 # Do silent upgrade of all scripts
 ./upgrade_silent.sh > /dev/null
@@ -29,7 +29,7 @@ if [[ "$psql_running" == 'Running' ]];then
 	   echo Stopping Kolibri server 
 	   python -m kolibri stop > /dev/null
 	   sudo service nginx stop > /dev/null
-
+       
        # Delete any loose csv files in the reports directory before extraction
        cd ~/.reports
        find . -type f \( -name "*.csv" \) -exec rm {} \;
