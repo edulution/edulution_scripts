@@ -1,5 +1,8 @@
 suppressMessages(library(DBI))
-suppressMessages(library(RPostgreSQL))
+suppressMessages(library(pool))
+suppressMessages(library(dplyr))
+suppressMessages(library(dbplyr))
+suppressMessages(library(RPostgres))
 
 # Get database credentials from environment variables
 db_name <- Sys.getenv("KOLIBRI_DATABASE_NAME")
@@ -9,8 +12,8 @@ db_passwd <- Sys.getenv("KOLIBRI_DATABASE_PASSWORD")
 db_port <- Sys.getenv("KOLIBRI_DATABASE_PORT")
 
 # connect to Kolibri database
-pg <- dbDriver("PostgreSQL")
-conn <- dbConnect(
+pg <- RPostgres::Postgres()
+conn <- dbPool(
   pg,
   dbname = db_name,
   host = db_host,
