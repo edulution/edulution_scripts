@@ -23,33 +23,54 @@ conn <- dbPool(
 )
 
 # facilityysers
-facilityusers <- dbGetQuery(conn, "SELECT * FROM kolibriauth_facilityuser")
+facilityusers <- conn %>%
+  tbl("kolibriauth_facilityuser") %>%
+  collect()
 
 # collections
-collections <- dbGetQuery(conn, "SELECT * FROM kolibriauth_collection")
+collections <- conn %>%
+  tbl("kolibriauth_collection") %>%
+  collect()
 
 # memberships
-memberships <- dbGetQuery(conn, "SELECT * FROM kolibriauth_membership")
+memberships <- conn %>%
+  tbl("kolibriauth_membership") %>%
+  collect()
 
 # roles
-roles <- dbGetQuery(conn, "SELECT * FROM kolibriauth_role")
+roles <- conn %>%
+  tbl("kolibriauth_role") %>%
+  collect()
 
 # get the default facility id and from it get the device name(facility name)
-default_facility_id <- dbGetQuery(conn, "SELECT default_facility_id FROM device_devicesettings")
+default_facility_id <- conn %>%
+  tbl("device_devicesettings") %>%
+  select(default_facility_id) %>%
+  collect()
 
 # get module for each channel
-channel_module <- dbGetQuery(conn, "select * from channel_module")
+channel_module <- conn %>%
+  tbl("channel_module") %>%
+  collect()
 
 # content summary logs
-content_summarylogs <- dbGetQuery(conn, "select * from logger_contentsummarylog")
+content_summarylogs <- conn %>%
+  tbl("logger_contentsummarylog") %>%
+  collect()
 
 # content session logs
-content_sessionlogs <- dbGetQuery(conn, "select * from logger_contentsessionlog")
+content_sessionlogs <- conn %>%
+  tbl("logger_contentsessionlog") %>%
+  collect()
 
 # get channel content
-channel_contents <- dbGetQuery(conn, "select * from content_contentnode")
+channel_contents <- conn %>%
+  tbl("content_contentnode") %>%
+  collect()
 
-channel_metadata <- dbGetQuery(conn, "select * from content_channelmetadata")
+channel_metadata <- conn %>%
+  tbl("content_channelmetadata") %>%
+  collect()
 
 # clean up and close database connection
-dbDisconnect(conn)
+poolClose(conn)
