@@ -1,4 +1,13 @@
-# Get total time spent by each user between month start and month end
+#' Get total time spent by each user between month start and month end
+#'
+#' @param sessionlogs A dataframe of contentsessionlogs
+#' @param lower_lim 
+#' @param upper_lim 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
   time_spent_by_user <- sessionlogs %>%
     filter(
@@ -18,7 +27,16 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
   return(time_spent_by_user)
 }
 
-# Get the number of distinct days a user logged in using the start_timestamp date only
+#' Get the number of distinct days a user logged in using the start_timestamp date only
+#'
+#' @param sessionlogs 
+#' @param lower_lim 
+#' @param upper_lim 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_logins_by_user <- function(sessionlogs, lower_lim, upper_lim) {
   logins_by_user <- sessionlogs %>%
     filter(
@@ -39,7 +57,16 @@ get_logins_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 }
 
 
-# Get the total number of completed exercises and videos between month start and month end
+#' Get the total number of completed exercises and videos between month start and month end
+#'
+#' @param sessionlogs 
+#' @param lower_lim 
+#' @param upper_lim 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_completed_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
   completed_ex_vid_count <- sessionlogs %>%
     filter(
@@ -61,7 +88,16 @@ get_completed_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
 }
 
 
-# get total time spent by channel
+#' Get total time spent by channel
+#'
+#' @param sessionlogs 
+#' @param lower_lim 
+#' @param upper_lim 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
   time_by_channel <- sessionlogs %>%
     filter(
@@ -97,7 +133,16 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 }
 
 
-# Get exercises and videos completed for each channel
+#' Get exercises and videos completed for each channel
+#'
+#' @param sessionlogs 
+#' @param lower_lim 
+#' @param upper_lim 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_ex_vid_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
   ex_vid_by_channel <- sessionlogs %>%
     filter(
@@ -131,7 +176,14 @@ get_ex_vid_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 }
 
 
-# get total_progress by channel_id for all time
+#' Get total_progress by channel_id for all time
+#'
+#' @param sessionlogs 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_prog_by_user_by_channel <- function(sessionlogs) {
   prog_by_user_by_channel <- sessionlogs %>%
     group_by(user_id, channel_id, content_id) %>%
@@ -161,7 +213,16 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
 }
 
 
-# Summary timespent and progress by topic and content kind for all time
+#' Summary timespent and progress by topic and content kind for all time
+#'
+#' @param summarylogs 
+#' @param topics 
+#' @param topic_nodes_count 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
   summary_act_by_topic <- summarylogs %>%
     left_join(
@@ -201,6 +262,17 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
 
 
 
+#' Get summary of time spent by topic for each user
+#'
+#' @param sessionlogs 
+#' @param topics 
+#' @param lower_lim 
+#' @param upper_lim 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, upper_lim) {
   month_summary_time_by_topic <- sessionlogs %>%
     filter(
@@ -239,6 +311,17 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
 
 
 
+#' Get summary of exercises done and videos watched by each user
+#'
+#' @param sessionlogs 
+#' @param topics 
+#' @param lower_lim 
+#' @param upper_lim 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_month_summary_exvid_by_topic <- function(sessionlogs, topics, lower_lim, upper_lim) {
   month_summary_exvid_by_topic <- sessionlogs %>%
     filter(
