@@ -1,5 +1,12 @@
-# Check that the resulting date after pasting 01 to the front of the input is valid
-# e.g December 2020 would be 01-12-20
+#' Check that the resulting date after pasting 01 to the front of the input is valid
+#' e.g December 2020 would be 01-12-20
+#'
+#' @param input_date 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 check_date_valid <- function(input_date) {
   regexp <- START %R%
     # starts with 01
@@ -28,35 +35,18 @@ check_date_valid <- function(input_date) {
   }
 }
 
-# helper function to get last name given a full name
-get_last_name <- function(full_name) {
-  # if the full name is blank or there is only one name
-  if (nchar(full_name) == 0 ||
-    length(strsplit(full_name, " ")[[1]]) == 1) {
-    last_name <- ""
-  }
 
-  else {
-    last_name <- paste(strsplit(full_name, " ")[[1]][-1], collapse = " ")
-  }
-  return(last_name)
-}
-
-
-# helper function to get first name given a full name
-get_first_name <- function(full_name) {
-  if (nchar(full_name) == 0 ||
-    length(strsplit(full_name, " ")[[1]]) == 1) {
-    first_name <- ""
-  }
-  else {
-    first_name <- paste(strsplit(full_name, " ")[[1]][1], collapse = " ")
-  }
-  return(toString(first_name))
-}
-
-
-# Simple function to generate file name of csv report in desired format
+#' Simple function to generate file name of csv report in desired format
+#'
+#' @param report_name 
+#' @param date 
+#' @param device_name 
+#' @param reports_dir 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 generate_filename <- function(report_name, date, device_name, reports_dir = "~/.reports/") {
   # generate file name based on name of report and date the user supplies
   # default reports dir is ~/.reports
