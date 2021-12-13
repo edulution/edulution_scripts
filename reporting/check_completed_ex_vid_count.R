@@ -1,3 +1,10 @@
+#'
+#' @param summary_df 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 check_completed_ex_vid_count <- function(summary_df) {
   # check if exercises and videos have been completed
   if (nrow(summary_df) == 0) {

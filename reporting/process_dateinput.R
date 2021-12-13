@@ -1,5 +1,12 @@
-# Turn the user date input into a named vector
-# containing year_month, month_start and month_end
+#' Turn the user date input into a named vector
+#' containing year_month, month_start and month_end
+#'
+#' @param dateinput 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 process_dateinput <- function(dateinput) {
   year_month <- dateinput
 

@@ -10,6 +10,7 @@ suppressMessages(library(tools))
 suppressMessages(library(gsubfn))
 suppressMessages(library(stringr))
 suppressMessages(library(rebus))
+suppressMessages(library(dbhelpers))
 
 # Source helper functions
 source("helpers.R")
@@ -24,7 +25,19 @@ source("process_dateinput.R")
 # Prevent displaying warning messages from script on console(errors will still show)
 options(warn = -1)
 
-# Function to get data extract only for month that user inputs
+#' Function to get data extract only for month that user inputs
+#'
+#' @param dates 
+#' @param sessionlogs 
+#' @param summarylogs 
+#' @param topics 
+#' @param device_name 
+#' @param include_coach_content 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, include_coach_content = FALSE) {
   # Get the dates needed from the dates vector supplied
   year_month <- dates$year_month

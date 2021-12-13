@@ -1,4 +1,14 @@
-# Check if session logs exist for the dates supplied, and for all time
+#' Check if session logs exist for the dates supplied, and for all time
+#'
+#' @param sessionlogs 
+#' @param dates 
+#' @param device_name 
+#' @param all_time 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = F) {
   year_month <- dates$year_month
   month_start <- dates$month_start

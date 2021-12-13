@@ -19,7 +19,14 @@ suppressMessages(library(stringr))
 suppressMessages(library(rebus))
 
 
-# Function to get all data in db from beginning of time until month that user specifies
+#' Function to get all data in db from beginning of time until month that user specifies
+#'
+#' @param year_month 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 alldata <- function(year_month) {
   # with user input from command line, create complete date by prefixing with 01
   upper_limit <- paste("01-", year_month, sep = "")
