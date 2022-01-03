@@ -90,9 +90,6 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
     month_end
   )
 
-  # change the column names to be the name of the channel + _progress
-  # names(prog_by_user_by_channel) <- c("user_id",recode(names(prog_by_user_by_channel)[-1],!!!course_name_id_progress))
-
   # Join all of the transformations together by user_id to make a complete report
   rpt <- users %>%
     left_join(time_spent_by_user, by = c("id" = "user_id")) %>%
@@ -103,21 +100,19 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
     left_join(ex_vid_by_channel, by = c("id" = "user_id")) %>%
     left_join(month_summary_exvid_by_topic, by = c("id" = "user_id")) %>%
     left_join(month_summary_time_by_topic, by = c("id" = "user_id")) %>%
-    # add month active, module, and centre by mutation
+    # Add new columns
     mutate(
       month_active = ifelse(total_hours > 0, 1, 0),
-      module = rep("numeracy")
-    ) %>%
-    # Set total exercises and total videos to 0 if total hours is 0
-    mutate(total_exercises = replace(total_exercises, total_hours == 0, 0)) %>%
-    mutate(
+      module = rep("numeracy"),
+      # Set total exercises and total videos to 0 if total hours is 0
+      total_exercises = replace(total_exercises, total_hours == 0, 0),
       total_videos = replace(total_videos, total_hours == 0, 0),
+      # Derive the first name and last name columns using helper functions
+      first_name = dbhelpers::get_first_name(full_name),
+      last_name = dbhelpers::get_last_name(full_name),
+      # Format the month end column into a string in the form YYYY-MM-DD
       month_end = rep(strftime(month_end, "%Y-%m-%d"))
     )
-
-  # Derive the first name and last name columns using helper functions
-  rpt$first_name <- sapply(rpt$full_name, get_first_name)
-  rpt$last_name <- sapply(rpt$full_name, get_last_name)
 
   # Convert id column from uuid to character string
   rpt <- rpt %>%
@@ -154,6 +149,7 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
   #return(rpt)
 }
 
+# Get user input from the command-line
 input <- commandArgs(TRUE)
 
 # Process the user input and get a vector of dates
