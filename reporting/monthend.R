@@ -92,16 +92,16 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
 
   # Join all of the transformations together by user_id to make a complete report
   rpt <- users %>%
-    left_join(time_spent_by_user, by = c("id" = "user_id")) %>%
-    left_join(completed_ex_vid_count, by = c("id" = "user_id")) %>%
-    left_join(logins_by_user, by = c("id" = "user_id")) %>%
-    left_join(time_by_channel, by = c("id" = "user_id")) %>%
-    left_join(prog_by_user_by_channel, by = c("id" = "user_id")) %>%
-    left_join(ex_vid_by_channel, by = c("id" = "user_id")) %>%
-    left_join(month_summary_exvid_by_topic, by = c("id" = "user_id")) %>%
-    left_join(month_summary_time_by_topic, by = c("id" = "user_id")) %>%
+    dplyr::left_join(time_spent_by_user, by = c("id" = "user_id")) %>%
+    dplyr::left_join(completed_ex_vid_count, by = c("id" = "user_id")) %>%
+    dplyr::left_join(logins_by_user, by = c("id" = "user_id")) %>%
+    dplyr::left_join(time_by_channel, by = c("id" = "user_id")) %>%
+    dplyr::left_join(prog_by_user_by_channel, by = c("id" = "user_id")) %>%
+    dplyr::left_join(ex_vid_by_channel, by = c("id" = "user_id")) %>%
+    dplyr::left_join(month_summary_exvid_by_topic, by = c("id" = "user_id")) %>%
+    dplyr::left_join(month_summary_time_by_topic, by = c("id" = "user_id")) %>%
     # Add new columns
-    mutate(
+    dplyr::mutate(
       month_active = ifelse(total_hours > 0, 1, 0),
       module = rep("numeracy"),
       # Set total exercises and total videos to 0 if total hours is 0
@@ -116,9 +116,9 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
 
   # Convert id column from uuid to character string
   rpt <- rpt %>%
-    mutate(id = str_replace_all(id, "-", "")) %>%
+    dplyr::mutate(id = str_replace_all(id, "-", "")) %>%
     # Reorder columns. put familiar columns first
-    select(
+    dplyr::select(
       id,
       first_name,
       last_name,
