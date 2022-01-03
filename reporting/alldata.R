@@ -26,7 +26,6 @@ suppressMessages(library(rebus))
 #' @return
 #' @export
 #'
-#' @examples
 alldata <- function(year_month) {
   # with user input from command line, create complete date by prefixing with 01
   upper_limit <- paste("01-", year_month, sep = "")
