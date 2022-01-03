@@ -23,52 +23,52 @@ conn <- dbPool(
 )
 
 # facilityysers
-facilityusers <- conn %>%
+facilityusers <<- conn %>%
   tbl("kolibriauth_facilityuser") %>%
   collect()
 
 # collections
-collections <- conn %>%
+collections <<- conn %>%
   tbl("kolibriauth_collection") %>%
   collect()
 
 # memberships
-memberships <- conn %>%
+memberships <<- conn %>%
   tbl("kolibriauth_membership") %>%
   collect()
 
 # roles
-roles <- conn %>%
+roles <<- conn %>%
   tbl("kolibriauth_role") %>%
   collect()
 
 # get the default facility id and from it get the device name(facility name)
-default_facility_id <- conn %>%
+default_facility_id <<- conn %>%
   tbl("device_devicesettings") %>%
   select(default_facility_id) %>%
   collect()
 
 # get module for each channel
-channel_module <- conn %>%
+channel_module <<- conn %>%
   tbl("channel_module") %>%
   collect()
 
 # content summary logs
-content_summarylogs <- conn %>%
+content_summarylogs <<- conn %>%
   tbl("logger_contentsummarylog") %>%
   collect()
 
 # content session logs
-content_sessionlogs <- conn %>%
+content_sessionlogs <<- conn %>%
   tbl("logger_contentsessionlog") %>%
   collect()
 
 # get channel content
-channel_contents <- conn %>%
+channel_contents <<- conn %>%
   tbl("content_contentnode") %>%
   collect()
 
-channel_metadata <- conn %>%
+channel_metadata <<- conn %>%
   tbl("content_channelmetadata") %>%
   collect()
 
