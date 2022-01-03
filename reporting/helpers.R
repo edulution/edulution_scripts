@@ -1,12 +1,11 @@
 #' Check that the resulting date after pasting 01 to the front of the input is valid
 #' e.g December 2020 would be 01-12-20
 #'
-#' @param input_date 
+#' @param input_date The data supplied, usually from command line input
 #'
-#' @return
+#' @return None. A success message is printed to the screen confirming the date is valid, or function execution is halted if it is not
 #' @export
 #'
-#' @examples
 check_date_valid <- function(input_date) {
   regexp <- START %R%
     # starts with 01
@@ -36,29 +35,29 @@ check_date_valid <- function(input_date) {
 }
 
 
-#' Simple function to generate file name of csv report in desired format
+#' Generate file name of a report in desired format
 #'
-#' @param report_name 
-#' @param date 
-#' @param device_name 
-#' @param reports_dir 
+#' @param report_name Name of the report
+#' @param date The date of the report
+#' @param device_name The name of the device the report is coming from
+#' @param reports_dir The directory in which reports are stored. Default is .reports folder in the home directory
+#' @param file_extension The file extension for the report. Default is ".csv"
+#' @param module The module for which the report is for. Default is "_numeracy_"
+#' @param separator The directory in which reports are stored. Default is .reports folder in the home directory
 #'
-#' @return
+#' @return A vector containing the filename
 #' @export
 #'
-#' @examples
-generate_filename <- function(report_name, date, device_name, reports_dir = "~/.reports/") {
-  # generate file name based on name of report and date the user supplies
-  # default reports dir is ~/.reports
-
+generate_filename <- function(report_name, date, device_name, file_extension = ".csv", module = "_numeracy_", separator = "",reports_dir = "~/.reports/") {
+  # Derive report filename by pasting the inputs in the right order
   filename <- paste(
     reports_dir,
     report_name,
     device_name,
-    "_numeracy_",
+    module,
     date,
-    ".csv",
-    sep = ""
+    file_extension,
+    sep = separator
   )
 
   return(filename)
