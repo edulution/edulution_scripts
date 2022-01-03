@@ -12,7 +12,7 @@ suppressMessages(library(stringr))
 suppressMessages(library(rebus))
 suppressMessages(library(dbhelpers))
 
-# Source helper functions
+# Source helper functions and prerequiste data into global scope
 source("helpers.R")
 source("get_db_tables.R")
 source("preproc_tables.R")
@@ -27,17 +27,15 @@ options(warn = -1)
 
 #' Function to get data extract only for month that user inputs
 #'
-#' @param dates 
-#' @param sessionlogs 
-#' @param summarylogs 
-#' @param topics 
-#' @param device_name 
-#' @param include_coach_content 
+#' @param dates A named vector derived from the \code{process_dateinput} function, containing the start and end dates for data extraction
+#' @param sessionlogs A \code{data.frame} containing ContentSessionLogs from Kolibri
+#' @param summarylogs A \code{data.frame} containing ContentSummaryLogs from Kolibri
+#' @param topics A \code{data.frame} containing ContentNodes of kind topic from Kolibri
+#' @param device_name A vector containing the device name, derived from Collections in Kolibri
+#' @param include_coach_content A \code{boolean} representing whether or not to include activity on ContentNodes flagged as coach content in the data extraction. Default value FALSE
 #'
-#' @return
-#' @export
+#' @return A \code{data.frame} containing activity data from between the start and end dates
 #'
-#' @examples
 monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, include_coach_content = FALSE) {
   # Get the dates needed from the dates vector supplied
   year_month <- dates$year_month
