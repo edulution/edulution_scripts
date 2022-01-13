@@ -14,8 +14,10 @@ check_date_valid <- function(input_date) {
     "-" %R%
     # followed by 0 then 0-9
     # or 1 then 0-2 (01-12 are the only valid months of the year)
-    or("0" %R% char_class("0-9"),
-       "1" %R% char_class("0-2")) %R%
+    or(
+      "0" %R% char_class("0-9"),
+      "1" %R% char_class("0-2")
+    ) %R%
     # followed by "-"
     "-" %R%
     # followed by any two digits (year)
@@ -29,7 +31,7 @@ check_date_valid <- function(input_date) {
     # If the regex is not satisfied
     # Stop the program and print out an error message to the console
     stop("Please enter a valid month and year mm-yy e.g 02-17")
-  }else{
+  } else {
     print("Date is valid")
   }
 }
@@ -48,7 +50,7 @@ check_date_valid <- function(input_date) {
 #' @return A vector containing the filename
 #' @export
 #'
-generate_filename <- function(report_name, date, device_name, file_extension = ".csv", module = "_numeracy_", separator = "",reports_dir = "~/.reports/") {
+generate_filename <- function(report_name, date, device_name, file_extension = ".csv", module = "_numeracy_", separator = "", reports_dir = "~/.reports/") {
   # Derive report filename by pasting the inputs in the right order
   filename <- paste(
     reports_dir,

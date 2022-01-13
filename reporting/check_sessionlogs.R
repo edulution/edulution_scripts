@@ -1,15 +1,14 @@
+library(dbhelpers)
 #' Check if session logs exist for the dates supplied, and for all time
 #'
-#' @param sessionlogs 
-#' @param dates 
-#' @param device_name 
-#' @param all_time 
+#' @param sessionlogs
+#' @param dates
+#' @param device_name
+#' @param all_time
 #'
 #' @return
 #' @export
-#'
-#' @examples
-check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = F) {
+check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = FALSE) {
   year_month <- dates$year_month
   month_start <- dates$month_start
   month_end <- dates$month_end
@@ -33,25 +32,24 @@ check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = F) {
     )
   }
 
-  # If no session logs were found
+  # If no session logs were found,
+  # print a message to the console
+  # return the list of users with all other fields blank
   if (num_logs == 0) {
-    # print a message to the console
-    # return the list of users with all other fields blank
     system("echo No learner activity found for the dates supplied")
     system("echo Sending list of users instead")
 
     # Get the list of users
-    report <- users
-    # Add columns for first name and last name using helper functions
-    report$first_name <- sapply(report$full_name, get_first_name)
-    report$last_name <- sapply(report$full_name, get_last_name)
 
-    report <- report %>%
+    report <- users %>%
       # convert id column from uuid to character string
       mutate(id = str_replace_all(id, "-", "")) %>%
       # Add columns for month_end and device name
       # Add other required columns and set to 0
       mutate(
+        # Add columns for first name and last name using helper functions
+        first_name = dbhelpers::get_first_name(full_name),
+        last_name = dbhelpers::get_last_name(full_name),
         total_hours = 0,
         total_exercises = 0,
         total_videos = 0,

@@ -1,8 +1,8 @@
 #' Get total time spent by each user between month start and month end
 #'
 #' @param sessionlogs A dataframe of contentsessionlogs
-#' @param lower_lim 
-#' @param upper_lim 
+#' @param lower_lim
+#' @param upper_lim
 #'
 #' @return
 #' @export
@@ -29,9 +29,9 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get the number of distinct days a user logged in using the start_timestamp date only
 #'
-#' @param sessionlogs 
-#' @param lower_lim 
-#' @param upper_lim 
+#' @param sessionlogs
+#' @param lower_lim
+#' @param upper_lim
 #'
 #' @return
 #' @export
@@ -59,9 +59,9 @@ get_logins_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get the total number of completed exercises and videos between month start and month end
 #'
-#' @param sessionlogs 
-#' @param lower_lim 
-#' @param upper_lim 
+#' @param sessionlogs
+#' @param lower_lim
+#' @param upper_lim
 #'
 #' @return
 #' @export
@@ -90,9 +90,9 @@ get_completed_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get total time spent by channel
 #'
-#' @param sessionlogs 
-#' @param lower_lim 
-#' @param upper_lim 
+#' @param sessionlogs
+#' @param lower_lim
+#' @param upper_lim
 #'
 #' @return
 #' @export
@@ -106,7 +106,7 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
     ) %>%
     group_by(user_id, channel_id) %>%
     summarise(total_time = sum(time_spent) / 3600) %>%
-    pivot_wider(names_from = channel_id, values_from = total_time) %>% 
+    pivot_wider(names_from = channel_id, values_from = total_time) %>%
     rename_at(
       vars(-user_id),
       function(x) {
@@ -135,9 +135,9 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get exercises and videos completed for each channel
 #'
-#' @param sessionlogs 
-#' @param lower_lim 
-#' @param upper_lim 
+#' @param sessionlogs
+#' @param lower_lim
+#' @param upper_lim
 #'
 #' @return
 #' @export
@@ -178,7 +178,7 @@ get_ex_vid_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get total_progress by channel_id for all time
 #'
-#' @param sessionlogs 
+#' @param sessionlogs
 #'
 #' @return
 #' @export
@@ -215,9 +215,9 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
 
 #' Summary timespent and progress by topic and content kind for all time
 #'
-#' @param summarylogs 
-#' @param topics 
-#' @param topic_nodes_count 
+#' @param summarylogs
+#' @param topics
+#' @param topic_nodes_count
 #'
 #' @return
 #' @export
@@ -264,10 +264,10 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
 
 #' Get summary of time spent by topic for each user
 #'
-#' @param sessionlogs 
-#' @param topics 
-#' @param lower_lim 
-#' @param upper_lim 
+#' @param sessionlogs
+#' @param topics
+#' @param lower_lim
+#' @param upper_lim
 #'
 #' @return
 #' @export
@@ -313,10 +313,10 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
 
 #' Get summary of exercises done and videos watched by each user
 #'
-#' @param sessionlogs 
-#' @param topics 
-#' @param lower_lim 
-#' @param upper_lim 
+#' @param sessionlogs
+#' @param topics
+#' @param lower_lim
+#' @param upper_lim
 #'
 #' @return
 #' @export

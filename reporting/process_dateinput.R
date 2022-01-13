@@ -1,7 +1,7 @@
 #' Turn the user date input into a named vector
 #' containing year_month, month_start and month_end
 #'
-#' @param dateinput 
+#' @param dateinput
 #'
 #' @return
 #' @export

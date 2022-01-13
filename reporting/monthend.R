@@ -145,8 +145,6 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
   )
   system("echo Report extracted successfully!")
   quit(save = "no")
-
-  #return(rpt)
 }
 
 # Get user input from the command-line

@@ -21,10 +21,9 @@ suppressMessages(library(rebus))
 
 #' Function to get all data in db from beginning of time until month that user specifies
 #'
-#' @param year_month 
+#' @param year_month The end date of the data extraction. A string of the year and month in the form YY-MM
 #'
-#' @return
-#' @export
+#' @return A \code{data.frame} containing activity data from the beginning of time to the end date
 #'
 alldata <- function(year_month) {
   # with user input from command line, create complete date by prefixing with 01
@@ -72,9 +71,7 @@ alldata <- function(year_month) {
         total_exercises = exercise,
         total_videos = video
       )
-  }
-
-  else {
+  } else {
     completed_ex_vid_count <- completed_ex_vid_count %>%
       rename(total_exercises = exercise) %>%
       mutate(total_videos = 0)

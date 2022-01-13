@@ -12,7 +12,7 @@ facilities <<- collections %>% filter(kind == "facility")
 device_name <<- collections %>%
   filter(id == default_facility_id) %>%
   # Get only the first 5 characters of the name
-  mutate(name = str_sub(name, 1,5)) %>%
+  mutate(name = str_sub(name, 1, 5)) %>%
   # Select only the name column
   select(name)
 
