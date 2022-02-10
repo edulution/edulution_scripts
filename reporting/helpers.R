@@ -7,6 +7,7 @@
 #' @export
 #'
 check_date_valid <- function(input_date) {
+  # Regular expression to match against the input date
   regexp <- START %R%
     # starts with 01
     "01" %R%
@@ -26,9 +27,9 @@ check_date_valid <- function(input_date) {
     # end of the string
     END
 
-  # Check if the inputted date satisfies the regex
+  # Check if the inputted date satisfies the regex above
   if (!(str_detect(input_date, regexp)) | (nchar(input_date) > 8)) {
-    # If the regex is not satisfied
+    # If the regex is not satisfied or if the number of characters is less than 8
     # Stop the program and print out an error message to the console
     stop("Please enter a valid month and year mm-yy e.g 02-17")
   } else {
@@ -51,7 +52,7 @@ check_date_valid <- function(input_date) {
 #' @export
 #'
 generate_filename <- function(report_name, date, device_name, file_extension = ".csv", module = "_numeracy_", separator = "", reports_dir = "~/.reports/") {
-  # Derive report filename by pasting the inputs in the right order
+  # Derive report file name by pasting the inputs in the right order
   filename <- paste(
     reports_dir,
     report_name,
