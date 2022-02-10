@@ -1,8 +1,16 @@
-# Preprocessing of topics
-
-# Get topics from content nodes
-# Then get full contentnode information joined to channel metadata
+#' Pre-processing of topics
+#' Get topics from content nodes
+#' Then get full content node information joined to channel metadata
+#'
+#' @param contentnodes A \code{data.frame} containing all content nodes
+#' @param channelmetadata A \code{data.frame} containing all channel metadata
+#'
+#' @return A \code{data.frame} containing the topics in all channels
+#' @export
+#'
 get_topics <- function(contentnodes, channelmetadata) {
+  # Filter content nodes of type topic
+  # Where id not equal to channel_id (if id = channel_id and kind = topic, it is actually a channel)
   topics <- contentnodes %>%
     filter(
       kind == "topic",
@@ -52,7 +60,13 @@ get_topics <- function(contentnodes, channelmetadata) {
 }
 
 
-# Count of contentnodes for each topic and content kind
+#' Count of contentnodes for each topic and content kind
+#'
+#' @param topics A \code{data.frame} containing all topics, derived from get_topics function
+#'
+#' @return A \code{data.frame} containing the number of content items in each topic
+#' @export
+#'
 get_topic_nodes_count <- function(topics) {
   topic_nodes_count <- topics %>%
     filter(
@@ -68,5 +82,7 @@ get_topic_nodes_count <- function(topics) {
     )
 }
 
+# Call the functions above and save the results to variables
+# channel contents and channel_metadata expected to be in global environment
 topics <- get_topics(channel_contents, channel_metadata)
 topic_nodes_count <- get_topic_nodes_count(topics)
