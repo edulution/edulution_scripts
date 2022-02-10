@@ -1,12 +1,12 @@
 library(dbhelpers)
 #' Check if session logs exist for the dates supplied, and for all time
 #'
-#' @param sessionlogs
-#' @param dates
-#' @param device_name
-#' @param all_time
+#' @param sessionlogs A \code{data.frame} containing all session logs
+#' @param dates A named vector of dates (year_month, month_start, month_end)
+#' @param device_name A string of the device name. Required to produce a report if the script fails
+#' @param all_time A \code{logical} indicating whether or not to check session logs for all time. Default FALSe
 #'
-#' @return
+#' @return None. Success message if session logs found. Error message and terminate script if not
 #' @export
 check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = FALSE) {
   year_month <- dates$year_month
@@ -18,14 +18,14 @@ check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = FALSE)
     # If all_time is set to True, check all session logs until the month_end supplied
     num_logs <- nrow(
       sessionlogs %>%
-        filter(end_timestamp <= month_end)
+        dplyr::filter(end_timestamp <= month_end)
     )
   } else {
     # If all_time is not set
     # Get check the session logs in the dates between month start and month end
     num_logs <- nrow(
       sessionlogs %>%
-        filter(
+        dplyr::filter(
           start_timestamp >= month_start,
           end_timestamp <= month_end
         )
@@ -43,10 +43,10 @@ check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = FALSE)
 
     report <- users %>%
       # convert id column from uuid to character string
-      mutate(id = str_replace_all(id, "-", "")) %>%
+      dplyr::mutate(id = str_replace_all(id, "-", "")) %>%
       # Add columns for month_end and device name
       # Add other required columns and set to 0
-      mutate(
+      dplyr::mutate(
         # Add columns for first name and last name using helper functions
         first_name = dbhelpers::get_first_name(full_name),
         last_name = dbhelpers::get_last_name(full_name),
@@ -61,7 +61,7 @@ check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = FALSE)
       ) %>%
       # Put the columns in order
       # Familiar columns first and everything else at the end
-      select(
+      dplyr::select(
         id,
         first_name,
         last_name,
