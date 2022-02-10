@@ -13,7 +13,7 @@ db_port <- Sys.getenv("KOLIBRI_DATABASE_PORT")
 
 # connect to Kolibri database
 pg <- RPostgres::Postgres()
-conn <- dbPool(
+conn <- pool::dbPool(
   pg,
   dbname = db_name,
   host = db_host,
@@ -24,53 +24,53 @@ conn <- dbPool(
 
 # facilityysers
 facilityusers <<- conn %>%
-  tbl("kolibriauth_facilityuser") %>%
-  collect()
+  dplyr::tbl("kolibriauth_facilityuser") %>%
+  dplyr::collect()
 
 # collections
 collections <<- conn %>%
-  tbl("kolibriauth_collection") %>%
-  collect()
+  dplyr::tbl("kolibriauth_collection") %>%
+  dplyr::collect()
 
 # memberships
 memberships <<- conn %>%
-  tbl("kolibriauth_membership") %>%
-  collect()
+  dplyr::tbl("kolibriauth_membership") %>%
+  dplyr::collect()
 
 # roles
 roles <<- conn %>%
-  tbl("kolibriauth_role") %>%
-  collect()
+  dplyr::tbl("kolibriauth_role") %>%
+  dplyr::collect()
 
 # get the default facility id and from it get the device name(facility name)
 default_facility_id <<- conn %>%
-  tbl("device_devicesettings") %>%
-  select(default_facility_id) %>%
-  collect()
+  dplyr::tbl("device_devicesettings") %>%
+  dplyr::select(default_facility_id) %>%
+  dplyr::collect()
 
 # get module for each channel
 channel_module <<- conn %>%
-  tbl("channel_module") %>%
-  collect()
+  dplyr::tbl("channel_module") %>%
+  dplyr::collect()
 
 # content summary logs
 content_summarylogs <<- conn %>%
-  tbl("logger_contentsummarylog") %>%
-  collect()
+  dplyr::tbl("logger_contentsummarylog") %>%
+  dplyr::collect()
 
 # content session logs
 content_sessionlogs <<- conn %>%
-  tbl("logger_contentsessionlog") %>%
-  collect()
+  dplyr::tbl("logger_contentsessionlog") %>%
+  dplyr::collect()
 
 # get channel content
 channel_contents <<- conn %>%
-  tbl("content_contentnode") %>%
-  collect()
+  dplyr::tbl("content_contentnode") %>%
+  dplyr::collect()
 
 channel_metadata <<- conn %>%
-  tbl("content_channelmetadata") %>%
-  collect()
+  dplyr::tbl("content_channelmetadata") %>%
+  dplyr::collect()
 
 # clean up and close database connection
-poolClose(conn)
+pool::poolClose(conn)
