@@ -47,7 +47,7 @@ if (nrow(users) == 0) {
     dplyr::rename(centre = name) %>%
     # Convert the last login to the nearest timezone for the centre location
     dplyr::mutate(
-      last_login = lubridate::ymd_hms(last_login) %>% lubridate::with_tz("Africa/Lusaka")
+      last_login = lubridate::ymd_hms(last_login) %>% lubridate::with_tz("Africa/Windhoek")
     ) %>%
     dplyr::select(
       id,
