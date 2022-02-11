@@ -62,3 +62,5 @@ fi
 ###################
 ~/.scripts/config/add_pgtune_settings.sh
 
+# Do channel subscriptions 
+~/.kolibri_helper_scripts/channel_setup/insert_channel_subscriptions.sh

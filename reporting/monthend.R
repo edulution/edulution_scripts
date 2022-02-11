@@ -10,8 +10,9 @@ suppressMessages(library(tools))
 suppressMessages(library(gsubfn))
 suppressMessages(library(stringr))
 suppressMessages(library(rebus))
+suppressMessages(library(dbhelpers))
 
-# Source helper functions
+# Source helper functions and prerequiste data into global scope
 source("helpers.R")
 source("get_db_tables.R")
 source("preproc_tables.R")
@@ -24,7 +25,17 @@ source("process_dateinput.R")
 # Prevent displaying warning messages from script on console(errors will still show)
 options(warn = -1)
 
-# Function to get data extract only for month that user inputs
+#' Function to get data extract only for month that user inputs
+#'
+#' @param dates A named vector derived from the \code{process_dateinput} function, containing the start and end dates for data extraction
+#' @param sessionlogs A \code{data.frame} containing ContentSessionLogs from Kolibri
+#' @param summarylogs A \code{data.frame} containing ContentSummaryLogs from Kolibri
+#' @param topics A \code{data.frame} containing ContentNodes of kind topic from Kolibri
+#' @param device_name A vector containing the device name, derived from Collections in Kolibri
+#' @param include_coach_content A \code{boolean} representing whether or not to include activity on ContentNodes flagged as coach content in the data extraction. Default value FALSE
+#'
+#' @return A \code{data.frame} containing activity data from between the start and end dates
+#'
 monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, include_coach_content = FALSE) {
   # Get the dates needed from the dates vector supplied
   year_month <- dates$year_month
@@ -79,40 +90,35 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
     month_end
   )
 
-  # change the column names to be the name of the channel + _progress
-  # names(prog_by_user_by_channel) <- c("user_id",recode(names(prog_by_user_by_channel)[-1],!!!course_name_id_progress))
-
   # Join all of the transformations together by user_id to make a complete report
   rpt <- users %>%
-    left_join(time_spent_by_user, by = c("id" = "user_id")) %>%
-    left_join(completed_ex_vid_count, by = c("id" = "user_id")) %>%
-    left_join(logins_by_user, by = c("id" = "user_id")) %>%
-    left_join(time_by_channel, by = c("id" = "user_id")) %>%
-    left_join(prog_by_user_by_channel, by = c("id" = "user_id")) %>%
-    left_join(ex_vid_by_channel, by = c("id" = "user_id")) %>%
-    left_join(month_summary_exvid_by_topic, by = c("id" = "user_id")) %>%
-    left_join(month_summary_time_by_topic, by = c("id" = "user_id")) %>%
-    # add month active, module, and centre by mutation
-    mutate(
+    dplyr::left_join(time_spent_by_user, by = c("id" = "user_id")) %>%
+    dplyr::left_join(completed_ex_vid_count, by = c("id" = "user_id")) %>%
+    dplyr::left_join(logins_by_user, by = c("id" = "user_id")) %>%
+    dplyr::left_join(time_by_channel, by = c("id" = "user_id")) %>%
+    dplyr::left_join(prog_by_user_by_channel, by = c("id" = "user_id")) %>%
+    dplyr::left_join(ex_vid_by_channel, by = c("id" = "user_id")) %>%
+    dplyr::left_join(month_summary_exvid_by_topic, by = c("id" = "user_id")) %>%
+    dplyr::left_join(month_summary_time_by_topic, by = c("id" = "user_id")) %>%
+    # Add new columns
+    dplyr::mutate(
       month_active = ifelse(total_hours > 0, 1, 0),
-      module = rep("numeracy")
-    ) %>%
-    # Set total exercises and total videos to 0 if total hours is 0
-    mutate(total_exercises = replace(total_exercises, total_hours == 0, 0)) %>%
-    mutate(
+      module = rep("numeracy"),
+      # Set total exercises and total videos to 0 if total hours is 0
+      total_exercises = replace(total_exercises, total_hours == 0, 0),
       total_videos = replace(total_videos, total_hours == 0, 0),
+      # Derive the first name and last name columns using helper functions
+      first_name = dbhelpers::get_first_name(full_name),
+      last_name = dbhelpers::get_last_name(full_name),
+      # Format the month end column into a string in the form YYYY-MM-DD
       month_end = rep(strftime(month_end, "%Y-%m-%d"))
     )
 
-  # Derive the first name and last name columns using helper functions
-  rpt$first_name <- sapply(rpt$full_name, get_first_name)
-  rpt$last_name <- sapply(rpt$full_name, get_last_name)
-
   # Convert id column from uuid to character string
   rpt <- rpt %>%
-    mutate(id = str_replace_all(id, "-", "")) %>%
+    dplyr::mutate(id = str_replace_all(id, "-", "")) %>%
     # Reorder columns. put familiar columns first
-    select(
+    dplyr::select(
       id,
       first_name,
       last_name,
@@ -139,10 +145,9 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
   )
   system("echo Report extracted successfully!")
   quit(save = "no")
-
-  #return(rpt)
 }
 
+# Get user input from the command-line
 input <- commandArgs(TRUE)
 
 # Process the user input and get a vector of dates

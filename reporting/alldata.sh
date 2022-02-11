@@ -30,8 +30,6 @@ if [[ "$psql_running" == 'Running' ]];then
      python -m kolibri stop > /dev/null
      sudo service nginx stop > /dev/null
        echo "${GREEN}Extracting data for month $1${RESET}"
-       #echo Checking and fixing students with abnormal hours
-       #~/.scripts/reporting/fix_crazy/fixcrazy
        echo Beginning report extraction.....
        # fetch the first argument given on the command line and use it as an argument to the Rscript
        Rscript ~/.scripts/reporting/alldata.R "$1"
@@ -42,6 +40,6 @@ if [[ "$psql_running" == 'Running' ]];then
        exit 1 
    fi
 else
-	echo "${RED}${BOLD}Error. Report NOT extracted. Please contact tech support 1>&2${RESET}"
-	exit 1
+    echo "${RED}${BOLD}Error. Report NOT extracted. Please contact tech support 1>&2${RESET}"
+    exit 1
 fi

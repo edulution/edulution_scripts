@@ -26,12 +26,12 @@ fi
 psql_running=$( check_process_running postgresql )
 
 if [[ "$psql_running" == 'Running' ]];then
-	if (echo "$1" |\
+    if (echo "$1" |\
     grep -E '^(1[0-2]|0[0-9])[-/][0-9]{2}' > /dev/null
-	); then
-	   echo Stopping Kolibri server 
-	   python -m kolibri stop > /dev/null
-	   sudo service nginx stop > /dev/null
+    ); then
+       echo Stopping Kolibri server 
+       python -m kolibri stop > /dev/null
+       sudo service nginx stop > /dev/null
        echo "${GREEN}Extracting data for month $1${RESET}"
 
        # Delete any loose csv files in the reports directory before extraction
@@ -56,6 +56,6 @@ if [[ "$psql_running" == 'Running' ]];then
        exit 1 
    fi
 else
-	echo "${RED}${BOLD}Error. Report NOT extracted. Please contact tech support ${RESET}" 1>&2
-	exit 1
+    echo "${RED}${BOLD}Error. Report NOT extracted. Please contact tech support ${RESET}" 1>&2
+    exit 1
 fi

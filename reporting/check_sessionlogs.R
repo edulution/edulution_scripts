@@ -1,5 +1,14 @@
-# Check if session logs exist for the dates supplied, and for all time
-check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = F) {
+library(dbhelpers)
+#' Check if session logs exist for the dates supplied, and for all time
+#'
+#' @param sessionlogs A \code{data.frame} containing all session logs
+#' @param dates A named vector of dates (year_month, month_start, month_end)
+#' @param device_name A string of the device name. Required to produce a report if the script fails
+#' @param all_time A \code{logical} indicating whether or not to check session logs for all time. Default FALSe
+#'
+#' @return None. Success message if session logs found. Error message and terminate script if not
+#' @export
+check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = FALSE) {
   year_month <- dates$year_month
   month_start <- dates$month_start
   month_end <- dates$month_end
@@ -9,39 +18,38 @@ check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = F) {
     # If all_time is set to True, check all session logs until the month_end supplied
     num_logs <- nrow(
       sessionlogs %>%
-        filter(end_timestamp <= month_end)
+        dplyr::filter(end_timestamp <= month_end)
     )
   } else {
     # If all_time is not set
     # Get check the session logs in the dates between month start and month end
     num_logs <- nrow(
       sessionlogs %>%
-        filter(
+        dplyr::filter(
           start_timestamp >= month_start,
           end_timestamp <= month_end
         )
     )
   }
 
-  # If no session logs were found
+  # If no session logs were found,
+  # print a message to the console
+  # return the list of users with all other fields blank
   if (num_logs == 0) {
-    # print a message to the console
-    # return the list of users with all other fields blank
     system("echo No learner activity found for the dates supplied")
     system("echo Sending list of users instead")
 
     # Get the list of users
-    report <- users
-    # Add columns for first name and last name using helper functions
-    report$first_name <- sapply(report$full_name, get_first_name)
-    report$last_name <- sapply(report$full_name, get_last_name)
 
-    report <- report %>%
+    report <- users %>%
       # convert id column from uuid to character string
-      mutate(id = str_replace_all(id, "-", "")) %>%
+      dplyr::mutate(id = str_replace_all(id, "-", "")) %>%
       # Add columns for month_end and device name
       # Add other required columns and set to 0
-      mutate(
+      dplyr::mutate(
+        # Add columns for first name and last name using helper functions
+        first_name = dbhelpers::get_first_name(full_name),
+        last_name = dbhelpers::get_last_name(full_name),
         total_hours = 0,
         total_exercises = 0,
         total_videos = 0,
@@ -53,7 +61,7 @@ check_sessionlogs <- function(sessionlogs, dates, device_name, all_time = F) {
       ) %>%
       # Put the columns in order
       # Familiar columns first and everything else at the end
-      select(
+      dplyr::select(
         id,
         first_name,
         last_name,
