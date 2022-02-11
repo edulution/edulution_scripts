@@ -1,5 +1,8 @@
 suppressMessages(library(DBI))
-suppressMessages(library(RPostgreSQL))
+suppressMessages(library(pool))
+suppressMessages(library(dplyr))
+suppressMessages(library(dbplyr))
+suppressMessages(library(RPostgres))
 
 # Get database credentials from environment variables
 db_name <- Sys.getenv("KOLIBRI_DATABASE_NAME")
@@ -9,8 +12,8 @@ db_passwd <- Sys.getenv("KOLIBRI_DATABASE_PASSWORD")
 db_port <- Sys.getenv("KOLIBRI_DATABASE_PORT")
 
 # connect to Kolibri database
-pg <- dbDriver("PostgreSQL")
-conn <- dbConnect(
+pg <- RPostgres::Postgres()
+conn <- pool::dbPool(
   pg,
   dbname = db_name,
   host = db_host,
@@ -20,33 +23,54 @@ conn <- dbConnect(
 )
 
 # facilityysers
-facilityusers <- dbGetQuery(conn, "SELECT * FROM kolibriauth_facilityuser")
+facilityusers <<- conn %>%
+  dplyr::tbl("kolibriauth_facilityuser") %>%
+  dplyr::collect()
 
 # collections
-collections <- dbGetQuery(conn, "SELECT * FROM kolibriauth_collection")
+collections <<- conn %>%
+  dplyr::tbl("kolibriauth_collection") %>%
+  dplyr::collect()
 
 # memberships
-memberships <- dbGetQuery(conn, "SELECT * FROM kolibriauth_membership")
+memberships <<- conn %>%
+  dplyr::tbl("kolibriauth_membership") %>%
+  dplyr::collect()
 
 # roles
-roles <- dbGetQuery(conn, "SELECT * FROM kolibriauth_role")
+roles <<- conn %>%
+  dplyr::tbl("kolibriauth_role") %>%
+  dplyr::collect()
 
 # get the default facility id and from it get the device name(facility name)
-default_facility_id <- dbGetQuery(conn, "SELECT default_facility_id FROM device_devicesettings")
+default_facility_id <<- conn %>%
+  dplyr::tbl("device_devicesettings") %>%
+  dplyr::select(default_facility_id) %>%
+  dplyr::collect()
 
 # get module for each channel
-channel_module <- dbGetQuery(conn, "select * from channel_module")
+channel_module <<- conn %>%
+  dplyr::tbl("channel_module") %>%
+  dplyr::collect()
 
 # content summary logs
-content_summarylogs <- dbGetQuery(conn, "select * from logger_contentsummarylog")
+content_summarylogs <<- conn %>%
+  dplyr::tbl("logger_contentsummarylog") %>%
+  dplyr::collect()
 
 # content session logs
-content_sessionlogs <- dbGetQuery(conn, "select * from logger_contentsessionlog")
+content_sessionlogs <<- conn %>%
+  dplyr::tbl("logger_contentsessionlog") %>%
+  dplyr::collect()
 
 # get channel content
-channel_contents <- dbGetQuery(conn, "select * from content_contentnode")
+channel_contents <<- conn %>%
+  dplyr::tbl("content_contentnode") %>%
+  dplyr::collect()
 
-channel_metadata <- dbGetQuery(conn, "select * from content_channelmetadata")
+channel_metadata <<- conn %>%
+  dplyr::tbl("content_channelmetadata") %>%
+  dplyr::collect()
 
 # clean up and close database connection
-dbDisconnect(conn)
+pool::poolClose(conn)

@@ -2,8 +2,8 @@
 
 #pull latest changes from master branch in repo
 cd ~/.scripts || exit
-git reset --hard origin/south_africa > /dev/null
-git pull origin south_africa > /dev/null
+git reset --hard origin/develop > /dev/null
+git pull origin develop > /dev/null
 
 # Do silent upgrade of all scripts
 ./upgrade_silent.sh
@@ -42,6 +42,6 @@ if [[ "$psql_running" == 'Running' ]];then
        exit 1 
    fi
 else
-	echo "${RED}${BOLD}Error. Report NOT extracted. Please contact tech support 1>&2${RESET}"
-	exit 1
+    echo "${RED}${BOLD}Error. Report NOT extracted. Please contact tech support 1>&2${RESET}"
+    exit 1
 fi
