@@ -1,5 +1,6 @@
 suppressMessages(library(plyr))
 suppressMessages(library(dplyr))
+suppressMessages(library(lubridate))
 
 # get the default facility id and from it get the device name(facility name)
 default_facility_id <<- default_facility_id %>%
@@ -44,6 +45,8 @@ if (nrow(users) == 0) {
     # then drop the facility_id column
     dplyr::left_join(facilities, by = c("facility_id" = "id")) %>%
     dplyr::rename(centre = name) %>%
+    # Convert the last login to the timezone specific to the region
+    dplyr::mutate(last_login = lubridate::ymd_hms(last_login) %>% lubridate::with_tz("Africa/Lusaka")) %>%
     dplyr::select(
       id,
       full_name,
