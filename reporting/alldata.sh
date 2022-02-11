@@ -2,8 +2,8 @@
 
 #pull latest changes from master branch in repo
 cd ~/.scripts || exit
-git reset --hard origin/develop > /dev/null
-git pull origin develop > /dev/null
+git reset --hard origin/south_africa > /dev/null
+git pull origin south_africa > /dev/null
 
 # Do silent upgrade of all scripts
 ./upgrade_silent.sh
@@ -30,8 +30,6 @@ if [[ "$psql_running" == 'Running' ]];then
      python -m kolibri stop > /dev/null
      sudo service nginx stop > /dev/null
        echo "${GREEN}Extracting data for month $1${RESET}"
-       #echo Checking and fixing students with abnormal hours
-       #~/.scripts/reporting/fix_crazy/fixcrazy
        echo Beginning report extraction.....
        # fetch the first argument given on the command line and use it as an argument to the Rscript
        Rscript ~/.scripts/reporting/alldata.R "$1"
