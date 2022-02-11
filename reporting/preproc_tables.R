@@ -45,8 +45,11 @@ if (nrow(users) == 0) {
     # then drop the facility_id column
     dplyr::left_join(facilities, by = c("facility_id" = "id")) %>%
     dplyr::rename(centre = name) %>%
-    # Convert the last login to the timezone specific to the region
-    dplyr::mutate(last_login = lubridate::ymd_hms(last_login) %>% lubridate::with_tz("Africa/Lusaka")) %>%
+    # Convert the last login and date joined to the nearest timezone for the centre location
+    dplyr::mutate(
+      last_login = lubridate::ymd_hms(last_login) %>% lubridate::with_tz("Africa/Lusaka"),
+      date_joined = lubridate::ymd_hms(date_joined) %>% lubridate::with_tz("Africa/Lusaka")
+    ) %>%
     dplyr::select(
       id,
       full_name,
