@@ -23,7 +23,7 @@ check_completed_ex_vid_count <- function(summary_df) {
     # transpose the rows into columns by user_id
     # exercise and video counts become columns
     summary_df <- summary_df %>%
-      dplyr::pivot_wider(names_from = kind, values_from = count)
+      tidyr::pivot_wider(names_from = kind, values_from = count)
 
     # rename the columns to read total_exercises, total_videos
 
