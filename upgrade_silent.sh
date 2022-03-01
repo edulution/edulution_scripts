@@ -63,3 +63,6 @@ fi
 
 # Do channel subscriptions 
 ~/.kolibri_helper_scripts/channel_setup/insert_channel_subscriptions.sh
+
+# Reinstall dbhelpers package
+~/.scripts/config/reinstall_dbhelpers_package.sh
