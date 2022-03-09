@@ -12,17 +12,17 @@ get_topics <- function(contentnodes, channelmetadata) {
   # Filter content nodes of type topic
   # Where id not equal to channel_id (if id = channel_id and kind = topic, it is actually a channel)
   topics <- contentnodes %>%
-    filter(
+    dplyr::filter(
       kind == "topic",
       id != channel_id
     ) %>%
-    rename(
+    dplyr::rename(
       # Rename the content_id to topic_id
       topic_id = id,
       # Rename the title of the node to topic_title
       topic_title = title
     ) %>%
-    select(
+    dplyr::select(
       # Select the topic_id, topic_title, and channel_id
       topic_id,
       topic_title,
@@ -30,24 +30,24 @@ get_topics <- function(contentnodes, channelmetadata) {
     ) %>%
     # Create a column called channel_topic
     # consists of channel_id and topic_id separated by underscore
-    mutate(channel_topic = paste0(channel_id, "_", topic_id))
+    dplyr::mutate(channel_topic = paste0(channel_id, "_", topic_id))
 
   # Join contentnodes and channelmetadata to topics
   topics_full <- contentnodes %>%
-    left_join(
+    dplyr::left_join(
       topics,
       c("parent_id" = "topic_id", "channel_id")
     ) %>%
-    left_join(
+    dplyr::left_join(
       # Join to channel_metadata
       channel_metadata,
       c("channel_id" = "id")
     ) %>%
-    rename(
+    dplyr::rename(
       # Rename the name column from channel_meta to channel_name
       channel_name = name
     ) %>%
-    select(
+    dplyr::select(
       content_id,
       channel_id,
       content_title = title,
@@ -69,12 +69,12 @@ get_topics <- function(contentnodes, channelmetadata) {
 #'
 get_topic_nodes_count <- function(topics) {
   topic_nodes_count <- topics %>%
-    filter(
+    dplyr::filter(
       kind != "topic",
       content_id != channel_id
     ) %>%
-    count(channel_id, topic_id, kind, name = "nodes_count") %>%
-    unite(
+    dplyr::count(channel_id, topic_id, kind, name = "nodes_count") %>%
+    tidyr::unite(
       "channel_topic_kind",
       c("channel_id", "topic_id", "kind"),
       sep = "_",
