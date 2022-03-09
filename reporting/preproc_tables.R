@@ -29,6 +29,18 @@ learners_and_groups <<- memberships %>%
   dplyr::distinct(user_id, .keep_all = TRUE) %>%
   dplyr::select(name, user_id)
 
+# Get learners and the classrooms (grades) they belong to
+learners_and_grades <- memberships %>%
+  # filter out memberships of type learnergroup
+  dplyr::filter(kind == "classroom") %>%
+  dplyr::group_by(user_id) %>%
+  # If a learner belongs to multiple classes, separate them with commas
+  dplyr::mutate(name = paste(name, collapse = ",") %>% stringr::str_trim()) %>%
+  dplyr::ungroup() %>%
+  dplyr::distinct(user_id, .keep_all = T) %>%
+  dplyr::select("class_name" = name, user_id)
+
+
 # filter out admins and coaches to get list of users
 # select only the relevant columns
 users <<- facilityusers %>%
@@ -45,6 +57,7 @@ if (nrow(users) == 0) {
     # then drop the facility_id column
     dplyr::left_join(facilities, by = c("facility_id" = "id")) %>%
     dplyr::rename(centre = name) %>%
+    dplyr::left_join(learners_and_grades, by = c("id"= "user_id")) %>% 
     # Convert the last login to the nearest timezone for the centre location
     dplyr::mutate(
       last_login = lubridate::ymd_hms(last_login) %>% lubridate::with_tz("Africa/Lusaka")
@@ -55,6 +68,7 @@ if (nrow(users) == 0) {
       username,
       date_joined,
       last_login,
+      class_name,
       centre,
       facility_id
     ) %>%
