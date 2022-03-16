@@ -25,6 +25,9 @@ alias flyway_bl='~/.scripts/config/flyway_bl.sh'
 # assign live learners to the right groups
 alias assign_learners='~/.kolibri_helper_scripts/assign_learners.sh;~/.baseline_testing/scripts/startup_script'
 
+# Regenerate lessons and quizzes, then assign learners and restart both kolibri and baseline
+alias make_quiz='kolibri stop;python ~/.kolibri_helper_scripts/setup.py;~/.kolibri_helper_scripts/assign_learners.sh;~/.scripts/restart_kolibri.sh;~/.baseline_testing/scripts/startup_script'
+
 #Import all Kolibri channels from the internet
 alias update_channels='~/.kolibri_helper_scripts/channel_setup/import_channels_network.sh'
 
