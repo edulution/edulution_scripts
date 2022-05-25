@@ -34,5 +34,8 @@ check_file_and_replace ~/.bash_aliases ~/.scripts/config/.bash_aliases 0
 # Run backup script
 ~/.scripts/backupdb/backup.sh
 
+# Add pg_tune settings
+~/.scripts/config/add_pgtune_settings.sh
+
 # Test report submission
 test_report_submission
