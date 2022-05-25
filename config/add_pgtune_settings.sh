@@ -6,6 +6,7 @@ sudo sed -i.backup '1,/Add settings for extensions here/!d' /etc/postgresql/11/m
 
 # Add the settings for 2 cores, 4GB RAM, HDD storage, data warehouse
 
+echo "shared_preload_libraries = 'pg_stat_statements'" | sudo tee -a /etc/postgresql/11/main/postgresql.conf
 echo "max_connections = 200" | sudo tee -a /etc/postgresql/11/main/postgresql.conf
 echo "shared_buffers = 1GB" | sudo tee -a /etc/postgresql/11/main/postgresql.conf
 echo "effective_cache_size = 3GB" | sudo tee -a /etc/postgresql/11/main/postgresql.conf
