@@ -29,7 +29,7 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get the number of distinct days a user logged in using the start_timestamp date only
 #'
-#' @param sessionlogs
+#' @param usersessionlogs
 #' @param lower_lim
 #' @param upper_lim
 #'
@@ -37,12 +37,13 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 #' @export
 #'
 #' @examples
-get_logins_by_user <- function(sessionlogs, lower_lim, upper_lim) {
-  logins_by_user <- sessionlogs %>%
+get_logins_by_user <- function(usersessionlogs, lower_lim, upper_lim) {
+  logins_by_user <- usersessionlogs %>%
     dplyr::filter(
       start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim
+      last_interaction_timestamp <= upper_lim
     ) %>%
+    mutate(start_date_only = strftime(start_timestamp, "%Y-%m-%d")) %>%
     dplyr::distinct(user_id, start_date_only) %>%
     dplyr::count(user_id, name = "total_logins")
 
