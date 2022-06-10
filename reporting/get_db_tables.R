@@ -63,6 +63,11 @@ content_sessionlogs <<- conn %>%
   dplyr::tbl("logger_contentsessionlog") %>%
   dplyr::collect()
 
+# user sessionlogs
+user_sessionlogs <<- conn %>%
+  dplyr::tbl("logger_usersessionlog") %>%
+  dplyr::collect()
+
 # get channel content
 channel_contents <<- conn %>%
   dplyr::tbl("content_contentnode") %>%
