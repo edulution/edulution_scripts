@@ -29,6 +29,7 @@ options(warn = -1)
 #'
 #' @param dates A named vector derived from the \code{process_dateinput} function, containing the start and end dates for data extraction
 #' @param sessionlogs A \code{data.frame} containing ContentSessionLogs from Kolibri
+#' @param usersessionlogs A \code{data.frame} containing UserSessionLogs from Kolibri
 #' @param summarylogs A \code{data.frame} containing ContentSummaryLogs from Kolibri
 #' @param topics A \code{data.frame} containing ContentNodes of kind topic from Kolibri
 #' @param device_name A vector containing the device name, derived from Collections in Kolibri
@@ -36,7 +37,7 @@ options(warn = -1)
 #'
 #' @return A \code{data.frame} containing activity data from between the start and end dates
 #'
-monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, include_coach_content = FALSE) {
+monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, device_name, include_coach_content = FALSE) {
   # Get the dates needed from the dates vector supplied
   year_month <- dates$year_month
   month_start <- dates$month_start
@@ -60,7 +61,7 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
   time_spent_by_user <- get_time_spent_by_user(sessionlogs, month_start, month_end)
 
   # Get the number of distinct days a user logeed in using the start_timestamp date only
-  logins_by_user <- get_logins_by_user(sessionlogs, month_start, month_end)
+  logins_by_user <- get_logins_by_user(usersessionlogs, month_start, month_end)
 
   # Get the total number of completed exercises and videos between month start and month end
   completed_ex_vid_count <- get_completed_ex_vid_count(sessionlogs, month_start, month_end)
@@ -160,6 +161,7 @@ check_sessionlogs(content_sessionlogs, dates_vec, device_name)
 # Extract the month end report
 monthend(
   dates = dates_vec,
+  usersessionlogs = user_sessionlogs,
   sessionlogs = content_sessionlogs,
   summarylogs = content_summarylogs,
   topics = topics,
