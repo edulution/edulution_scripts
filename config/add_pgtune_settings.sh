@@ -2,7 +2,7 @@
 
 # Get backup of postgresql conf file
 # Remove all lines after the Add settings for extensions here line
-sudo sed -i.backup '1,/Add settings for extensions here/!d' /etc/postgresql/11/main/postgresql.conf
+sudo sed -i.backup '1,/Add settings for extensions here/!d' /etc/postgresql/13/main/postgresql.conf
 
 # Add the settings for 2 cores, 4GB RAM, HDD storage, data warehouse
 
