@@ -254,7 +254,8 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
       topic_act_type,
       topic_act_progpct
     ) %>%
-    replace_na(list(topic_act_progpct = 0L))
+    replace_na(list(topic_act_progpct = 0L)) %>%
+    pivot_wider(names_from = topic_act_type, values_from = topic_act_progpct)
 
   print("Sucessfully retrieved summary activity by topic")
 
