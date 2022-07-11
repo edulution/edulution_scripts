@@ -354,3 +354,6 @@ get_month_summary_exvid_by_topic <- function(summarylogs, topics, lower_lim, upp
 
   return(month_summary_exvid_by_topic)
 }
+
+#TODO: Reuse old code to get exercises and videos attempted
+# total and by topic
