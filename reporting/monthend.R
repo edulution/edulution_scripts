@@ -71,6 +71,9 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
 
   # Get exercises and videos completed for each channel
   ex_vid_by_channel <- get_ex_vid_by_channel(sessionlogs, month_start, month_end)
+  
+  # Get the summary progress by topic and content type
+  ex_vid_progress_by_topic <- get_summary_act_by_topic(summarylogs, topics, topic_nodes_count)
 
   # get total_progress by channel_id for all time
   prog_by_user_by_channel <- get_prog_by_user_by_channel(sessionlogs)
@@ -101,6 +104,7 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
     dplyr::left_join(ex_vid_by_channel, by = c("id" = "user_id")) %>%
     dplyr::left_join(month_summary_exvid_by_topic, by = c("id" = "user_id")) %>%
     dplyr::left_join(month_summary_time_by_topic, by = c("id" = "user_id")) %>%
+    dplyr::left_join(ex_vid_progress_by_topic, by = c("id" = "user_id")) %>%
     # Add new columns
     dplyr::mutate(
       month_active = ifelse(total_hours > 0, 1, 0),
