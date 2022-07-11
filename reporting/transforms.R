@@ -60,7 +60,7 @@ get_logins_by_user <- function(usersessionlogs, lower_lim, upper_lim) {
 
 #' Get the total number of completed exercises and videos between month start and month end
 #'
-#' @param sessionlogs
+#' @param summarylogs
 #' @param lower_lim
 #' @param upper_lim
 #'
@@ -68,12 +68,11 @@ get_logins_by_user <- function(usersessionlogs, lower_lim, upper_lim) {
 #' @export
 #'
 #' @examples
-get_completed_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
-  completed_ex_vid_count <- sessionlogs %>%
+get_completed_ex_vid_count <- function(summarylogs, lower_lim, upper_lim) {
+  completed_ex_vid_count <- summarylogs %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim,
-      progress >= 0.99
+      completion_timestamp >= lower_lim,
+      completion_timestamp <= upper_lim
     ) %>%
     dplyr::count(user_id, kind, name = "count") %>%
     check_completed_ex_vid_count()
@@ -136,7 +135,7 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get exercises and videos completed for each channel
 #'
-#' @param sessionlogs
+#' @param summarylogs
 #' @param lower_lim
 #' @param upper_lim
 #'
@@ -144,12 +143,11 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 #' @export
 #'
 #' @examples
-get_ex_vid_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
-  ex_vid_by_channel <- sessionlogs %>%
+get_ex_vid_by_channel <- function(summarylogs, lower_lim, upper_lim) {
+  ex_vid_by_channel <- summarylogs %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim,
-      progress >= 0.99
+      completion_timestamp >= lower_lim,
+      completion_timestamp <= upper_lim
     ) %>%
     dplyr::group_by(user_id, channel_id) %>%
     dplyr::count(user_id, kind, name = "count") %>%
@@ -324,12 +322,11 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
 #' @export
 #'
 #' @examples
-get_month_summary_exvid_by_topic <- function(sessionlogs, topics, lower_lim, upper_lim) {
-  month_summary_exvid_by_topic <- sessionlogs %>%
+get_month_summary_exvid_by_topic <- function(summarylogs, topics, lower_lim, upper_lim) {
+  month_summary_exvid_by_topic <- summarylogs %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim,
-      progress >= 0.99
+      completion_timestamp >= lower_lim,
+      completion_timestamp <= upper_lim,
     ) %>%
     dplyr::left_join(
       topics,
