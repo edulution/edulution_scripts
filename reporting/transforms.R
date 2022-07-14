@@ -105,8 +105,7 @@ get_attempted_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
     ) %>%
     dplyr::distinct(content_id, .keep_all = T) %>% 
     dplyr::count(user_id, kind, name = "count") %>%
-    check_completed_ex_vid_count() %>%
-    tidyr::pivot_wider()
+    check_completed_ex_vid_count()
   
   print(paste(
     "Sucessfully retrieved exercises and videos completed by user between",
@@ -136,7 +135,7 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
     ) %>%
     dplyr::group_by(user_id, channel_id) %>%
     dplyr::summarise(total_time = sum(time_spent) / 3600) %>%
-    tidyr::pivot_wider(names_from = channel_id, values_from = total_time) %>%
+    tidyr::pivot_wider(names_from = channel_id, values_from = total_time, values_fill = 0) %>%
     dplyr::rename_at(
       vars(-user_id),
       function(x) {
@@ -182,7 +181,7 @@ get_ex_vid_by_channel <- function(summarylogs, lower_lim, upper_lim) {
     dplyr::group_by(user_id, channel_id) %>%
     dplyr::count(user_id, kind, name = "count") %>%
     tidyr::unite("act_channel", c(channel_id, kind)) %>%
-    tidyr::pivot_wider(names_from = act_channel, values_from = count) %>%
+    tidyr::pivot_wider(names_from = act_channel, values_from = count, values_fill = 0) %>%
     dplyr::rename_at(
       vars(-user_id),
       function(x) {
@@ -227,7 +226,7 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
     # get rid of the columns for total prog and total_items
     # turn the progress for each channel into a separate column
     dplyr::select(-c(total_prog, total_items)) %>%
-    tidyr::pivot_wider(names_from = channel_id, values_from = pct_progress) %>%
+    tidyr::pivot_wider(names_from = channel_id, values_from = pct_progress, values_fill = 0) %>%
     dplyr::rename_at(
       vars(-user_id),
       function(x) {
@@ -283,7 +282,7 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
       topic_act_progpct
     ) %>%
     # replace_na(list(topic_act_progpct = 0L)) %>%
-    pivot_wider(names_from = topic_act_type, values_from = topic_act_progpct)
+    pivot_wider(names_from = topic_act_type, values_from = topic_act_progpct, values_fill = 0)
 
   print("Sucessfully retrieved summary activity by topic")
 
@@ -327,7 +326,7 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
       # Add the word time spent to topic_act_type
       topic_act_type, "timespent"
     )) %>%
-    tidyr::pivot_wider(names_from = topic_act_type, values_from = topic_act_timespent)
+    tidyr::pivot_wider(names_from = topic_act_type, values_from = topic_act_timespent, values_fill = 0)
 
   print(paste(
     "Sucessfully retrieved summary_progress by user between",
@@ -373,7 +372,7 @@ get_month_summary_exvid_by_topic <- function(summarylogs, topics, lower_lim, upp
       # Add the word completed to topic_act_type
       topic_act_type, "completed"
     )) %>%
-    tidyr::pivot_wider(names_from = topic_act_type, values_from = num_completed)
+    tidyr::pivot_wider(names_from = topic_act_type, values_from = num_completed, values_fill = 0)
 
   print(paste(
     "Sucessfully retrieved summary exercises and videos by topic by user between",
