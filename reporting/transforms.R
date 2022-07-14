@@ -88,6 +88,36 @@ get_completed_ex_vid_count <- function(summarylogs, lower_lim, upper_lim) {
 }
 
 
+#' Get number of unique attempted exercise and videos between a date range
+#'
+#' @param sessionlogs A \code{data.frame} of the ContentSessionlogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
+#'
+#' @return A \code{data.frame}
+#' @export
+#'
+get_attempted_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
+  attempted_ex_vid_count <- sessionlogs %>%
+    dplyr::filter(
+      start_timestamp >= lower_lim,
+      end_timestamp <= upper_lim
+    ) %>%
+    dplyr::distinct(content_id, .keep_all = T) %>% 
+    dplyr::count(user_id, kind, name = "count") %>%
+    check_completed_ex_vid_count() %>%
+    tidyr::pivot_wider()
+  
+  print(paste(
+    "Sucessfully retrieved exercises and videos completed by user between",
+    lower_lim,
+    "and",
+    upper_lim
+  ))
+  
+  return(attempted_ex_vid_count)
+}
+
 #' Get total time spent by channel
 #'
 #' @param sessionlogs
@@ -252,7 +282,7 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
       topic_act_type,
       topic_act_progpct
     ) %>%
-    replace_na(list(topic_act_progpct = 0L)) %>%
+    # replace_na(list(topic_act_progpct = 0L)) %>%
     pivot_wider(names_from = topic_act_type, values_from = topic_act_progpct)
 
   print("Sucessfully retrieved summary activity by topic")
@@ -355,5 +385,5 @@ get_month_summary_exvid_by_topic <- function(summarylogs, topics, lower_lim, upp
   return(month_summary_exvid_by_topic)
 }
 
-#TODO: Reuse old code to get exercises and videos attempted
+# TODO: Reuse old code to get exercises and videos attempted
 # total and by topic
