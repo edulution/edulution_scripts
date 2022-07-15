@@ -10,9 +10,13 @@
 #' @examples
 get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
   time_spent_by_user <- sessionlogs %>%
+    dplyr::mutate(
+      start_timestamp = as.Date(start_timestamp),
+      end_timestamp = as.Date(end_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim
+      between(start_timestamp, lower_lim, upper_lim),
+      between(end_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::group_by(user_id) %>%
     dplyr::summarize(total_hours = sum(time_spent) / 3600)
@@ -39,9 +43,13 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 #' @examples
 get_logins_by_user <- function(usersessionlogs, lower_lim, upper_lim) {
   logins_by_user <- usersessionlogs %>%
+    mutate(
+      start_timestamp = as.Date(start_timestamp),
+      last_interaction_timestamp = as.Date(last_interaction_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      last_interaction_timestamp <= upper_lim
+      between(start_timestamp, lower_lim, upper_lim),
+      between(last_interaction_timestamp, lower_lim, upper_lim)
     ) %>%
     mutate(start_date_only = strftime(start_timestamp, "%Y-%m-%d")) %>%
     dplyr::distinct(user_id, start_date_only) %>%
@@ -70,9 +78,11 @@ get_logins_by_user <- function(usersessionlogs, lower_lim, upper_lim) {
 #' @examples
 get_completed_ex_vid_count <- function(summarylogs, lower_lim, upper_lim) {
   completed_ex_vid_count <- summarylogs %>%
+    mutate(
+      completion_timestamp = as.Date(completion_timestamp)
+    ) %>%
     dplyr::filter(
-      completion_timestamp >= lower_lim,
-      completion_timestamp <= upper_lim
+      between(completion_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::count(user_id, kind, name = "count") %>%
     check_completed_ex_vid_count()
@@ -99,21 +109,25 @@ get_completed_ex_vid_count <- function(summarylogs, lower_lim, upper_lim) {
 #'
 get_attempted_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
   attempted_ex_vid_count <- sessionlogs %>%
-    dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim
+    dplyr::mutate(
+      start_timestamp = as.Date(start_timestamp),
+      end_timestamp = as.Date(end_timestamp)
     ) %>%
-    dplyr::distinct(content_id, .keep_all = T) %>% 
+    dplyr::filter(
+      between(start_timestamp, lower_lim, upper_lim),
+      between(end_timestamp, lower_lim, upper_lim)
+    ) %>%
+    dplyr::distinct(content_id, .keep_all = T) %>%
     dplyr::count(user_id, kind, name = "count") %>%
     check_completed_ex_vid_count()
-  
+
   print(paste(
     "Sucessfully retrieved exercises and videos completed by user between",
     lower_lim,
     "and",
     upper_lim
   ))
-  
+
   return(attempted_ex_vid_count)
 }
 
@@ -129,19 +143,23 @@ get_attempted_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
 #' @examples
 get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
   time_by_channel <- sessionlogs %>%
+    dplyr::mutate(
+      start_timestamp = as.Date(start_timestamp),
+      end_timestamp = as.Date(end_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim
+      between(start_timestamp, lower_lim, upper_lim),
+      between(end_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::group_by(user_id, channel_id) %>%
     dplyr::summarise(total_time = sum(time_spent) / 3600) %>%
-    tidyr::pivot_wider(names_from = channel_id, values_from = total_time, values_fill = 0) %>%
-    dplyr::rename_at(
-      vars(-user_id),
-      function(x) {
-        paste0(x, "_playlist_timespent")
-      }
-    ) %>%
+    tidyr::pivot_wider(names_from = channel_id, names_glue = "{channel_id}_playlist_timespent", values_from = total_time, values_fill = 0) %>%
+    # dplyr::rename_at(
+    #   vars(-user_id),
+    #   function(x) {
+    #     paste0(x, "_playlist_timespent")
+    #   }
+    # ) %>%
     dplyr::ungroup()
 
   print(paste(
@@ -174,23 +192,25 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 #' @examples
 get_ex_vid_by_channel <- function(summarylogs, lower_lim, upper_lim) {
   ex_vid_by_channel <- summarylogs %>%
+    mutate(
+      completion_timestamp = as.Date(completion_timestamp)
+    ) %>%
     dplyr::filter(
-      completion_timestamp >= lower_lim,
-      completion_timestamp <= upper_lim
+      between(completion_timestamp, lower_lim, upper_lim)
     ) %>%
-    dplyr::group_by(user_id, channel_id) %>%
-    dplyr::count(user_id, kind, name = "count") %>%
-    tidyr::unite("act_channel", c(channel_id, kind)) %>%
-    tidyr::pivot_wider(names_from = act_channel, values_from = count, values_fill = 0) %>%
-    dplyr::rename_at(
-      vars(-user_id),
-      function(x) {
-        str_replace(x, "_exercise", "_playlist_exercise") %>%
-          str_replace("_video", "_playlist_video") %>%
-          str_replace("_document", "_playlist_document")
-      }
-    ) %>%
-    dplyr::ungroup()
+    dplyr::count(user_id, channel_id, kind, name = "count") %>%
+    # tidyr::unite("act_channel", c(channel_id, kind)) %>%
+    # tidyr::pivot_wider(names_from = act_channel, values_from = count, values_fill = 0) %>%
+    tidyr::pivot_wider(names_from = c(channel_id, kind), names_glue = "{channel_id}_playlist_{kind}", values_from = count, values_fill = 0)
+  # dplyr::rename_at(
+  #   vars(-user_id),
+  #   function(x) {
+  #     str_replace(x, "_exercise", "_playlist_exercise") %>%
+  #       str_replace("_video", "_playlist_video") %>%
+  #       str_replace("_document", "_playlist_document")
+  #   }
+  # ) %>%
+  # dplyr::ungroup()
 
   print(paste(
     "Sucessfully retrieved exercises and videos by channel by user between",
@@ -304,9 +324,13 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
 #' @examples
 get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, upper_lim) {
   month_summary_time_by_topic <- sessionlogs %>%
+    dplyr::mutate(
+      start_timestamp = as.Date(start_timestamp),
+      end_timestamp = as.Date(end_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim
+      between(start_timestamp, lower_lim, upper_lim),
+      between(end_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::left_join(
       topics,
@@ -322,11 +346,16 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
       topic_act_timespent = sum(time_spent) / 3600
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(topic_act_type = str_c(
-      # Add the word time spent to topic_act_type
-      topic_act_type, "timespent"
-    )) %>%
-    tidyr::pivot_wider(names_from = topic_act_type, values_from = topic_act_timespent, values_fill = 0)
+    # dplyr::mutate(topic_act_type = str_c(
+    #   # Add the word time spent to topic_act_type
+    #   topic_act_type, "timespent"
+    # )) %>%
+    tidyr::pivot_wider(
+      names_from = topic_act_type,
+      names_glue = "{topic_act_type}timespent",
+      values_from = topic_act_timespent,
+      values_fill = 0
+    )
 
   print(paste(
     "Sucessfully retrieved summary_progress by user between",
@@ -353,26 +382,38 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
 #' @examples
 get_month_summary_exvid_by_topic <- function(summarylogs, topics, lower_lim, upper_lim) {
   month_summary_exvid_by_topic <- summarylogs %>%
+    mutate(
+      completion_timestamp = as.Date(completion_timestamp)
+    ) %>%
     dplyr::filter(
-      completion_timestamp >= lower_lim,
-      completion_timestamp <= upper_lim,
+      between(completion_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::left_join(
       topics,
       by = c("content_id", "channel_id", "kind")
     ) %>%
-    tidyr::unite(
-      "topic_act_type",
-      c("channel_id", "topic_id", "kind"),
-      sep = "_"
+    # tidyr::unite(
+    #   "topic_act_type",
+    #   c("channel_id", "topic_id", "kind"),
+    #   sep = "_"
+    # ) %>%
+    dplyr::count(
+      user_id,
+      channel_id,
+      topic_id, kind,
+      name = "num_completed"
     ) %>%
-    dplyr::count(user_id, topic_act_type, name = "num_completed") %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(topic_act_type = str_c(
-      # Add the word completed to topic_act_type
-      topic_act_type, "completed"
-    )) %>%
-    tidyr::pivot_wider(names_from = topic_act_type, values_from = num_completed, values_fill = 0)
+    # dplyr::ungroup() %>%
+    # dplyr::mutate(topic_act_type = str_c(
+    #   # Add the word completed to topic_act_type
+    #   topic_act_type, "completed"
+    # )) %>%
+    tidyr::pivot_wider(
+      names_from = c(channel_id, topic_id, kind),
+      names_glue = "{channel_id}_{topic_id}_{kind}completed",
+      values_from = num_completed,
+      values_fill = 0
+    )
 
   print(paste(
     "Sucessfully retrieved summary exercises and videos by topic by user between",
