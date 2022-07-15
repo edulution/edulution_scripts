@@ -1,18 +1,22 @@
 #' Get total time spent by each user between month start and month end
 #'
-#' @param sessionlogs A dataframe of contentsessionlogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range#'
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
 get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
   time_spent_by_user <- sessionlogs %>%
+    dplyr::mutate(
+      start_timestamp = as.Date(start_timestamp),
+      end_timestamp = as.Date(end_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim
+      between(start_timestamp, lower_lim, upper_lim),
+      between(end_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::group_by(user_id) %>%
     dplyr::summarize(total_hours = sum(time_spent) / 3600)
@@ -29,20 +33,25 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get the number of distinct days a user logged in using the start_timestamp date only
 #'
-#' @param sessionlogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param usersessionlogs A \code{data.frame} of UserSessionlogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
 #' @return
 #' @export
 #'
 #' @examples
-get_logins_by_user <- function(sessionlogs, lower_lim, upper_lim) {
-  logins_by_user <- sessionlogs %>%
-    dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim
+get_logins_by_user <- function(usersessionlogs, lower_lim, upper_lim) {
+  logins_by_user <- usersessionlogs %>%
+    dplyr::mutate(
+      start_timestamp = as.Date(start_timestamp),
+      last_interaction_timestamp = as.Date(last_interaction_timestamp)
     ) %>%
+    dplyr::filter(
+      between(start_timestamp, lower_lim, upper_lim),
+      between(last_interaction_timestamp, lower_lim, upper_lim)
+    ) %>%
+    mutate(start_date_only = strftime(start_timestamp, "%Y-%m-%d")) %>%
     dplyr::distinct(user_id, start_date_only) %>%
     dplyr::count(user_id, name = "total_logins")
 
@@ -59,20 +68,21 @@ get_logins_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get the total number of completed exercises and videos between month start and month end
 #'
-#' @param sessionlogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param summarylogs A \code{data.frame} of ContentSummarylogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
-get_completed_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
-  completed_ex_vid_count <- sessionlogs %>%
+get_completed_ex_vid_count <- function(summarylogs, lower_lim, upper_lim) {
+  completed_ex_vid_count <- summarylogs %>%
+    dplyr::mutate(
+      completion_timestamp = as.Date(completion_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim,
-      progress >= 0.99
+      between(completion_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::count(user_id, kind, name = "count") %>%
     check_completed_ex_vid_count()
@@ -88,30 +98,66 @@ get_completed_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
 }
 
 
+#' Get number of unique attempted exercise and videos between a date range
+#'
+#' @param sessionlogs A \code{data.frame} of the ContentSessionlogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
+#'
+#' @return A \code{data.frame}
+#' @export
+#'
+get_attempted_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
+  attempted_ex_vid_count <- sessionlogs %>%
+    dplyr::mutate(
+      start_timestamp = as.Date(start_timestamp),
+      end_timestamp = as.Date(end_timestamp)
+    ) %>%
+    dplyr::filter(
+      between(start_timestamp, lower_lim, upper_lim),
+      between(end_timestamp, lower_lim, upper_lim)
+    ) %>%
+    dplyr::distinct(content_id, .keep_all = T) %>%
+    dplyr::count(user_id, kind, name = "count") %>%
+    check_completed_ex_vid_count()
+
+  print(paste(
+    "Sucessfully retrieved exercises and videos completed by user between",
+    lower_lim,
+    "and",
+    upper_lim
+  ))
+
+  return(attempted_ex_vid_count)
+}
+
 #' Get total time spent by channel
 #'
-#' @param sessionlogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
 get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
   time_by_channel <- sessionlogs %>%
+    dplyr::mutate(
+      start_timestamp = as.Date(start_timestamp),
+      end_timestamp = as.Date(end_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim
+      between(start_timestamp, lower_lim, upper_lim),
+      between(end_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::group_by(user_id, channel_id) %>%
     dplyr::summarise(total_time = sum(time_spent) / 3600) %>%
-    tidyr::pivot_wider(names_from = channel_id, values_from = total_time) %>%
-    dplyr::rename_at(
-      vars(-user_id),
-      function(x) {
-        paste0(x, "_playlist_timespent")
-      }
+    tidyr::pivot_wider(
+      names_from = channel_id,
+      names_glue = "{channel_id}_playlist_timespent",
+      values_from = total_time,
+      values_fill = 0
     ) %>%
     dplyr::ungroup()
 
@@ -135,34 +181,29 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get exercises and videos completed for each channel
 #'
-#' @param sessionlogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param summarylogs A \code{data.frame} of ContentSummarylogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
-get_ex_vid_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
-  ex_vid_by_channel <- sessionlogs %>%
+get_ex_vid_by_channel <- function(summarylogs, lower_lim, upper_lim) {
+  ex_vid_by_channel <- summarylogs %>%
+    dplyr::mutate(
+      completion_timestamp = as.Date(completion_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim,
-      progress >= 0.99
+      between(completion_timestamp, lower_lim, upper_lim)
     ) %>%
-    dplyr::group_by(user_id, channel_id) %>%
-    dplyr::count(user_id, kind, name = "count") %>%
-    tidyr::unite("act_channel", c(channel_id, kind)) %>%
-    tidyr::pivot_wider(names_from = act_channel, values_from = count) %>%
-    dplyr::rename_at(
-      vars(-user_id),
-      function(x) {
-        str_replace(x, "_exercise", "_playlist_exercise") %>%
-          str_replace("_video", "_playlist_video") %>%
-          str_replace("_document", "_playlist_document")
-      }
-    ) %>%
-    dplyr::ungroup()
+    dplyr::count(user_id, channel_id, kind, name = "count") %>%
+    tidyr::pivot_wider(
+      names_from = c(channel_id, kind),
+      names_glue = "{channel_id}_playlist_{kind}",
+      values_from = count,
+      values_fill = 0
+    )
 
   print(paste(
     "Sucessfully retrieved exercises and videos by channel by user between",
@@ -178,9 +219,9 @@ get_ex_vid_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get total_progress by channel_id for all time
 #'
-#' @param sessionlogs
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
@@ -198,12 +239,11 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
     # get rid of the columns for total prog and total_items
     # turn the progress for each channel into a separate column
     dplyr::select(-c(total_prog, total_items)) %>%
-    tidyr::pivot_wider(names_from = channel_id, values_from = pct_progress) %>%
-    dplyr::rename_at(
-      vars(-user_id),
-      function(x) {
-        paste0(x, "_playlist_progress")
-      }
+    tidyr::pivot_wider(
+      names_from = channel_id,
+      names_glue = "{channel_id}_playlist_progress",
+      values_from = pct_progress,
+      values_fill = 0
     ) %>%
     dplyr::ungroup()
 
@@ -215,11 +255,11 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
 
 #' Summary timespent and progress by topic and content kind for all time
 #'
-#' @param summarylogs
-#' @param topics
-#' @param topic_nodes_count
+#' @param summarylogs A \code{data.frame} of ContentSummarylogs
+#' @param topics A \code{data.frame} of the topics, from the get_topics \code{function}
+#' @param topic_nodes_count A \code{data.frame} of the topic_nodes_count, from the get_topic_nodes_count \code{function}
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
@@ -253,7 +293,7 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
       topic_act_type,
       topic_act_progpct
     ) %>%
-    replace_na(list(topic_act_progpct = 0L))
+    tidyr::pivot_wider(names_from = topic_act_type, values_from = topic_act_progpct, values_fill = 0)
 
   print("Sucessfully retrieved summary activity by topic")
 
@@ -264,20 +304,24 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
 
 #' Get summary of time spent by topic for each user
 #'
-#' @param sessionlogs
-#' @param topics
-#' @param lower_lim
-#' @param upper_lim
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
+#' @param topics A \code{data.frame} of the topics, from the get_topics \code{function}
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
 get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, upper_lim) {
   month_summary_time_by_topic <- sessionlogs %>%
+    dplyr::mutate(
+      start_timestamp = as.Date(start_timestamp),
+      end_timestamp = as.Date(end_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim
+      between(start_timestamp, lower_lim, upper_lim),
+      between(end_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::left_join(
       topics,
@@ -293,11 +337,12 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
       topic_act_timespent = sum(time_spent) / 3600
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(topic_act_type = str_c(
-      # Add the word time spent to topic_act_type
-      topic_act_type, "timespent"
-    )) %>%
-    tidyr::pivot_wider(names_from = topic_act_type, values_from = topic_act_timespent)
+    tidyr::pivot_wider(
+      names_from = topic_act_type,
+      names_glue = "{topic_act_type}timespent",
+      values_from = topic_act_timespent,
+      values_fill = 0
+    )
 
   print(paste(
     "Sucessfully retrieved summary_progress by user between",
@@ -313,38 +358,39 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
 
 #' Get summary of exercises done and videos watched by each user
 #'
-#' @param sessionlogs
-#' @param topics
-#' @param lower_lim
-#' @param upper_lim
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
+#' @param topics A \code{data.frame} of the topics, from the get_topics \code{function}
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
-get_month_summary_exvid_by_topic <- function(sessionlogs, topics, lower_lim, upper_lim) {
-  month_summary_exvid_by_topic <- sessionlogs %>%
+get_month_summary_exvid_by_topic <- function(summarylogs, topics, lower_lim, upper_lim) {
+  month_summary_exvid_by_topic <- summarylogs %>%
+    dplyr::mutate(
+      completion_timestamp = as.Date(completion_timestamp)
+    ) %>%
     dplyr::filter(
-      start_timestamp >= lower_lim,
-      end_timestamp <= upper_lim,
-      progress >= 0.99
+      between(completion_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::left_join(
       topics,
       by = c("content_id", "channel_id", "kind")
     ) %>%
-    tidyr::unite(
-      "topic_act_type",
-      c("channel_id", "topic_id", "kind"),
-      sep = "_"
+    dplyr::count(
+      user_id,
+      channel_id,
+      topic_id, kind,
+      name = "num_completed"
     ) %>%
-    dplyr::count(user_id, topic_act_type, name = "num_completed") %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(topic_act_type = str_c(
-      # Add the word completed to topic_act_type
-      topic_act_type, "completed"
-    )) %>%
-    tidyr::pivot_wider(names_from = topic_act_type, values_from = num_completed)
+    tidyr::pivot_wider(
+      names_from = c(channel_id, topic_id, kind),
+      names_glue = "{channel_id}_{topic_id}_{kind}completed",
+      values_from = num_completed,
+      values_fill = 0
+    )
 
   print(paste(
     "Sucessfully retrieved summary exercises and videos by topic by user between",

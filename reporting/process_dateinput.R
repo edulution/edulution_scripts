@@ -28,8 +28,8 @@ process_dateinput <- function(dateinput) {
   # return a named vector containing year_month, month_start and month_end
   dates_vec <- list(
     year_month = year_month,
-    month_start = month_start,
-    month_end = month_end
+    month_start = as.Date(month_start),
+    month_end = as.Date(month_end)
   )
 
   return(dates_vec)

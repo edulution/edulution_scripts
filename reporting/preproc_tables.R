@@ -2,6 +2,8 @@ suppressMessages(library(plyr))
 suppressMessages(library(dplyr))
 suppressMessages(library(lubridate))
 
+centre_timezone <- "Africa/Windhoek"
+
 # get the default facility id and from it get the device name(facility name)
 default_facility_id <<- default_facility_id %>%
   dplyr::pull(default_facility_id)
@@ -57,10 +59,10 @@ if (nrow(users) == 0) {
     # then drop the facility_id column
     dplyr::left_join(facilities, by = c("facility_id" = "id")) %>%
     dplyr::rename(centre = name) %>%
-    dplyr::left_join(learners_and_grades, by = c("id"= "user_id")) %>% 
+    dplyr::left_join(learners_and_grades, by = c("id" = "user_id")) %>%
     # Convert the last login to the nearest timezone for the centre location
     dplyr::mutate(
-      last_login = lubridate::ymd_hms(last_login) %>% lubridate::with_tz("Africa/Windhoek")
+      last_login = lubridate::ymd_hms(last_login) %>% lubridate::with_tz(centre_timezone)
     ) %>%
     dplyr::select(
       id,
@@ -91,6 +93,7 @@ names(course_name_id) <- unlist(channel_metadata$id)
 # create named vector with abbr_name_progress and make the channel ids the names of each of the elements
 course_name_id_progress <-
   unlist(channel_metadata$abbr_name_progress)
+
 names(course_name_id_progress) <- unlist(channel_metadata$id)
 
 # get number of content items by channel.used to compute overall progress in channel
