@@ -93,6 +93,7 @@ names(course_name_id) <- unlist(channel_metadata$id)
 # create named vector with abbr_name_progress and make the channel ids the names of each of the elements
 course_name_id_progress <-
   unlist(channel_metadata$abbr_name_progress)
+
 names(course_name_id_progress) <- unlist(channel_metadata$id)
 
 # get number of content items by channel.used to compute overall progress in channel
