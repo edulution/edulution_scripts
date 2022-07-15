@@ -1,10 +1,10 @@
 #' Get total time spent by each user between month start and month end
 #'
-#' @param sessionlogs A dataframe of contentsessionlogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range#'
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
@@ -33,9 +33,9 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get the number of distinct days a user logged in using the start_timestamp date only
 #'
-#' @param usersessionlogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param usersessionlogs A \code{data.frame} of UserSessionlogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
 #' @return
 #' @export
@@ -43,7 +43,7 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 #' @examples
 get_logins_by_user <- function(usersessionlogs, lower_lim, upper_lim) {
   logins_by_user <- usersessionlogs %>%
-    mutate(
+    dplyr::mutate(
       start_timestamp = as.Date(start_timestamp),
       last_interaction_timestamp = as.Date(last_interaction_timestamp)
     ) %>%
@@ -68,17 +68,17 @@ get_logins_by_user <- function(usersessionlogs, lower_lim, upper_lim) {
 
 #' Get the total number of completed exercises and videos between month start and month end
 #'
-#' @param summarylogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param summarylogs A \code{data.frame} of ContentSummarylogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
 get_completed_ex_vid_count <- function(summarylogs, lower_lim, upper_lim) {
   completed_ex_vid_count <- summarylogs %>%
-    mutate(
+    dplyr::mutate(
       completion_timestamp = as.Date(completion_timestamp)
     ) %>%
     dplyr::filter(
@@ -133,11 +133,11 @@ get_attempted_ex_vid_count <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get total time spent by channel
 #'
-#' @param sessionlogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
@@ -181,17 +181,17 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
 
 #' Get exercises and videos completed for each channel
 #'
-#' @param summarylogs
-#' @param lower_lim
-#' @param upper_lim
+#' @param summarylogs A \code{data.frame} of ContentSummarylogs
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
 get_ex_vid_by_channel <- function(summarylogs, lower_lim, upper_lim) {
   ex_vid_by_channel <- summarylogs %>%
-    mutate(
+    dplyr::mutate(
       completion_timestamp = as.Date(completion_timestamp)
     ) %>%
     dplyr::filter(
@@ -219,9 +219,9 @@ get_ex_vid_by_channel <- function(summarylogs, lower_lim, upper_lim) {
 
 #' Get total_progress by channel_id for all time
 #'
-#' @param sessionlogs
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
@@ -255,11 +255,11 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
 
 #' Summary timespent and progress by topic and content kind for all time
 #'
-#' @param summarylogs
-#' @param topics
-#' @param topic_nodes_count
+#' @param summarylogs A \code{data.frame} of ContentSummarylogs
+#' @param topics A \code{data.frame} of the topics, from the get_topics \code{function}
+#' @param topic_nodes_count A \code{data.frame} of the topic_nodes_count, from the get_topic_nodes_count \code{function}
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
@@ -293,7 +293,7 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
       topic_act_type,
       topic_act_progpct
     ) %>%
-    pivot_wider(names_from = topic_act_type, values_from = topic_act_progpct, values_fill = 0)
+    tidyr::pivot_wider(names_from = topic_act_type, values_from = topic_act_progpct, values_fill = 0)
 
   print("Sucessfully retrieved summary activity by topic")
 
@@ -304,12 +304,12 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
 
 #' Get summary of time spent by topic for each user
 #'
-#' @param sessionlogs
-#' @param topics
-#' @param lower_lim
-#' @param upper_lim
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
+#' @param topics A \code{data.frame} of the topics, from the get_topics \code{function}
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
@@ -358,18 +358,18 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
 
 #' Get summary of exercises done and videos watched by each user
 #'
-#' @param sessionlogs
-#' @param topics
-#' @param lower_lim
-#' @param upper_lim
+#' @param sessionlogs A \code{data.frame} of ContentSessionlogs
+#' @param topics A \code{data.frame} of the topics, from the get_topics \code{function}
+#' @param lower_lim Lower bound of date range
+#' @param upper_lim Upper bound of date range
 #'
-#' @return
+#' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
 get_month_summary_exvid_by_topic <- function(summarylogs, topics, lower_lim, upper_lim) {
   month_summary_exvid_by_topic <- summarylogs %>%
-    mutate(
+    dplyr::mutate(
       completion_timestamp = as.Date(completion_timestamp)
     ) %>%
     dplyr::filter(
