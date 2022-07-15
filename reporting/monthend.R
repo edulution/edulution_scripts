@@ -64,14 +64,14 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
   logins_by_user <- get_logins_by_user(usersessionlogs, month_start, month_end)
 
   # Get the total number of completed exercises and videos between month start and month end
-  completed_ex_vid_count <- get_completed_ex_vid_count(sessionlogs, month_start, month_end)
+  completed_ex_vid_count <- get_completed_ex_vid_count(summarylogs, month_start, month_end)
 
   # get total time spent by channel
   time_by_channel <- get_time_by_channel(sessionlogs, month_start, month_end)
 
   # Get exercises and videos completed for each channel
-  ex_vid_by_channel <- get_ex_vid_by_channel(sessionlogs, month_start, month_end)
-  
+  ex_vid_by_channel <- get_ex_vid_by_channel(summarylogs, month_start, month_end)
+
   # Get the summary progress by topic and content type
   ex_vid_progress_by_topic <- get_summary_act_by_topic(summarylogs, topics, topic_nodes_count)
 
@@ -80,7 +80,7 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
 
   # Exercises and videos completed by topic for the dates supplied
   month_summary_exvid_by_topic <- get_month_summary_exvid_by_topic(
-    sessionlogs,
+    summarylogs,
     topics,
     month_start,
     month_end
@@ -139,7 +139,9 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
       module,
       total_logins,
       everything()
-    )
+    ) %>%
+    # Replace NAs in numeric columns with 0
+    mutate_if(is.numeric, replace_na, replace = 0)
 
   # Write report to csv
   write.csv(
