@@ -153,13 +153,12 @@ get_time_by_channel <- function(sessionlogs, lower_lim, upper_lim) {
     ) %>%
     dplyr::group_by(user_id, channel_id) %>%
     dplyr::summarise(total_time = sum(time_spent) / 3600) %>%
-    tidyr::pivot_wider(names_from = channel_id, names_glue = "{channel_id}_playlist_timespent", values_from = total_time, values_fill = 0) %>%
-    # dplyr::rename_at(
-    #   vars(-user_id),
-    #   function(x) {
-    #     paste0(x, "_playlist_timespent")
-    #   }
-    # ) %>%
+    tidyr::pivot_wider(
+      names_from = channel_id,
+      names_glue = "{channel_id}_playlist_timespent",
+      values_from = total_time,
+      values_fill = 0
+    ) %>%
     dplyr::ungroup()
 
   print(paste(
@@ -199,18 +198,12 @@ get_ex_vid_by_channel <- function(summarylogs, lower_lim, upper_lim) {
       between(completion_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::count(user_id, channel_id, kind, name = "count") %>%
-    # tidyr::unite("act_channel", c(channel_id, kind)) %>%
-    # tidyr::pivot_wider(names_from = act_channel, values_from = count, values_fill = 0) %>%
-    tidyr::pivot_wider(names_from = c(channel_id, kind), names_glue = "{channel_id}_playlist_{kind}", values_from = count, values_fill = 0)
-  # dplyr::rename_at(
-  #   vars(-user_id),
-  #   function(x) {
-  #     str_replace(x, "_exercise", "_playlist_exercise") %>%
-  #       str_replace("_video", "_playlist_video") %>%
-  #       str_replace("_document", "_playlist_document")
-  #   }
-  # ) %>%
-  # dplyr::ungroup()
+    tidyr::pivot_wider(
+      names_from = c(channel_id, kind),
+      names_glue = "{channel_id}_playlist_{kind}",
+      values_from = count,
+      values_fill = 0
+    )
 
   print(paste(
     "Sucessfully retrieved exercises and videos by channel by user between",
@@ -246,12 +239,11 @@ get_prog_by_user_by_channel <- function(sessionlogs) {
     # get rid of the columns for total prog and total_items
     # turn the progress for each channel into a separate column
     dplyr::select(-c(total_prog, total_items)) %>%
-    tidyr::pivot_wider(names_from = channel_id, values_from = pct_progress, values_fill = 0) %>%
-    dplyr::rename_at(
-      vars(-user_id),
-      function(x) {
-        paste0(x, "_playlist_progress")
-      }
+    tidyr::pivot_wider(
+      names_from = channel_id,
+      names_glue = "{channel_id}_playlist_progress",
+      values_from = pct_progress,
+      values_fill = 0
     ) %>%
     dplyr::ungroup()
 
@@ -301,7 +293,6 @@ get_summary_act_by_topic <- function(summarylogs, topics, topic_nodes_count) {
       topic_act_type,
       topic_act_progpct
     ) %>%
-    # replace_na(list(topic_act_progpct = 0L)) %>%
     pivot_wider(names_from = topic_act_type, values_from = topic_act_progpct, values_fill = 0)
 
   print("Sucessfully retrieved summary activity by topic")
@@ -346,10 +337,6 @@ get_month_summary_time_by_topic <- function(sessionlogs, topics, lower_lim, uppe
       topic_act_timespent = sum(time_spent) / 3600
     ) %>%
     dplyr::ungroup() %>%
-    # dplyr::mutate(topic_act_type = str_c(
-    #   # Add the word time spent to topic_act_type
-    #   topic_act_type, "timespent"
-    # )) %>%
     tidyr::pivot_wider(
       names_from = topic_act_type,
       names_glue = "{topic_act_type}timespent",
@@ -392,22 +379,12 @@ get_month_summary_exvid_by_topic <- function(summarylogs, topics, lower_lim, upp
       topics,
       by = c("content_id", "channel_id", "kind")
     ) %>%
-    # tidyr::unite(
-    #   "topic_act_type",
-    #   c("channel_id", "topic_id", "kind"),
-    #   sep = "_"
-    # ) %>%
     dplyr::count(
       user_id,
       channel_id,
       topic_id, kind,
       name = "num_completed"
     ) %>%
-    # dplyr::ungroup() %>%
-    # dplyr::mutate(topic_act_type = str_c(
-    #   # Add the word completed to topic_act_type
-    #   topic_act_type, "completed"
-    # )) %>%
     tidyr::pivot_wider(
       names_from = c(channel_id, topic_id, kind),
       names_glue = "{channel_id}_{topic_id}_{kind}completed",
@@ -424,6 +401,3 @@ get_month_summary_exvid_by_topic <- function(summarylogs, topics, lower_lim, upp
 
   return(month_summary_exvid_by_topic)
 }
-
-# TODO: Reuse old code to get exercises and videos attempted
-# total and by topic
