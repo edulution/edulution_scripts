@@ -79,9 +79,11 @@ if (nrow(users) == 0) {
 
 # join channel metadata to channel_module
 channel_metadata <<- channel_metadata %>%
-  dplyr::left_join(channel_module, by = c("id" = "channel_id")) %>%
+  # dplyr::left_join(channel_module, by = c("id" = "channel_id")) %>%
   # create new column with module and abbreviated playlist name
-  dplyr::mutate(abbr_name = paste0(module, "_", abbreviate(name))) %>%
+  # dplyr::mutate(abbr_name = paste0(module, "_", abbreviate(name))) %>%
+# Paste the word numeracy and the abbreviated channel name (All courses are numeracy)
+  dplyr::mutate(abbr_name = paste0("numeracy", "_", abbreviate(name))) %>%
   # create new column with abbr name and the word progress
   # will be used as the column name for channel progress in final report
   dplyr::mutate(abbr_name_progress = paste0(abbr_name, "_progress"))

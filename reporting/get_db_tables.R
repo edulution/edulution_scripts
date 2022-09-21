@@ -49,9 +49,9 @@ default_facility_id <<- conn %>%
   dplyr::collect()
 
 # get module for each channel
-channel_module <<- conn %>%
-  dplyr::tbl("channel_module") %>%
-  dplyr::collect()
+# channel_module <<- conn %>%
+#   dplyr::tbl("channel_module") %>%
+#   dplyr::collect()
 
 # content summary logs
 content_summarylogs <<- conn %>%
