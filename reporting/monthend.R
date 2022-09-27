@@ -29,6 +29,7 @@ options(warn = -1)
 #'
 #' @param dates A named vector derived from the \code{process_dateinput} function, containing the start and end dates for data extraction
 #' @param sessionlogs A \code{data.frame} containing ContentSessionLogs from Kolibri
+#' @param usersessionlogs A \code{data.frame} containing UserSessionLogs from Kolibri
 #' @param summarylogs A \code{data.frame} containing ContentSummaryLogs from Kolibri
 #' @param topics A \code{data.frame} containing ContentNodes of kind topic from Kolibri
 #' @param device_name A vector containing the device name, derived from Collections in Kolibri
@@ -36,7 +37,7 @@ options(warn = -1)
 #'
 #' @return A \code{data.frame} containing activity data from between the start and end dates
 #'
-monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, include_coach_content = FALSE) {
+monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, device_name, include_coach_content = FALSE) {
   # Get the dates needed from the dates vector supplied
   year_month <- dates$year_month
   month_start <- dates$month_start
@@ -60,23 +61,26 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
   time_spent_by_user <- get_time_spent_by_user(sessionlogs, month_start, month_end)
 
   # Get the number of distinct days a user logeed in using the start_timestamp date only
-  logins_by_user <- get_logins_by_user(sessionlogs, month_start, month_end)
+  logins_by_user <- get_logins_by_user(usersessionlogs, month_start, month_end)
 
   # Get the total number of completed exercises and videos between month start and month end
-  completed_ex_vid_count <- get_completed_ex_vid_count(sessionlogs, month_start, month_end)
+  completed_ex_vid_count <- get_completed_ex_vid_count(summarylogs, month_start, month_end)
 
   # get total time spent by channel
   time_by_channel <- get_time_by_channel(sessionlogs, month_start, month_end)
 
   # Get exercises and videos completed for each channel
-  ex_vid_by_channel <- get_ex_vid_by_channel(sessionlogs, month_start, month_end)
+  ex_vid_by_channel <- get_ex_vid_by_channel(summarylogs, month_start, month_end)
+
+  # Get the summary progress by topic and content type
+  ex_vid_progress_by_topic <- get_summary_act_by_topic(summarylogs, topics, topic_nodes_count)
 
   # get total_progress by channel_id for all time
   prog_by_user_by_channel <- get_prog_by_user_by_channel(sessionlogs)
 
   # Exercises and videos completed by topic for the dates supplied
   month_summary_exvid_by_topic <- get_month_summary_exvid_by_topic(
-    sessionlogs,
+    summarylogs,
     topics,
     month_start,
     month_end
@@ -100,6 +104,7 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
     dplyr::left_join(ex_vid_by_channel, by = c("id" = "user_id")) %>%
     dplyr::left_join(month_summary_exvid_by_topic, by = c("id" = "user_id")) %>%
     dplyr::left_join(month_summary_time_by_topic, by = c("id" = "user_id")) %>%
+    dplyr::left_join(ex_vid_progress_by_topic, by = c("id" = "user_id")) %>%
     # Add new columns
     dplyr::mutate(
       month_active = ifelse(total_hours > 0, 1, 0),
@@ -123,6 +128,7 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
       first_name,
       last_name,
       username,
+      class_name,
       centre,
       total_hours,
       total_exercises,
@@ -133,7 +139,9 @@ monthend <- function(dates, sessionlogs, summarylogs, topics, device_name, inclu
       module,
       total_logins,
       everything()
-    )
+    ) %>%
+    # Replace NAs in numeric columns with 0
+    mutate_if(is.numeric, replace_na, replace = 0)
 
   # Write report to csv
   write.csv(
@@ -159,6 +167,7 @@ check_sessionlogs(content_sessionlogs, dates_vec, device_name)
 # Extract the month end report
 monthend(
   dates = dates_vec,
+  usersessionlogs = user_sessionlogs,
   sessionlogs = content_sessionlogs,
   summarylogs = content_summarylogs,
   topics = topics,
