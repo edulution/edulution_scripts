@@ -1,4 +1,25 @@
 #!/bin/bash
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "    bashaliases - Bash aliases"
+  echo
+  echo "DESCRIPTION"
+  echo "    This script contains several command aliases that can be used to perform various actions such as backup, upgrade, reboot, etc."
+  echo
+  echo "    The available aliases are: shutdown, reboot, whoru, alldata, monthend, monthend_swap, restartko, backup, upgrade, tunnel, swapdb,"
+  echo "    baseline, restartbl, getkousers, flyway_bl, assign_learners, make_quiz, update_channels, export_channels."
+  echo "    Each alias can be used to perform a specific action and can be executed by typing the alias name in the command line followed by enter."
+  echo 
+  echo "    Documentation for script run by the aliase can be viewed by using -h or --help option for the repective script."
+  echo 
+  echo "Example"
+  echo "    shutdown"
+  echo "    restartko"
+  exit 1
+fi
+
+
 # source the file containing colors and text output styling
 
 # shellcheck source=/dev/null
