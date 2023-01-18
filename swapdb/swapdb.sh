@@ -1,5 +1,18 @@
 #!/bin/bash
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "  swapdb - Swap database"
+  echo
+  echo "DESCRIPTION"
+  echo "  This script is used to swap the Kolibri and Baseline Testing databases."
+  echo "  It checks if the swap databases exist, stops the servers, and then swaps the databases."
+  echo 
+  echo "Example"
+  echo "  ./swap_db.sh "
+  exit 1
+fi
+
 # source script to check if database exists
 # shellcheck source=/dev/null
 source ~/.baseline_testing/scripts/check_db_exists.sh
