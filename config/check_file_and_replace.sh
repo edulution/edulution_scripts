@@ -1,4 +1,21 @@
 #!/bin/bash
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "    check_file_and_replace - Check file and replace"
+  echo
+  echo "DESCRIPTION"
+  echo "	This script contains a function 'check_file_and_replace' which is used to check for a file and create or replace it with a specified file."
+  echo "	The function takes 3 arguments: "
+  echo "	1. file to check for"
+  echo "	2. file to create or replace it with"
+  echo "	3. (1 or 0) Source the file immediately after creating or replacing it"
+  echo "	It also creates a backup of the file before replacing it."
+  echo 
+  exit 1
+fi
+
+
 # shellcheck source=/dev/null
 
 # Function to check for a file, then create or replace
