@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Edulution
+Comment=Edulution coach and tech operations
+Exec=/home/kolibri/.scripts/centre_commands_interface.sh
+Icon=/home/kolibri/.scripts/edulution_logo.svg
+Terminal=false
+Type=Application
+StartupWMClass=edulution
+StartupNotify=true
+X-Ayatana-Desktop-Shortcuts=Pinned
