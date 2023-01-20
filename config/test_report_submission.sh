@@ -1,5 +1,15 @@
 #!/bin/bash
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "  test_report_submission - Test report submission"
+  echo
+  echo "DESCRIPTION"
+  echo "	This function tests the report submission by creating a test file, populating it with the output of the 'whoru' script, and"
+  echo "	sending it to a remote server"
+  exit 1
+fi
+
 test_report_submission(){
 	# Send testfile to make sure scripts are correctly set up
 	touch ~/.reports/test.R
