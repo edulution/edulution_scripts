@@ -1,5 +1,14 @@
 #!/bin/bash
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "  replace_host_key - Replace Host key"
+  echo
+  echo "DESCRIPTION"
+  echo "	This script removes an old host key and adds a new host key for the IP address '130.211.93.74' in the known_hosts file."
+  exit 1
+fi
+
 #remove old host key
 echo "Removing old host key"
 ssh-keygen -R "130.211.93.74"
