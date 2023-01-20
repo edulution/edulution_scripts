@@ -1,5 +1,20 @@
 #!/bin/bash
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "  monthend - Monthend "
+  echo
+  echo "DESCRIPTION"
+  echo "  Extracts data for the specified month and year and sends report"
+  echo "  year and month in format MM-YY, e.g. 02-23"
+  echo 
+  echo "Usage"
+  echo "    ./monthend.sh MM-YY or monthend MM-YY"
+  echo "    ./monthend.sh 01-23 or monthend 01-23"
+
+  exit 1
+fi
+
 # Pull latest changes from master branch in repo
 cd ~/.scripts || exit
 git reset --hard origin/zambia > /dev/null
