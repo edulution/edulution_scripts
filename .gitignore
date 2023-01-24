@@ -7,6 +7,5 @@ config.yml
 .Rproj.*
 renv/
 .Rprofile
-*.csv
 renv.lock
 
