@@ -1,5 +1,9 @@
 #!/bin/bash
 
+source functions.sh
+
+COUNTRY_BRANCH="zambia"
+
 # Create a list of options
 options=(
     "Restart Kolibri"
@@ -23,7 +27,7 @@ case "$choice" in
     "Take database backup")
         zenity --info --text="You selected option 2"
         ;;
-    "Submit Reports")
+    "Submit reports")
         selected_date=$(zenity --calendar --text="Select any date in the month you would like to submit reports" --title="Report Submission" --date-format=%m-%y)
         echo "Selected date: $selected_date"
         # Display a question dialog box
@@ -32,8 +36,17 @@ case "$choice" in
         	zenity --question --title="Confirm reports submission" --text="You are about to submit reports for $selected_date. Do you want to continue?"
 
         	if [ $? -eq 0 ]; then
-        		echo "Submitting reports for $selected_date"
-
+                check_internet_connection
+                
+                if [[ $? -eq 0 ]]; then
+                    # Connection is successful. Begin submitting report
+                    zenity --info --title="Internet connection" --text="Beginning report submission."
+                    
+                else
+                    # Connection is not successful
+                    zenity --error --title="Internet connection not successful" --text="You are not connected to the internet."
+                    echo "You are not connected to the internet"
+                fi
         	else
         	    # If the user clicked the "No" button, perform action B
         	    exit 0
@@ -41,6 +54,54 @@ case "$choice" in
         else
         	exit 0
         fi
+        ;;
+    "Fetch latest updates")
+        zenity --question --title="Fetching latest updates" --text="You are about to fetch the latest updates. Do you want to continue?"
+
+            if [ $? -eq 0 ]; then
+                check_internet_connection
+                
+                if [[ $? -eq 0 ]]; then
+                    # Connection is successful. Begin fetching updates
+
+                    # Use Zenity to display a progress dialog
+                    zenity --progress --pulsate --title="Updating code" --text="Please wait..." --auto-close &
+
+                    # Save the PID of the Zenity process
+                    ZENITY_PID=$!
+
+                    # List of directories
+                    directories=("~/.scripts" "~/.baseline_testing" "~/.kolibri_helper_scripts")
+
+                    for dir in "${directories[@]}"; do
+                      # Expand the tilde character
+                      eval expanded_dir="$dir"
+
+                      # Go to the directory
+                      cd "$expanded_dir" || { kill $ZENITY_PID && zenity --error --title="Code update" --text="Error: Failed to change directory to $expanded_dir."; exit 1; }
+
+                      # Pull the latest code from Github
+                      git pull origin "$COUNTRY_BRANCH" > /dev/null || { kill $ZENITY_PID && zenity --error --title="Code update" --text="Error: Failed to pull the latest updates for $expanded_dir."; exit 1; }
+
+                    done
+
+                    # Close the progress dialog
+                    kill $ZENITY_PID
+
+                    # Show a message box indicating that the operation is completed successfully
+                    zenity --info --title="Updates complete" --text="Updates have been fetched successfully"
+
+
+                    
+                else
+                    # Connection is not successful
+                    zenity --error --title="Internet connection not successful" --text="You are not connected to the internet."
+                    echo "You are not connected to the internet"
+                fi
+            else
+                # If the user clicked the "No" button, perform action B
+                exit 0
+            fi
         ;;
     "Quit")
         exit 0
