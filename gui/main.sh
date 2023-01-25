@@ -48,7 +48,7 @@ case "$choice" in
                     echo "You are not connected to the internet"
                 fi
         	else
-        	    # If the user clicked the "No" button, perform action B
+        	    # If the user clicked the "No" button, exit the application
         	    exit 0
         	fi
         else
@@ -99,7 +99,7 @@ case "$choice" in
                     echo "You are not connected to the internet"
                 fi
             else
-                # If the user clicked the "No" button, perform action B
+                # If the user clicked the "No" button, exit the application
                 exit 0
             fi
         ;;
