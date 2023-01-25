@@ -3,7 +3,7 @@
 # Function to check internet connection
 check_internet_connection() {
     # Use Zenity to display a progress dialog
-    zenity --progress --pulsate --title="Checking internet connection" --text="Please wait..." --auto-close &
+    zenity --progress --pulsate --title="Checking internet connection" --text="Checking your internet connection. Please wait..." --auto-close &
 
     # Save the PID of the Zenity process
     ZENITY_PID=$!
