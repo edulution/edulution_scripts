@@ -16,7 +16,7 @@ check_internet_connection() {
     return $exit_code
 }
 
-
+# Function to create database backups
 create_database_backups(){
     local exit_code=$?
 
@@ -88,4 +88,18 @@ create_database_backups(){
     echo "# Sucessfully created backups"
     echo "100"
     return $exit_code
+}
+
+
+# Function to check if a process is running
+check_process_running () {
+    ps_out=$(ps -ef | grep "$1" | grep -v 'grep' | grep -v "$0")
+    result=$(echo "$ps_out" | grep "$1")
+    if [[ "$result" != "" ]];then
+        # Process is running
+        return 0
+    else
+        # Process is not running
+        return 1
+    fi
 }
