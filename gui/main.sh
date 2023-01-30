@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source functions.sh
+source ~/.scripts/gui/functions.sh
 
 COUNTRY_BRANCH="zambia"
 
@@ -25,7 +25,23 @@ case "$choice" in
         zenity --info --text="You selected option 1"
         ;;
     "Take database backup")
-        zenity --info --text="You selected option 2"
+        zenity --question --title="Confirm taking backups" --text="You are about to take database backups. Do you want to continue?"
+
+            if [ $? -eq 0 ]; then
+                create_database_backups
+                
+                if [[ $? -eq 0 ]]; then
+                    # Connection is successful. Begin submitting report
+                    zenity --info --title="Database backups" --text="Backups created successfully."
+                    
+                else
+                    # Connection is not successful
+                    zenity --error --title="Database backups" --text="Backups not created successfully. Please try again or contact support"
+                fi
+            else
+                # If the user clicked the "No" button, exit the application
+                exit 0
+            fi
         ;;
     "Submit reports")
         selected_date=$(zenity --calendar --text="Select any date in the month you would like to submit reports" --title="Report Submission" --date-format=%m-%y)
@@ -40,7 +56,9 @@ case "$choice" in
                 
                 if [[ $? -eq 0 ]]; then
                     # Connection is successful. Begin submitting report
-                    zenity --info --title="Internet connection" --text="Beginning report submission."
+                    zenity --progress --pulsate --title="Report submission" --text="Extracting and submitting reports. Please wait..." --auto-close &
+                    ~/.scripts/reporting/monthend.sh "$selected_date" &
+                    zenity --info --title="Reports submission complete" --text="Report submission complete"
                     
                 else
                     # Connection is not successful
