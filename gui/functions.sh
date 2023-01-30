@@ -18,9 +18,6 @@ check_internet_connection() {
 
 
 create_database_backups(){
-    zenity --progress --pulsate --title="Database backups" --text="Creating database backups. Please wait..." --auto-close &
-    
-    ZENITY_PID=$!
     local exit_code=$?
 
     # File extension for backup files is custom format with extension .backup
@@ -32,6 +29,9 @@ create_database_backups(){
     # Get today's date and use it as timestamp for database backup file
     timestamp=$(date +"%Y%m%d")
 
+    echo "# Preparing...."
+    echo "5"
+    echo "prepare variables"
     # Get database name using direct query on terminal. remove leading and trailing whitespace
     database_name=$(PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD psql -d "$KOLIBRI_DATABASE_NAME"\
      -U "$KOLIBRI_DATABASE_USER" \
@@ -50,31 +50,42 @@ create_database_backups(){
     zip_file_name=${database_name}_backups_${timestamp}
 
     # Create database backup using credentials from environment variables 
-    echo "Creating Kolibri database backup"
+    echo "# Creating Kolibri database backup...."
+    echo "20"
+    echo "Creating Kolibri backup"
     PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD pg_dump "$KOLIBRI_DATABASE_NAME" \
      -U "$KOLIBRI_DATABASE_USER" \
      -h "$KOLIBRI_DATABASE_HOST"\
      -p "$KOLIBRI_DATABASE_PORT" \
      -Fc > "$backups_dir/$kolibri_backup_name"
 
-    echo "Creating Baseline database backup"
+    echo "# Creating Baseline database backup...."
+    echo "60"
+    echo "Creating baseline backup"
     PGPASSWORD=$BASELINE_DATABASE_PASSWORD pg_dump "$BASELINE_DATABASE_NAME" \
      -U "$BASELINE_DATABASE_USER" \
      -h "$BASELINE_DATABASE_HOST" \
      -p "$BASELINE_DATABASE_PORT" \
      -Fc > "$backups_dir/$baseline_backup_name"
 
-    echo "Creating zip file with backups"
+    echo "# Compressing backups...."
+    echo "80"
+    echo "Create zip file with backups"
     # create zip file containing both backups taken above and remove the original files
     zip -jm "$backups_dir/$zip_file_name" "$backups_dir/$kolibri_backup_name" "$backups_dir/$baseline_backup_name"
 
     # Remove spaces from names of backups
+    echo "# Cleaning up..."
+    echo "90"
+    echo "Clean up spaces in filenames"
     rename "s/ //g" "$backups_dir"*.backup
 
     # Call script to remove backups older than 40 days
+    echo "Deleting backups more that 40 days old"
     ~/.scripts/backupdb/remove_old_backups.sh
 
-    echo "Sucessfully created backups"
-    kill $ZENITY_PID
+
+    echo "# Sucessfully created backups"
+    echo "100"
     return $exit_code
 }
