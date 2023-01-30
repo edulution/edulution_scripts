@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source ~/.scripts/gui/functions.sh
+source $(dirname "${BASH_SOURCE[0]}")/functions.sh
+
+VERSION=$(dirname "${BASH_SOURCE[0]}")/VERSION
 
 COUNTRY_BRANCH="zambia"
 
@@ -13,11 +15,14 @@ options=(
     "Submit reports"
     "Fetch latest updates"
     "Help"
+    "About...."
     "Quit"
     )
 
 # Display the list of options in a dialog box
-choice=$(zenity --list --title="Select an option" --column="Options" "${options[@]}")
+choice=$(zenity --list \
+    --title="Select an option" \
+    --column="Options" "${options[@]}")
 
 # Check the user's choice and perform the corresponding action
 case "$choice" in
@@ -28,15 +33,34 @@ case "$choice" in
         zenity --question --title="Confirm taking backups" --text="You are about to take database backups. Do you want to continue?"
 
             if [ $? -eq 0 ]; then
-                create_database_backups
+                zenity --progress \
+                --title="Database backups" \
+                --text="Creating database backups. Please wait..." \
+                --percentage=0 \
+                --auto-close &
+
+                pid=$!
+
+                create_database_backups 2>&1 | zenity --progress \
+                --title="Database backups" \
+                --text="Creating database backups. Please wait..." \
+                --percentage=0 \
+                --auto-kill \
+                --auto-close &
+
+                wait
                 
                 if [[ $? -eq 0 ]]; then
                     # Connection is successful. Begin submitting report
-                    zenity --info --title="Database backups" --text="Backups created successfully."
+                    zenity --info \
+                    --title="Database backups" \
+                    --text="Backups created successfully."
                     
                 else
                     # Connection is not successful
-                    zenity --error --title="Database backups" --text="Backups not created successfully. Please try again or contact support"
+                    zenity --error \
+                    --title="Database backups" \
+                    --text="Backups not created successfully. Please try again or contact support"
                 fi
             else
                 # If the user clicked the "No" button, exit the application
@@ -44,21 +68,34 @@ case "$choice" in
             fi
         ;;
     "Submit reports")
-        selected_date=$(zenity --calendar --text="Select any date in the month you would like to submit reports" --title="Report Submission" --date-format=%m-%y)
+        selected_date=$(zenity --calendar \
+            --text="Select any date in the month you would like to submit reports" \
+            --title="Report Submission" \
+            --date-format=%m-%y)
         echo "Selected date: $selected_date"
         # Display a question dialog box
                 # Check the exit status of the zenity command
         if [ $? -eq 0 ]; then
-        	zenity --question --title="Confirm reports submission" --text="You are about to submit reports for $selected_date. Do you want to continue?"
+        	zenity --question \
+            --title="Confirm reports submission" \
+            --text="You are about to submit reports for $selected_date. Do you want to continue?"
 
         	if [ $? -eq 0 ]; then
                 check_internet_connection
                 
                 if [[ $? -eq 0 ]]; then
                     # Connection is successful. Begin submitting report
-                    zenity --progress --pulsate --title="Report submission" --text="Extracting and submitting reports. Please wait..." --auto-close &
+                    zenity --progress \
+                    --pulsate \
+                    --title="Report submission" \
+                    --text="Extracting and submitting reports. Please wait..." \
+                    --auto-close &
+
                     ~/.scripts/reporting/monthend.sh "$selected_date" &
-                    zenity --info --title="Reports submission complete" --text="Report submission complete"
+                    
+                    zenity --info \
+                    --title="Reports submission complete" \
+                    --text="Report submission complete"
                     
                 else
                     # Connection is not successful
@@ -108,8 +145,6 @@ case "$choice" in
 
                     # Show a message box indicating that the operation is completed successfully
                     zenity --info --title="Updates complete" --text="Updates have been fetched successfully"
-
-
                     
                 else
                     # Connection is not successful
@@ -120,6 +155,12 @@ case "$choice" in
                 # If the user clicked the "No" button, exit the application
                 exit 0
             fi
+        ;;
+    "About")
+        # About this application
+        zenity --text-info \
+               --title="About this application" \
+               --filename="$VERSION"
         ;;
     "Quit")
         exit 0
