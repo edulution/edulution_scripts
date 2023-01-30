@@ -30,17 +30,10 @@ case "$choice" in
         zenity --info --text="You selected option 1"
         ;;
     "Take database backup")
+        # Ask the user if they would like to continue
         zenity --question --title="Confirm taking backups" --text="You are about to take database backups. Do you want to continue?"
 
             if [ $? -eq 0 ]; then
-                zenity --progress \
-                --title="Database backups" \
-                --text="Creating database backups. Please wait..." \
-                --percentage=0 \
-                --auto-close &
-
-                pid=$!
-
                 create_database_backups 2>&1 | zenity --progress \
                 --title="Database backups" \
                 --text="Creating database backups. Please wait..." \
