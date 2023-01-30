@@ -31,9 +31,12 @@ case "$choice" in
         ;;
     "Take database backup")
         # Ask the user if they would like to continue
-        zenity --question --title="Confirm taking backups" --text="You are about to take database backups. Do you want to continue?"
+        zenity --question \
+        --title="Confirm taking backups" \
+        --text="You are about to take database backups. Do you want to continue?"
 
             if [ $? -eq 0 ]; then
+                # Run create backups function then pass the output to a zenity dialog
                 create_database_backups 2>&1 | zenity --progress \
                 --title="Database backups" \
                 --text="Creating database backups. Please wait..." \
