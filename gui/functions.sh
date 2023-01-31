@@ -107,3 +107,32 @@ check_process_running () {
         return 1
     fi
 }
+
+
+# Function to fetch latest code updates
+fetch_latest_updates(){
+    directories=("~/.scripts" "~/.baseline_testing" "~/.kolibri_helper_scripts")
+    total_dirs=${#directories[@]}
+    progress=0
+    progress_step=$((100 / total_dirs))
+
+    for dir in "${directories[@]}"; do
+      # Expand the tilde character
+      eval expanded_dir="$dir"
+
+      # Go to the directory
+      cd "$expanded_dir" ||
+      { echo "Error: Failed to change directory to $expanded_dir."; return 1; }
+
+      # Pull the latest code from Github
+      git reset --hard origin/"$COUNTRY_BRANCH" &
+      git pull origin "$COUNTRY_BRANCH" > /dev/null ||
+      { echo "Error: Failed to pull the latest updates for $expanded_dir."; return 1; }
+
+      progress=$((progress + progress_step))
+      echo "# Fetching updates for $dir"
+      echo $progress
+    done
+
+    return 0
+}
