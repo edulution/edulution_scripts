@@ -113,34 +113,31 @@ case "$choice" in
                 check_internet_connection
                 
                 if [[ $? -eq 0 ]]; then
-                    # Connection is successful. Begin fetching updates
+                    # Capture the output of the fetch latest updates function
+                    fetch_updates_output=$(fetch_latest_updates 2>&1)
+                    # Capture the exit code of the fetch latest updates function
+                    fetch_updates_exit_status=$?
 
-                    # Use Zenity to display a progress dialog
-                    zenity --progress --pulsate --title="Updating code" --text="Please wait..." --auto-close &
+                    # Pipe the output to zenity progress dialog
+                    echo "$fetch_updates_output" 2>&1 | zenity --progress \
+                    --title="Fetching updates" \
+                    --text="Fetching updates..." \
+                    --percentage=0 \
+                    --auto-kill \
+                    --auto-close &
 
-                    # Save the PID of the Zenity process
-                    ZENITY_PID=$!
-
-                    # List of directories
-                    directories=("~/.scripts" "~/.baseline_testing" "~/.kolibri_helper_scripts")
-
-                    for dir in "${directories[@]}"; do
-                      # Expand the tilde character
-                      eval expanded_dir="$dir"
-
-                      # Go to the directory
-                      cd "$expanded_dir" || { kill $ZENITY_PID && zenity --error --title="Code update" --text="Error: Failed to change directory to $expanded_dir."; exit 1; }
-
-                      # Pull the latest code from Github
-                      git pull origin "$COUNTRY_BRANCH" > /dev/null || { kill $ZENITY_PID && zenity --error --title="Code update" --text="Error: Failed to pull the latest updates for $expanded_dir."; exit 1; }
-
-                    done
-
-                    # Close the progress dialog
-                    kill $ZENITY_PID
-
-                    # Show a message box indicating that the operation is completed successfully
-                    zenity --info --title="Updates complete" --text="Updates have been fetched successfully"
+                    wait
+                    
+                    if [[ $fetch_updates_exit_status -eq 0 ]]; then
+                        zenity --info \
+                        --title="Fetching updates" \
+                        --text="Updates fetched successfully."
+                        
+                    else
+                        zenity --error \
+                        --title="Fetching updates" \
+                        --text="Updates not fetched successfully. Please try again or contact support"
+                    fi
                     
                 else
                     # Connection is not successful
