@@ -15,7 +15,7 @@ options=(
     "Submit reports"
     "Fetch latest updates"
     "Help"
-    "About...."
+    "About"
     "Quit"
     )
 
@@ -95,7 +95,9 @@ case "$choice" in
                     
                 else
                     # Connection is not successful
-                    zenity --error --title="Internet connection not successful" --text="You are not connected to the internet."
+                    zenity --error \
+                    --title="Internet connection not successful" \
+                    --text="You are not connected to the internet."
                     echo "You are not connected to the internet"
                 fi
         	else
@@ -107,7 +109,9 @@ case "$choice" in
         fi
         ;;
     "Fetch latest updates")
-        zenity --question --title="Fetching latest updates" --text="You are about to fetch the latest updates. Do you want to continue?"
+        zenity --question \
+        --title="Fetching latest updates" \
+        --text="You are about to fetch the latest updates. Do you want to continue?"
 
             if [ $? -eq 0 ]; then
                 check_internet_connection
@@ -141,7 +145,9 @@ case "$choice" in
                     
                 else
                     # Connection is not successful
-                    zenity --error --title="Internet connection not successful" --text="You are not connected to the internet."
+                    zenity --error \
+                    --title="Internet connection not successful" \
+                    --text="You are not connected to the internet."
                     echo "You are not connected to the internet"
                 fi
             else
@@ -159,7 +165,8 @@ case "$choice" in
         exit 0
         ;;
     *)
-        zenity --error --text="Invalid selection"
+        zenity --error \
+        --text="Invalid selection"
         exit 1
         ;;
 esac
