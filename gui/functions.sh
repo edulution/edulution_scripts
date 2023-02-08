@@ -194,6 +194,8 @@ cleanup_loose_reports(){
     { echo "Error: Failed to change directory to $expanded_dir."; return 1; }
 
     # Delete all loose csv files
-    find . -type f \( -name "*.csv" \) -exec rm {} \;
+    find . -type f \( -name "*.csv" \) -exec rm {} \; ||
+    { echo "Error: Failed to delete loose files in $expanded_dir."; return 1; }
+    
     return 0
 }
