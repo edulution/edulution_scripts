@@ -136,3 +136,64 @@ fetch_latest_updates(){
 
     return 0
 }
+
+
+# Run a series of functions and output percentage progress
+run_functions_with_progress() {
+  # Define variables
+  local functions=("$@")
+  local function_count=$#
+  
+  local progress=0
+  local log_file="error_$(date +'%Y%m%d_%H%M%S').log"
+
+  # Loop through each function and run it
+  for ((i=0; i<$function_count; i++)); do
+    current_function=${functions[i]}
+
+    # Echo name of function that is running
+    echo "# Running function ${functions[i]}"
+
+    # Direct standard error to an error log file
+    "$current_function" 2> >(tee -a "$ERROR_LOG")
+    # "${functions[i]}" &> /dev/null
+
+    # Check exit code of function
+    exit_code=$?
+    
+    # If the exit code is not 0, tell the user there is an error and break the loop
+    if [[ $exit_code -ne 0 ]]; then
+      echo "# Error in function ${functions[i]}" >> "$log_file"
+      break
+    fi
+
+    # Increment progress
+    progress=$((progress + 100 / function_count))
+    # Update progress bar
+    echo "$progress"
+  done
+
+  # Check if there were any errors in the log file
+  if [[ -f "$log_file" ]]; then
+    # Inform the user and exit with code 1
+    echo "# Error: see $log_file for details"
+    return 1
+  else
+    return 0
+  fi
+}
+
+
+# Clean up loose csv files from the reports directory
+cleanup_loose_reports(){
+    local reports_dir="~/.reports"
+    eval expanded_dir="$reports_dir"
+
+    # Go into the directory
+    cd "$expanded_dir" ||
+    { echo "Error: Failed to change directory to $expanded_dir."; return 1; }
+
+    # Delete all loose csv files
+    find . -type f \( -name "*.csv" \) -exec rm {} \;
+    return 0
+}
