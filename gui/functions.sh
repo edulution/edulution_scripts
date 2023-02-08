@@ -3,20 +3,20 @@
 # Function to check internet connection
 check_internet_connection() {
     # Use Zenity to display a progress dialog
-    zenity --progress \
-    --pulsate \
-    --title="Checking internet connection" \
-    --text="Checking your internet connection. Please wait..." \
-    --auto-close &
+    # zenity --progress \
+    # --pulsate \
+    # --title="Checking internet connection" \
+    # --text="Checking your internet connection. Please wait..." \
+    # --auto-close &
 
-    # Save the PID of the Zenity process
-    ZENITY_PID=$!
+    # # Save the PID of the Zenity process
+    # ZENITY_PID=$!
 
     # Check if there is an internet connection
     wget -q --tries=10 --timeout=20 --spider http://google.com
 
     local exit_code=$?
-    kill $ZENITY_PID
+    # kill $ZENITY_PID
     return $exit_code
 }
 
@@ -196,6 +196,20 @@ cleanup_loose_reports(){
     # Delete all loose csv files
     find . -type f \( -name "*.csv" \) -exec rm {} \; ||
     { echo "Error: Failed to delete loose files in $expanded_dir."; return 1; }
-    
+
+    return 0
+}
+
+# Restart Kolibri function
+restart_kolibri(){
+    # stop the kolibri server
+    python -m kolibri stop || return 1
+
+    # stop all processes running on port 8080
+    fuser -k 8080/tcp || return 1
+
+    # start the kolibri server
+    python -m kolibri start || return 1
+
     return 0
 }
