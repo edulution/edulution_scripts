@@ -64,49 +64,82 @@ case "$choice" in
             fi
         ;;
     "Submit reports")
-        selected_date=$(zenity --calendar \
+        selected_date_full=$(zenity --calendar \
             --text="Select any date in the month you would like to submit reports" \
             --title="Report Submission" \
-            --date-format=%m-%y)
-        echo "Selected date: $selected_date"
+            --date-format='%Y-%m-%d')
+
+        # Get month and year in full from selected date for display
+        selected_month=$(date -d "$selected_date_full" +"%B %Y")
+        echo "Selected date: $selected_month"
+
+        # Get date in required format for report extraction
+        date_report_extr=$(date -d "$selected_date_full" +"%m-%y")
+        echo "$date_report_extr"
+        
         # Display a question dialog box
                 # Check the exit status of the zenity command
         if [ $? -eq 0 ]; then
         	zenity --question \
             --title="Confirm reports submission" \
-            --text="You are about to submit reports for $selected_date. Do you want to continue?"
-
+            --text="You are about to submit reports for <b>$selected_month</b>. Do you want to continue?"
         	if [ $? -eq 0 ]; then
                 check_internet_connection
                 
+                # Internet connection successful
+                # Begin report extraction
                 if [[ $? -eq 0 ]]; then
-                    # Connection is successful. Begin submitting report
-                    zenity --progress \
-                    --pulsate \
-                    --title="Report submission" \
-                    --text="Extracting and submitting reports. Please wait..." \
-                    --auto-close &
+                    # Capture the output of the fetch latest updates function
+                    # fetch_updates_output=$(fetch_latest_updates 2>&1)
+                    # # Capture the exit code of the fetch latest updates function
+                    # fetch_updates_exit_status=$?
 
-                    ~/.scripts/reporting/monthend.sh "$selected_date" &
-                    
-                    zenity --info \
-                    --title="Reports submission complete" \
-                    --text="Report submission complete"
-                    
+                    # Pipe the output to zenity progress dialog
+                    run_functions_with_progress function1 function2 function3 |
+                    zenity --title="Running Functions" \
+                    --progress\
+                    --text="Please wait while functions are being executed"\
+                    --percentage=0\
+                    --auto-close
+
+                    if [ $? -ne 0 ]; then
+                      zenity --error --text="An error occurred while running functions"
+                    else
+                      zenity --info \
+                      --title="Running functions" \
+                      --text="Functions ran successfully."
+                    fi
+
+                    run_functions_with_progress function1 function2 function3 |
+                    zenity --title="Running Functions" \
+                    --progress\
+                    --text="Please wait while functions are being executed"\
+                    --percentage=0\
+                    --auto-close
+
+                    if [ $? -ne 0 ]; then
+                      zenity --error --text="An error occurred while running functions"
+                    else
+                      zenity --info \
+                      --title="Running functions" \
+                      --text="Functions ran successfully."
+                    fi
+
+                # Internet connection not successful
                 else
-                    # Connection is not successful
                     zenity --error \
                     --title="Internet connection not successful" \
                     --text="You are not connected to the internet."
                     echo "You are not connected to the internet"
                 fi
+            else
+                # If the user clicked the "No" button, exit the application
+                exit 0
+            fi
         	else
         	    # If the user clicked the "No" button, exit the application
         	    exit 0
         	fi
-        else
-        	exit 0
-        fi
         ;;
     "Fetch latest updates")
         zenity --question \
