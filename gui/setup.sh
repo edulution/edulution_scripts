@@ -7,7 +7,7 @@ source $(dirname "${BASH_SOURCE[0]}")/functions.sh
 CURRENT_DIR=$(dirname "$0")
 
 # Create error log directory
-DIRECTORIES=( ~/.logs )
+DIRECTORIES=( ~/.logs ~/backups )
 
 # Create the logs directory if it does not exist
 check_or_create_dirs "${DIRECTORIES[@]}"
