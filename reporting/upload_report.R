@@ -11,7 +11,7 @@ library(gargle)
 #' @return None
 #' @export
 #'
-upload_file_to_gcloud <- function(filename, bucketname = "reportsupload.edulution.org", auth_file = "edu-connect-777-3a25d4846944.json", ...) {
+upload_file_to_gcloud <- function(filename, bucketname = "reportsupload.edulution.org", auth_file = "/opt/edu-connect-777-3a25d4846944.json", ...) {
   Sys.setenv("GCS_AUTH_FILE" = auth_file)
   Sys.setenv("GCS_DEFAULT_BUCKET" = bucketname)
   googleCloudStorageR::gcs_global_bucket(Sys.getenv("GCS_DEFAULT_BUCKET"))
@@ -30,7 +30,7 @@ upload_file_to_gcloud <- function(filename, bucketname = "reportsupload.edulutio
 
   tryCatch(
     {
-      gcs_upload(file = filename)
+      gcs_upload(file = filename, name = basename(filename))
     },
     warning = function(w) {
       print(w)
