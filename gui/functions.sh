@@ -213,3 +213,20 @@ restart_kolibri(){
 
     return 0
 }
+
+
+# Function to check or create a list of directoriesS
+check_or_create_dirs(){
+    DIRECTORIES=("$@")
+    for DIRECTORY in "${DIRECTORIES[@]}"; do
+        if [ ! -d "$DIRECTORY" ]; then
+            echo "$DIRECTORY does not exist. Creating directory..."
+            mkdir "$DIRECTORY" || return 1
+        else
+            echo "$DIRECTORY already exists. Skipping this step"
+        fi
+    done
+
+    echo "Done!"
+    return 0
+}
