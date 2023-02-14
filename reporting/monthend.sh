@@ -42,7 +42,8 @@ if [[ "$psql_running" == 'Running' ]];then
 
        # After Rscript executes, execute send report script
        ~/.scripts/reporting/send_report.sh
-       
+       ~/.scripts/reporting/gcloud_upload.sh
+
        # submit baseline tests for the selected month
        ~/.baseline_testing/scripts/reporting/baseline.sh "$1"
 
