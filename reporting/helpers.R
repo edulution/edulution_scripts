@@ -41,7 +41,7 @@ check_date_valid <- function(input_date) {
 #' Generate file name of a report in desired format
 #'
 #' @param report_name Name of the report
-#' @param date The date of the report
+#' @param input_date The input datedate of the report
 #' @param device_name The name of the device the report is coming from
 #' @param reports_dir The directory in which reports are stored. Default is .reports folder in the home directory
 #' @param file_extension The file extension for the report. Default is ".csv"
@@ -51,14 +51,14 @@ check_date_valid <- function(input_date) {
 #' @return A vector containing the filename
 #' @export
 #'
-generate_filename <- function(report_name, date, device_name, file_extension = ".csv", module = "_numeracy_", separator = "", reports_dir = "~/.reports/") {
+generate_filename <- function(report_name, input_date, device_name, file_extension = ".csv", separator = "", reports_dir = "~/.reports/") {
   # Derive report file name by pasting the inputs in the right order
   filename <- paste(
     reports_dir,
     report_name,
     device_name,
-    module,
-    date,
+    input_date,
+    format(Sys.time(), '%Y%m%d%H%M%S'),
     file_extension,
     sep = separator
   )
