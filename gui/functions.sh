@@ -25,19 +25,19 @@ create_database_backups(){
     local exit_code=$?
 
     # File extension for backup files is custom format with extension .backup
-    file_extension=".backup"
+    local file_extension=".backup"
 
     # Directory to store backups
-    backups_dir=~/backups/
+    local backups_dir=~/backups/
 
     # Get today's date and use it as timestamp for database backup file
-    timestamp=$(date +"%Y%m%d")
+    local timestamp=$(date +"%Y%m%d")
 
     echo "# Preparing...."
     echo "5"
     echo "prepare variables"
     # Get database name using direct query on terminal. remove leading and trailing whitespace
-    database_name=$(PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD psql -d "$KOLIBRI_DATABASE_NAME"\
+    local database_name=$(PGPASSWORD=$KOLIBRI_DATABASE_PASSWORD psql -d "$KOLIBRI_DATABASE_NAME"\
      -U "$KOLIBRI_DATABASE_USER" \
      -h "$KOLIBRI_DATABASE_HOST" \
      -p "$KOLIBRI_DATABASE_PORT" \
@@ -45,13 +45,13 @@ create_database_backups(){
      sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 
     # Derive backup name by combining the dataabse name, timestamp and file extension
-    kolibri_backup_name=${database_name}_kolibri_${timestamp}${file_extension}
+    local kolibri_backup_name=${database_name}_kolibri_${timestamp}${file_extension}
 
     # name of baseline backup
-    baseline_backup_name=${database_name}_baseline_${timestamp}${file_extension}
+    local baseline_backup_name=${database_name}_baseline_${timestamp}${file_extension}
 
     # Name of zip file
-    zip_file_name=${database_name}_backups_${timestamp}
+    local zip_file_name=${database_name}_backups_${timestamp}
 
     # Create database backup using credentials from environment variables 
     echo "# Creating Kolibri database backup...."
@@ -111,10 +111,10 @@ check_process_running () {
 
 # Function to fetch latest code updates
 fetch_latest_updates(){
-    directories=("~/.scripts" "~/.baseline_testing" "~/.kolibri_helper_scripts")
-    total_dirs=${#directories[@]}
-    progress=0
-    progress_step=$((100 / total_dirs))
+    local directories=("~/.scripts" "~/.baseline_testing" "~/.kolibri_helper_scripts")
+    local total_dirs=${#directories[@]}
+    local progress=0
+    local progress_step=$((100 / total_dirs))
 
     for dir in "${directories[@]}"; do
       # Expand the tilde character
@@ -159,7 +159,7 @@ run_functions_with_progress() {
     # "${functions[i]}" &> /dev/null
 
     # Check exit code of function
-    exit_code=$?
+    local exit_code=$?
     
     # If the exit code is not 0, tell the user there is an error and break the loop
     if [[ $exit_code -ne 0 ]]; then
@@ -217,7 +217,7 @@ restart_kolibri(){
 
 # Function to check or create a list of directoriesS
 check_or_create_dirs(){
-    DIRECTORIES=("$@")
+    local DIRECTORIES=("$@")
     for DIRECTORY in "${DIRECTORIES[@]}"; do
         if [ ! -d "$DIRECTORY" ]; then
             echo "$DIRECTORY does not exist. Creating directory..."
@@ -228,5 +228,31 @@ check_or_create_dirs(){
     done
 
     echo "Done!"
+    return 0
+}
+
+
+
+upload_report(){
+    local reports_dir=$1
+
+    cd "$reports_dir" || return 1
+
+    #check reports folder for file most recently created from baseline and send to google server
+    MOST_REC_FILEPATH=$( ls "$reports_dir" -t | head -n1 )
+
+    # Get the name of the most recent file without path and extension
+    MOST_REC_FILENAME=$( basename "$MOST_REC_FILEPATH" .csv)
+
+    # Create a zip file with this file in the current directory
+    # bzip2 compression reduces file size by ~ 88%
+    # Expected output is $MOST_REC_FILENAME.zip and the original csv file deleted
+    zip -jm -Z bzip2 "$MOST_REC_FILENAME" "$MOST_REC_FILEPATH" || return 1
+
+    # if connection lost the script will exit with status 1 and output error message
+    Rscript ~/.scripts/reporting/upload_report.R "$MOST_REC_FILENAME.zip" &&
+    echo "${GREEN}${BOLD}Report uploaded successfully!${RESET}" ||
+    echo "${RED}${BOLD}Failed to upload report. Please check your internet connection and try again 1>&2${RESET}" && return 1
+    
     return 0
 }
