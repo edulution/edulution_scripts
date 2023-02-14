@@ -9,8 +9,8 @@ COUNTRY_BRANCH="zambia"
 # Create a list of options
 options=(
     "Restart Kolibri"
-    "Regenerate Kolibri quizzes"
-    "Assign Learners"
+    # "Regenerate Kolibri quizzes"
+    # "Assign Learners"
     "Take database backup"
     "Submit reports"
     "Fetch latest updates"
