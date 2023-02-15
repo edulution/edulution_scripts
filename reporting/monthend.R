@@ -146,7 +146,7 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
   # Write report to csv
   write.csv(
     rpt,
-    file = generate_filename("monthend_", year_month, device_name),
+    file = generate_filename(report_name = "activity_", input_date = year_month, device_name = device_name),
     col.names = FALSE,
     row.names = FALSE,
     na = "0"
