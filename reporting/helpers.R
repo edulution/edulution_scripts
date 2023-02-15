@@ -51,16 +51,16 @@ check_date_valid <- function(input_date) {
 #' @return A vector containing the filename
 #' @export
 #'
-generate_filename <- function(report_name, input_date, device_name, file_extension = ".csv", separator = "", reports_dir = "~/.reports/") {
+generate_filename <- function(report_name, input_date, device_name, file_extension = ".csv", reports_dir = "~/.reports/") {
   # Derive report file name by pasting the inputs in the right order
-  filename <- paste(
+  filename <- paste0(
     reports_dir,
     report_name,
     device_name,
     input_date,
+    "_",
     format(Sys.time(), '%Y%m%d%H%M%S'),
-    file_extension,
-    sep = separator
+    file_extension
   )
 
   return(filename)
