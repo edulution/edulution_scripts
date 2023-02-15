@@ -27,7 +27,38 @@ choice=$(zenity --list \
 # Check the user's choice and perform the corresponding action
 case "$choice" in
     "Restart Kolibri")
-        zenity --info --text="You selected option 1"
+        # Ask the user if they would like to continue
+        zenity --question \
+        --title="Confirm restarting Kolibri" \
+        --text="You are about to restart Kolibri. Do you want to continue?"
+
+            if [ $? -eq 0 ]; then
+                # Run create backups function then pass the output to a zenity dialog
+                restart_kolibri 2>&1 | zenity --progress \
+                --title="Restart Kolibri" \
+                --text="Restarting Kolibri. Please wait..." \
+                --percentage=0 \
+                --auto-kill \
+                --auto-close &
+
+                wait
+                
+                if [[ $? -eq 0 ]]; then
+                    # Connection is successful. Begin submitting report
+                    zenity --info \
+                    --title="Database backups" \
+                    --text="Backups created successfully."
+                    
+                else
+                    # Connection is not successful
+                    zenity --error \
+                    --title="Database backups" \
+                    --text="Backups not created successfully. Please try again or contact support"
+                fi
+            else
+                # If the user clicked the "No" button, exit the application
+                exit 0
+            fi
         ;;
     "Take database backup")
         # Ask the user if they would like to continue
