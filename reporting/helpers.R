@@ -57,6 +57,7 @@ generate_filename <- function(report_name, input_date, device_name, file_extensi
     reports_dir,
     report_name,
     device_name,
+    "_",
     input_date,
     "_",
     format(Sys.time(), '%Y%m%d%H%M%S'),
