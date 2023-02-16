@@ -14,8 +14,8 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   echo "    Documentation for script run by the aliase can be viewed by using -h or --help option for the repective script."
   echo 
   echo "Example"
-  echo "    shutdown"
-  echo "    restartko"
+  echo "    shutdown: runs kolibri stop;~/.scripts/backupdb/backup.sh;sudo shutdown -h now"
+  echo "    backup: runs python -m kolibri stop;sudo service nginx stop;~/.scripts/backupdb/backup.sh"
   exit 1
 fi
 
