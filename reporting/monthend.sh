@@ -5,8 +5,8 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   echo "  monthend - Monthend "
   echo
   echo "DESCRIPTION"
-  echo "  Extracts data for the specified month and year and sends report"
-  echo "  year and month in format MM-YY, e.g. 02-23"
+  echo "    Extracts data for the specified month and year and sends report"
+  echo "    year and month in format MM-YY, e.g. 02-23"
   echo 
   echo "Usage"
   echo "    ./monthend.sh MM-YY or monthend MM-YY"
