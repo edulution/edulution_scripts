@@ -10,7 +10,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   echo "	It uses the credentials from environment variables to connect to the databases and create backups."
   echo "	The backups are then zipped and stored in the specified backup directory."
   echo
-  echo "Example"
+  echo "USAGE"
   echo "	backup "
   exit 1
 fi
