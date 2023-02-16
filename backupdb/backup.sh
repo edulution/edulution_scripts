@@ -11,7 +11,8 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   echo "	The backups are then zipped and stored in the specified backup directory."
   echo
   echo "USAGE"
-  echo "	backup "
+  echo "	./backup.sh "
+  echo "  ./backup.sh ~/Desktop"
   exit 1
 fi
 
