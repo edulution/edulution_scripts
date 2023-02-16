@@ -1,5 +1,24 @@
 #!/bin/bash
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "   flyway_bl - Flyway Baseline  "
+  echo
+  echo "DESCRIPTION"
+  echo "	The function first switches to the baseline testing directory, resets the code to match the remote branch, replaces "
+  echo "	placeholders in the migrations file with values from environment variables, and then invokes flyway with the "
+  echo "	supplied argument. The script then calls the function with the command line argument supplied."
+  echo 
+  echo "NOTE:"
+  echo "	sudo prevalages are required to run the script"
+  echo
+  echo "Example"
+	echo "	flyway info"
+	echo "	flyway migrate"
+	echo "	flyway etc"
+  exit 1
+fi
+
 # Invoke flyway on baseline testing database
 
 function flyway_bl(){

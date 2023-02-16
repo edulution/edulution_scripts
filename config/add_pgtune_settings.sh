@@ -1,5 +1,20 @@
 #!/bin/bash
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "   add_pgtune_settings - Postgres DB settings"
+  echo
+  echo "DESCRIPTION"
+  echo "	This script is used to add tuning settings to a Postgres 13 database. It will check if the Postgres 13 has been set up and if"
+  echo "	it has, the script will add the settings for 2 cores, 4GB RAM, HDD storage, data warehouse and then restart the postgresql service."
+  echo "	The script also takes a backup of the postgresql.conf file before adding the tuning settings."
+  echo 
+  echo "NOTE:"
+  echo "	sudo prevalages are required to run the script"
+  exit 1
+fi
+
+
 DIRECTORY="/etc/postgresql/13/main"
 
 # Store path to conf file in variable

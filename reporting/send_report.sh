@@ -1,5 +1,15 @@
 #!/bin/bash
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "   - "
+  echo
+  echo "DESCRIPTION"
+  echo "	Send the most recently created file from the '/.reports' folder and then checks for the"
+  echo "	file that was most recently created. It then creates a zip file with the file using bzip2 compression"
+  exit 1
+fi
+
 # Go into reports folder
 cd ~/.reports || exit
 

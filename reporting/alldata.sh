@@ -1,5 +1,16 @@
 #!/bin/bash
 
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "NAME"
+  echo "  alldata - All data"
+  echo
+  echo "DESCRIPTION"
+  echo "    This script pulls the latest changes from the 'zambia' branch of the '~/.scripts' repository, performs a silent"
+  echo "    upgrade of all scripts, checks if the postgresql process is running, and extracts a report using the Rscript 'alldata.R' "
+  echo "    with the first argument as its parameter. The extracted report is then sent using the 'send_report.sh' script"
+  exit 1
+fi
+
 #pull latest changes from master branch in repo
 cd ~/.scripts || exit
 git reset --hard origin/zambia > /dev/null
