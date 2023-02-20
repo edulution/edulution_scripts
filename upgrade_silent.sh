@@ -66,5 +66,3 @@ fi
 
 # Reinstall dbhelpers package
 ~/.scripts/config/reinstall_dbhelpers_package.sh
-
-python ~/.kolibri_helper_scripts/delete_learners.py -f ~/.scripts/jan2023_gr7_deletion.csv
