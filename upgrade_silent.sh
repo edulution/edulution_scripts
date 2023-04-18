@@ -66,3 +66,6 @@ fi
 
 # Reinstall dbhelpers package
 ~/.scripts/config/reinstall_dbhelpers_package.sh
+
+# Insert teacher accounts (MPL)
+python ~/.kolibri_helper_scripts/insert_coaches.py -f ~/.kolibri_helper_scripts/mpl_teachers.csv
