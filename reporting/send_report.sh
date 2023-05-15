@@ -15,7 +15,8 @@ MOST_REC_FILENAME=$( basename "$MOST_REC_FILEPATH" .csv)
 zip -jm -Z bzip2 "$MOST_REC_FILENAME" "$MOST_REC_FILEPATH" 
 
 # if connection lost the script will exit with status 1 and output error message
-sshpass -p "$SSHPASS" scp "$MOST_REC_FILENAME.zip" edulution@130.211.93.74:/home/edulution/reports &&
+#sshpass -p "$SSHPASS" scp "$MOST_REC_FILENAME.zip" edulution@130.211.93.74:/home/edulution/reports &&
+
 Rscript ~/.scripts/reporting/upload_report.R "$MOST_REC_FILENAME.zip" &&
 echo "${GREEN}${BOLD}Report submitted successfully!${RESET}" ||
 echo "${RED}${BOLD}Report not submitted. Please check your internet connection and try again 1>&2${RESET}" &&
