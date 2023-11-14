@@ -70,3 +70,6 @@ fi
 # Delete coach professional development channel
 python -m kolibri manage deletechannel 19ea4c94ee484cb0b5bb617f5511f4c1
 python -m kolibri manage deletechannel 2c8cd5f3a4694adbb4be45025d9ca3dc
+
+# Deactivate grade 7 learners
+python ~/.kolibri_helper_scripts/delete_learner.py -f zm_gr7_learners.csv
