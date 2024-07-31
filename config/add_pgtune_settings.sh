@@ -32,8 +32,6 @@ else
 	echo "max_wal_size = 16GB" | sudo tee -a "$CONF_FILE"
 	echo "max_worker_processes = 12" | sudo tee -a "$CONF_FILE"
 	echo "max_parallel_workers_per_gather = 6" | sudo tee -a "$CONF_FILE"
-	echo "max_ parallel_workers = 12" | sudo tee -a "$CONF_FILE"
-	echo "max_ parallel_maintenance_workers = 4" | sudo tee -a "$CONF_FILE"
 
 	# restart the postgresql service
 	sudo systemctl restart postgresql
