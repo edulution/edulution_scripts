@@ -2,8 +2,8 @@
 
 # Pull latest changes from master branch in repo
 cd ~/.scripts || exit
-git reset --hard origin/south_africa > /dev/null
-git pull origin south_africa > /dev/null
+git reset --hard origin/nk_math_2024 > /dev/null
+git pull origin nk_math_2024 > /dev/null
 
 # Do silent upgrade of all scripts
 ./upgrade_silent.sh > /dev/null
