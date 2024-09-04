@@ -129,6 +129,7 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
       last_name,
       username,
       class_name,
+      deleted,
       centre,
       total_hours,
       total_exercises,
