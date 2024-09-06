@@ -2,7 +2,7 @@ suppressMessages(library(plyr))
 suppressMessages(library(dplyr))
 suppressMessages(library(lubridate))
 
-centre_timezone <- "Africa/Lusaka"
+centre_timezone <- "Africa/Johannesburg"
 
 # get the default facility id and from it get the device name(facility name)
 default_facility_id <<- default_facility_id %>%
@@ -15,7 +15,7 @@ facilities <<- collections %>% dplyr::filter(kind == "facility")
 device_name <<- collections %>%
   dplyr::filter(id == default_facility_id) %>%
   # Get only the first 5 characters of the name
-  dplyr::mutate(name = str_sub(name, 1, 5)) %>%
+  dplyr::mutate(name = stringr::str_sub(name, 1, 5)) %>%
   # Select only the name column
   dplyr::select(name)
 
@@ -70,6 +70,7 @@ if (nrow(users) == 0) {
       username,
       date_joined,
       last_login,
+      deleted,
       class_name,
       centre,
       facility_id
