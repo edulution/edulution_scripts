@@ -19,7 +19,7 @@ SPINNER_PID=$!
 
 # Pull latest changes from the master branch in repo
 cd ~/.scripts || exit
-# git reset --hard origin/zambia > /dev/null 2>&1
+git reset --hard origin/zambia > /dev/null 2>&1
 git pull origin zambia > /dev/null 2>&1
 
 # Do a silent upgrade of all scripts
