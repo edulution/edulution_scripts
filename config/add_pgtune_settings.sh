@@ -1,14 +1,14 @@
 #!/bin/bash
 
-DIRECTORY="/etc/postgresql/14/main"
+DIRECTORY="/etc/postgresql/17/main"
 
 # Store path to conf file in variable
 CONF_FILE="$DIRECTORY/postgresql.conf"
 
 if [ ! -d "$DIRECTORY" ]; then
-	echo "Postgres 14 has not been set up. Skipping...."
+	echo "Postgres 17 has not been set up. Skipping...."
 else
-	echo "Postgres 14 has been set up. Adding tuning settings"
+	echo "Postgres 17 has been set up. Adding tuning settings"
 
 	# Get backup of postgresql conf file
 	# Remove all lines after the Add settings for extensions here line
