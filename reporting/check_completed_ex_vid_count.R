@@ -16,7 +16,7 @@ check_completed_ex_vid_count <- function(summary_df) {
     # create a df
     # populate it with zeroes on user_id, total_exercises, total_videos
     zeroes <- data.frame(users$id, rep(0, nrow(users)), rep(0, nrow(users)))
-    names(zeroes) <- c("user_id", "total_exercises", "total_videos")
+    names(zeroes) <- c("user_id", "total_exercises", "total_videos", "total_quizzes", "total_documents")
 
     summary_df <- zeroes
   } else {
@@ -43,6 +43,18 @@ check_completed_ex_vid_count <- function(summary_df) {
       summary_df <- summary_df %>% dplyr::rename(total_documents = document)
     } else {
       summary_df <- summary_df %>% dplyr::mutate(total_documents = 0)
+    }
+
+    if ("document" %in% colnames(summary_df)) {
+      summary_df <- summary_df %>% dplyr::rename(total_documents = document)
+    } else {
+      summary_df <- summary_df %>% dplyr::mutate(total_documents = 0)
+    }
+
+    if ("quiz" %in% colnames(summary_df)) {
+      summary_df <- summary_df %>% dplyr::rename(total_quizzes = quiz)
+    } else {
+      summary_df <- summary_df %>% dplyr::mutate(total_quizzes = 0)
     }
   }
   return(summary_df)
