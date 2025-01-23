@@ -3,12 +3,25 @@
 #' @param sessionlogs A \code{data.frame} of ContentSessionlogs
 #' @param lower_lim Lower bound of date range
 #' @param upper_lim Upper bound of date range#'
+#' @param quizzes_only Get time spent on quizzes only. If set to false, gets time spent on everything except quizzes
 #'
 #' @return A \code{data.frame}
 #' @export
 #'
 #' @examples
-get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
+get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim, quizzes_only = FALSE) {
+  # Filter sessionlogs based on quizzes_only argument
+  if (quizzes_only) {
+    sessionlogs <- sessionlogs %>%
+      dplyr::filter(kind == "quiz")
+    summary_column <- "total_hours_quizzes"
+  } else {
+    sessionlogs <- sessionlogs %>%
+      dplyr::filter(kind != "quiz")
+    summary_column <- "total_hours"
+  }
+
+  # Perform the same data transformation, filtering, and summarizing steps
   time_spent_by_user <- sessionlogs %>%
     dplyr::mutate(
       start_timestamp = as.Date(start_timestamp),
@@ -19,10 +32,10 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
       between(end_timestamp, lower_lim, upper_lim)
     ) %>%
     dplyr::group_by(user_id) %>%
-    dplyr::summarize(total_hours = sum(time_spent) / 3600)
+    dplyr::summarize(!!summary_column := sum(time_spent) / 3600)
 
   print(paste(
-    "Sucessfully retrieved time spent by user between",
+    "Successfully retrieved time spent by user between",
     lower_lim,
     "and",
     upper_lim
@@ -30,6 +43,7 @@ get_time_spent_by_user <- function(sessionlogs, lower_lim, upper_lim) {
 
   return(time_spent_by_user)
 }
+
 
 #' Get the number of distinct days a user logged in using the start_timestamp date only
 #'
@@ -96,6 +110,8 @@ get_completed_ex_vid_count <- function(summarylogs, lower_lim, upper_lim) {
 
   return(completed_ex_vid_count)
 }
+
+
 
 
 #' Get number of unique attempted exercise and videos between a date range
