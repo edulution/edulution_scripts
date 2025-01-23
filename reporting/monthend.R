@@ -59,6 +59,9 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
 
   # Get total time spent by each user between month start and month end
   time_spent_by_user <- get_time_spent_by_user(sessionlogs, month_start, month_end)
+  
+  # Get the total time spent on quizzes by each user between month start and month end
+  quiz_time_spent_by_user <- get_time_spent_by_user(sessionlogs, month_start, month_end, quizzes_only = T)
 
   # Get the number of distinct days a user logeed in using the start_timestamp date only
   logins_by_user <- get_logins_by_user(usersessionlogs, month_start, month_end)
@@ -97,6 +100,7 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
   # Join all of the transformations together by user_id to make a complete report
   rpt <- users %>%
     dplyr::left_join(time_spent_by_user, by = c("id" = "user_id")) %>%
+    dplyr::left_join(quiz_time_spent_by_user, by = c("id" = "user_id")) %>%
     dplyr::left_join(completed_ex_vid_count, by = c("id" = "user_id")) %>%
     dplyr::left_join(logins_by_user, by = c("id" = "user_id")) %>%
     dplyr::left_join(time_by_channel, by = c("id" = "user_id")) %>%
@@ -132,6 +136,7 @@ monthend <- function(dates, usersessionlogs, sessionlogs, summarylogs, topics, d
       deleted,
       centre,
       total_hours,
+      total_hours_quizzes,
       total_exercises,
       total_videos,
       month_end,
